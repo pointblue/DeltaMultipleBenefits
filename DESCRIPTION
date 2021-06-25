@@ -1,5 +1,5 @@
 Package: DeltaMultipleBenefits
-Title: What the Package Does (One Line, Title Case)
+Title: Project the Multiple Benefits of Land Cover Change in the Sacramento-San Joaquin Delta
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Kristen",
@@ -7,7 +7,14 @@ Authors@R:
            role = c("aut", "cre"),
            email = "kdybala@pointblue.org",
            comment = c(ORCID = "0000-0002-2787-4600"))
-Description: What the package does (one paragraph).
+Description: Supports land use planning, management, conservation, and 
+    community engagement by projecting the net impacts of alternative scenarios 
+    of land cover change on multiple benefits of interest, such as wildlife 
+    distributions and ecosystem services associated with land covers. It applies
+    existing models to user-supplied landscapes and compares to a baseline 
+    landscape to project the net change for each benefit. It also summarizes the 
+    net change for multiple benefits to communicate synergies and trade-offs 
+    among benefits of interest under each scenario. 
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
