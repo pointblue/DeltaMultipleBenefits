@@ -34,8 +34,9 @@
 #'   default `NULL`
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #'
-#' @return Nothing returned to R environment. Writes rasters to file for each
-#'   land cover class.
+#' @return Nothing returned to R environment. Writes rasters to `pathout` for
+#'   each land cover class.
+#' @seealso [python_focal_run()], [python_focal_finalize()]
 #' @export
 #'
 #' @examples

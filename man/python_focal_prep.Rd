@@ -39,8 +39,8 @@ default \code{NULL}}
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
 }
 \value{
-Nothing returned to R environment. Writes rasters to file for each
-land cover class.
+Nothing returned to R environment. Writes rasters to \code{pathout} for
+each land cover class.
 }
 \description{
 Prepare for running focal statistics on a landscape raster via Python, to
@@ -75,4 +75,7 @@ pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra')))
 python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
 pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
 suffix = c('_area', '_elev'))
+}
+\seealso{
+\code{\link[=python_focal_run]{python_focal_run()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
 }
