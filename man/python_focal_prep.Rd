@@ -8,7 +8,7 @@ python_focal_prep(
   landscape,
   SDM,
   pathout,
-  scenario_name,
+  landscape_name,
   suffix = NULL,
   mask = NULL,
   pixel_value = NULL,
@@ -18,15 +18,13 @@ python_focal_prep(
 \arguments{
 \item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
 
-\item{SDM}{The name of intended species distribution model: \code{"riparian"},
-\code{"waterbird_fall"}, or \code{"waterbird_win"}}
+\item{SDM}{The name of intended species distribution model, for which
+\code{landscape} will be reclassified, and corresponding name of the
+subdirectory within \code{pathout/scenario_name} where results will be written:
+\code{"riparian"}, \code{"waterbird_fall"}, or \code{"waterbird_win"}}
 
 \item{pathout}{Character string; Optional filepath to directory where output
 rasters should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
-
-\item{scenario_name}{Character string; Name of the landscape scenario being
-evaluated, corresponding to the subdirectory in \code{pathout} where results
-will be written.}
 
 \item{suffix}{Character string; custom suffix appended to layer names
 (optional unless \code{maskpath} is not \code{NULL})}
@@ -37,6 +35,10 @@ will be written.}
 default \code{NULL}}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
+
+\item{scenario_name}{Character string; Name of the landscape scenario being
+evaluated, corresponding to the subdirectory in \code{pathout} where results
+will be written.}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for

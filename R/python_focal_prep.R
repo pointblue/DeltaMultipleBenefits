@@ -20,8 +20,10 @@
 #' have two values. See examples.
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
-#' @param SDM The name of intended species distribution model: `"riparian"`,
-#'   `"waterbird_fall"`, or `"waterbird_win"`
+#' @param SDM The name of intended species distribution model, for which
+#'   `landscape` will be reclassified, and corresponding name of the
+#'   subdirectory within `pathout/scenario_name` where results will be written:
+#'   `"riparian"`, `"waterbird_fall"`, or `"waterbird_win"`
 #' @param pathout Character string; Optional filepath to directory where output
 #'   rasters should be written; passed to [terra::writeRaster()]
 #' @param scenario_name Character string; Name of the landscape scenario being
@@ -52,7 +54,7 @@
 #' pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
 #' suffix = c('_area', '_elev'))
 
-python_focal_prep = function(landscape, SDM, pathout, scenario_name,
+python_focal_prep = function(landscape, SDM, pathout, landscape_name,
                              suffix = NULL, mask = NULL, pixel_value = NULL,
                              overwrite = FALSE) {
 
@@ -67,7 +69,7 @@ python_focal_prep = function(landscape, SDM, pathout, scenario_name,
   # reclassify according to riparian and waterbird model inputs
   presence_reclass = reclassify_landcover(presence, SDM = SDM)
 
-  create_directory(file.path(pathout, scenario_name, SDM))
+  create_directory(file.path(pathout, landscape_name, SDM))
 
   # optional: if mask is provided (e.g. pfld data), generate layers
   # reflecting the value of the mask layer wherever each land cover is present
@@ -82,7 +84,7 @@ python_focal_prep = function(landscape, SDM, pathout, scenario_name,
     terra::names(newstack_mask) = paste0(terra::names(presence_reclass),
                                          suffix[2])
     terra::writeRaster(newstack_mask,
-                       filename = file.path(pathout, scenario_name, SDM,
+                       filename = file.path(pathout, landscape_name, SDM,
                                             paste0(terra::names(newstack_mask),
                                                    '.tif')),
                        overwrite = overwrite)
@@ -102,7 +104,7 @@ python_focal_prep = function(landscape, SDM, pathout, scenario_name,
   }
 
   terra::writeRaster(presence_reclass,
-                     filename = file.path(pathout, scenario_name, SDM,
+                     filename = file.path(pathout, landscape_name, SDM,
                                           paste0(terra::names(presence_reclass),
                                                  '.tif')),
                      overwrite = overwrite)
