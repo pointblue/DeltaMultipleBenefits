@@ -1,15 +1,18 @@
 #' Update waterbird predictors: crane roost locations
 #'
 #' Helper function for estimating impact of landscape changes on known crane
-#' roosts, to generate updated estimates of the distance to roost.
+#' roosts, to generate updated estimates of the distance to roost for use with
+#' waterbird distribution models.
 #'
-#' @details
-#' For landscapes that represent a projected change from baseline conditions,
-#' evaluates historical crane roosts to determine whether the land cover is
-#' projected to become unsuitable (>20% cover with an unsuitable land cover
-#' class). Unsuitable roosts are removed, generating files named for
-#' `scenario_name` in `pathout`. Use this function prior to using [python_dist]
-#' to calculate distance to roost and generate `droost_km.tif`.
+#' @details For landscapes that represent a projected change from baseline
+#'   conditions, this function facilitates evaluating historical crane roosts to
+#'   determine whether the land cover overlaying them in `landscape` is
+#'   projected to become unsuitable (>20% cover with an unsuitable land cover
+#'   class, including orchard, vineyard, riparian, woodland, scrub, urban).
+#'   Unsuitable roost polygons are removed, and updated roost maps are
+#'   generated, named as `scenario_name` in `pathout`. Use this function prior
+#'   to using [python_dist] to calculate distance to roost and generate updated
+#'   versions of `droost_km.tif` for each scenario.
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param roostpath Filepath to a raster representing the location of
@@ -34,21 +37,26 @@ update_roosts = function(landscape, roostpath, pathout, scenario_name,
   # check how much traditional roosts overlap with incompatible land covers:
   # orchard, vineyard, riparian, woodland, scrub, urban
   roost_overlay = landscape %>%
-    subst(from = c(11:19, 60, 70:79, 100:120), to = 1) %>%
-    subst(from = c(2:130), to = 0) %>% #everything else
-    terra::extract(vect(roostpath))
+    terra::subst(from = c(11:19, 60, 70:79, 100:120), to = 1) %>%
+    terra::subst(from = c(2:130), to = 0) %>% #everything else
+    terra::extract(terra::vect(roostpath))
 
   # identify polygons to exclude with >20% incompatible landcover
   incompatible = roost_overlay %>% setNames(c('ID', 'landscape')) %>%
-    group_by(ID, landscape) %>% count() %>% ungroup() %>%
-    group_by(ID) %>% mutate(ncell = sum(n), prop = n/ncell) %>% ungroup() %>%
-    filter(landscape == 1 & prop > 0.2) %>% arrange(desc(prop))
+    dplyr::group_by(ID, landscape) %>%
+    dplyr::count() %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(ID) %>%
+    dplyr::mutate(ncell = sum(n), prop = n/ncell) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(landscape == 1 & prop > 0.2) %>%
+    dplyr::arrange(desc(prop))
 
   create_directory(file.path(pathout, scenario_name))
 
-  read_sf(roostpath) %>%
-    filter(!Roost_ID %in% incompatible$ID) %>%
-    vect() %>% rasterize(., landscape) %>%
-    writeRaster(file.path(pathout, scenario_name, 'roosts.tif'),
-                overwrite = overwrite)
+  sf::read_sf(roostpath) %>%
+    dplyr::filter(!Roost_ID %in% incompatible$ID) %>%
+    terra::vect() %>% terra::rasterize(., landscape) %>%
+    terra::writeRaster(file.path(pathout, scenario_name, 'roosts.tif'),
+                       overwrite = overwrite)
 }

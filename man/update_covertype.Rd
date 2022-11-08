@@ -39,9 +39,10 @@ Helper function for updating covertype predictors for the waterbird
 distribution models.
 }
 \details{
-Classifies the landscape rasters according to the land cover classes
-that were originally surveyed (the only classes for which predictions should
-be generated). Generates file: \code{covertype.tif}.
+Classifies the \code{landscape} rasters according to the land cover
+classes that were originally surveyed, which are the only classes for which
+predictions should be generated from the waterbird distribution models.
+Generates file: \code{covertype.tif} at location \verb{pathout/scenario_name/}.
 }
 \examples{
 # See vignette

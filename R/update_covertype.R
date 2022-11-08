@@ -3,10 +3,10 @@
 #' Helper function for updating covertype predictors for the waterbird
 #' distribution models.
 #'
-#' @details
-#' Classifies the landscape rasters according to the land cover classes
-#' that were originally surveyed (the only classes for which predictions should
-#' be generated). Generates file: `covertype.tif`.
+#' @details Classifies the `landscape` rasters according to the land cover
+#'   classes that were originally surveyed, which are the only classes for which
+#'   predictions should be generated from the waterbird distribution models.
+#'   Generates file: `covertype.tif` at location `pathout/scenario_name/`.
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param SDM The name of intended species distribution model:
@@ -31,16 +31,16 @@ update_covertype = function(landscape, SDM, maskpath = NULL, pathout,
                               scenario_name, overwrite = FALSE) {
 
   if (SDM == 'waterbird_fall') {
-    key = freq(landscape) %>%
-      mutate(
-        covertype = case_when(
+    key = terra::freq(landscape) %>%
+      dplyr::mutate(
+        covertype = dplyr::case_when(
           label == 'RICE' ~ 'Rice',
           label == 'PASTURE_OTHER' ~ 'Irrigated pasture',
           label == 'PASTURE_ALFALFA' ~ 'Alfalfa',
           label %in%
             c('WETLAND_MANAGED_PERENNIAL', 'WETLAND_MANAGED_SEASONAL') ~ 'Wetland',
           TRUE ~ NA_character_),
-        covertype_code = case_when(
+        covertype_code = dplyr::case_when(
           covertype == 'Alfalfa' ~ 1,
           covertype == 'Irrigated pasture' ~ 2,
           covertype == 'Rice' ~ 3,
@@ -48,9 +48,9 @@ update_covertype = function(landscape, SDM, maskpath = NULL, pathout,
       )
 
   } else if (SDM == 'waterbird_win') {
-    key = freq(landscape) %>%
-      mutate(
-        covertype = case_when(
+    key = terra::freq(landscape) %>%
+      dplyr::mutate(
+        covertype = dplyr::case_when(
           label == 'PASTURE_ALFALFA' ~ 'Alfalfa',
           label == 'FIELD_CORN' ~ 'Corn',
           label == 'PASTURE_OTHER' ~ 'Irrigated pasture',
@@ -59,7 +59,7 @@ update_covertype = function(landscape, SDM, maskpath = NULL, pathout,
             c('WETLAND_MANAGED_PERENNIAL', 'WETLAND_MANAGED_SEASONAL') ~ 'Wetland',
           label == 'GRAIN&HAY_WHEAT' ~ 'Winter wheat',
           TRUE ~ NA_character_),
-        covertype_code = case_when(
+        covertype_code = dplyr::case_when(
           covertype == 'Alfalfa' ~ 1,
           covertype == 'Corn' ~ 2,
           covertype == 'Irrigated pasture' ~ 3,
@@ -70,17 +70,21 @@ update_covertype = function(landscape, SDM, maskpath = NULL, pathout,
   }
 
   if (!is.null(maskpath)) {
-    landscape = mask(landscape, rast(maskpath))
+    landscape = terra::mask(landscape, terra::rast(maskpath))
   }
 
-  covertype = classify(landscape,
+  covertype = terra::classify(landscape,
                        rcl = key %>%
-                         select(from = value, to = covertype_code),
+                         dplyr::select(from = value, to = covertype_code),
                        othersNA = TRUE)
-  levels(covertype) = key %>% select(covertype_code, covertype) %>%
-    distinct() %>% drop_na() %>% arrange(covertype_code) %>% as.data.frame()
+  levels(covertype) = key %>% dplyr::select(covertype_code, covertype) %>%
+    dplyr::distinct() %>%
+    tidyr::drop_na() %>%
+    dplyr::arrange(covertype_code) %>%
+    as.data.frame()
 
   create_directory(file.path(pathout, scenario_name))
-  writeRaster(covertype, file.path(pathout, scenario_name, 'covertype.tif'),
-              overwrite = overwrite)
+  terra::writeRaster(covertype,
+                     file.path(pathout, scenario_name, 'covertype.tif'),
+                     overwrite = overwrite)
 }

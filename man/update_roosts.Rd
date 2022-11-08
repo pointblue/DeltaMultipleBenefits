@@ -26,15 +26,19 @@ Nothing; all files written to \code{pathout}
 }
 \description{
 Helper function for estimating impact of landscape changes on known crane
-roosts, to generate updated estimates of the distance to roost.
+roosts, to generate updated estimates of the distance to roost for use with
+waterbird distribution models.
 }
 \details{
-For landscapes that represent a projected change from baseline conditions,
-evaluates historical crane roosts to determine whether the land cover is
+For landscapes that represent a projected change from baseline
+conditions, this function facilitates evaluating historical crane roosts to
+determine whether the land cover overlaying them in \code{landscape} is
 projected to become unsuitable (>20\% cover with an unsuitable land cover
-class). Unsuitable roosts are removed, generating files named for
-\code{scenario_name} in \code{pathout}. Use this function prior to using \link{python_dist}
-to calculate distance to roost and generate \code{droost_km.tif}.
+class, including orchard, vineyard, riparian, woodland, scrub, urban).
+Unsuitable roost polygons are removed, and updated roost maps are
+generated, named as \code{scenario_name} in \code{pathout}. Use this function prior
+to using \link{python_dist} to calculate distance to roost and generate updated
+versions of \code{droost_km.tif} for each scenario.
 }
 \examples{
 # See vignette
