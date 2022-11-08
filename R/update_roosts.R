@@ -50,7 +50,7 @@ update_roosts = function(landscape, roostpath, pathout, scenario_name,
     dplyr::mutate(ncell = sum(n), prop = n/ncell) %>%
     dplyr::ungroup() %>%
     dplyr::filter(landscape == 1 & prop > 0.2) %>%
-    dplyr::arrange(desc(prop))
+    dplyr::arrange(dplyr::desc(prop))
 
   create_directory(file.path(pathout, scenario_name))
 

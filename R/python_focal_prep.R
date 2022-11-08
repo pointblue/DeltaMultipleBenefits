@@ -60,8 +60,8 @@ python_focal_prep = function(landscape, SDM, pathout, scenario_name,
   }
 
   # split layer by land cover classes to represent presence/absence
-  layernames = freq(landscape) %>% pull(label)
-  presence = segregate(landscape, other = 0) %>% setNames(layernames)
+  layernames = terra::freq(landscape) %>% dplyr::pull(label)
+  presence = terra::segregate(landscape, other = 0) %>% setNames(layernames)
 
   # reclassify according to riparian and waterbird model inputs
   presence_reclass = reclassify_landcover(presence, SDM = SDM)
@@ -76,28 +76,33 @@ python_focal_prep = function(landscape, SDM, pathout, scenario_name,
     # where presence_reclass is 0 (land cover not present), change maskpath to
     # NA (allowing values in mask path to be summarized only for that specific
     # land cover)
-    newstack_mask = mask(mask, presence_reclass, maskvalue = 0,
-                         updatevalue = NA)
-    names(newstack_mask) = paste0(names(presence_reclass), suffix[2])
-    writeRaster(newstack_mask,
-                filename = file.path(pathout, scenario_name, SDM,
-                                     paste0(names(newstack_mask), '.tif')),
-                overwrite = overwrite)
+    newstack_mask = terra::mask(mask, presence_reclass, maskvalue = 0,
+                                updatevalue = NA)
+    terra::names(newstack_mask) = paste0(terra::names(presence_reclass),
+                                         suffix[2])
+    terra::writeRaster(newstack_mask,
+                       filename = file.path(pathout, scenario_name, SDM,
+                                            paste0(terra::names(newstack_mask),
+                                                   '.tif')),
+                       overwrite = overwrite)
   }
 
   # finalize original unmasked values:
   # optional: replace presence (1) with another value (e.g., pixel area)
   if (!is.null(pixel_value)) {
-    presence_reclass = subst(presence_reclass, from = 1, to = pixel_value)
+    presence_reclass = terra::subst(presence_reclass,
+                                    from = 1, to = pixel_value)
   }
 
   # optional: add suffix
   if (!is.null(suffix)) {
-    names(presence_reclass) = paste0(names(presence_reclass), suffix[1])
+    terra::names(presence_reclass) = paste0(terra::names(presence_reclass),
+                                            suffix[1])
   }
 
-  writeRaster(presence_reclass,
-              filename = file.path(pathout, scenario_name, SDM,
-                                   paste0(names(presence_reclass), '.tif')),
-              overwrite = overwrite)
+  terra::writeRaster(presence_reclass,
+                     filename = file.path(pathout, scenario_name, SDM,
+                                          paste0(terra::names(presence_reclass),
+                                                 '.tif')),
+                     overwrite = overwrite)
 }
