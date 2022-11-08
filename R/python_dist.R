@@ -3,7 +3,7 @@
 #' Function to call python script for calculating Euclidean distances on
 #' landscape rasters via arcpy.
 #'
-#' Calls the `dist_stats.py` function to calculate the Euclidean distance (in
+#' Calls the [dist_stats.py] function to calculate the Euclidean distance (in
 #' km) for all cells in the input raster without a value to the nearest cell
 #' with a value (e.g., for calculating distance to a crane roost or a stream).
 #'

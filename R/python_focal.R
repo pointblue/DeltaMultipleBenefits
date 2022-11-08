@@ -3,7 +3,7 @@
 #' Function to call python script for calculating focal statistics on landscape
 #' rasters via arcpy.
 #'
-#' Calls the `focal_stats.py` function to summarize cell values for the input
+#' Calls the [focal_stats.py] function to summarize cell values for the input
 #' raster within a buffer distance defined by `scale`. Summary functions may
 #' include `'SUM'` or `'MEAN'`.
 #'
