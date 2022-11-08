@@ -38,7 +38,7 @@ python_focal = function(pathin, landscape_name, SDM, regex = NULL,
   # create necessary directories
   create_directory(file.path(pathout, landscape_name, SDM, scale))
 
-  # run focal stats
+  # run focal_stats.py
   focal_stats(
     pathin = file.path(pathin, landscape_name, SDM),
     pathout = file.path(pathout, landscape_name, SDM, scale),
