@@ -15,17 +15,16 @@ python_focal_run(
 )
 }
 \arguments{
-\item{pathin}{Filepath for the directory containing input rasters to be
-processed, such as those created from running \link{python_focal_prep}}
+\item{pathin, landscape_name}{Character strings defining the filepath
+(\code{pathin/landscape_name}) containing input rasters to be processed, such as
+those created from running \code{\link[=python_focal_prep]{python_focal_prep()}}}
 
-\item{landscape_name}{Subdirectory containing the rasters for a target
-landscape scenario for generating focal_stats}
-
-\item{SDM}{The name of intended species distribution model: \code{"riparian"},
+\item{SDM}{Character string; the name of intended species distribution model
+and subdirectory within \code{pathin/landscape_name}: \code{"riparian"},
 \code{"waterbird_fall"}, or \code{"waterbird_win"}}
 
 \item{regex}{Optional regular expression to process only a subset of the
-rasters in \code{pathin/landscape_name}}
+rasters in \code{pathin/landscape_name/SDM}}
 
 \item{scale}{String representing the buffer size (in m) within which focal
 stats are calculated}

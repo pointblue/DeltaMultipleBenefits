@@ -19,14 +19,14 @@
 #'   Analyst extensions. While these statistics can be entirely calculated in R,
 #'   arcpy is much faster. See vignette for more details.
 #'
-#' @param pathin Filepath for the directory containing input rasters to be
-#'   processed, such as those created from running [python_focal_prep]
-#' @param landscape_name Subdirectory containing the rasters for a target
-#'   landscape scenario for generating focal_stats
-#' @param SDM The name of intended species distribution model: `"riparian"`,
+#' @param pathin,landscape_name Character strings defining the filepath
+#'   (`pathin/landscape_name`) containing input rasters to be processed, such as
+#'   those created from running [python_focal_prep()]
+#' @param SDM Character string; the name of intended species distribution model
+#'   and subdirectory within `pathin/landscape_name`: `"riparian"`,
 #'   `"waterbird_fall"`, or `"waterbird_win"`
 #' @param regex Optional regular expression to process only a subset of the
-#'   rasters in `pathin/landscape_name`
+#'   rasters in `pathin/landscape_name/SDM`
 #' @param scale String representing the buffer size (in m) within which focal
 #'   stats are calculated
 #' @param fun Function to summarize focal statistics: `'SUM'` or `'MEAN'`

@@ -6,7 +6,7 @@
 \usage{
 python_focal_finalize(
   pathin,
-  scenario_name,
+  landscape_name,
   SDM,
   scale,
   pathout,
@@ -16,17 +16,17 @@ python_focal_finalize(
 )
 }
 \arguments{
-\item{pathin}{Character string; Filepath to directory where source rasters
-can be located; passed to \code{\link[terra:rast]{terra::rast()}}}
+\item{pathin, landscape_name}{Character strings defining the filepath
+(\code{pathin/landscape_name}) containing input rasters to be processed, such as
+those created from running \code{\link[=python_focal_run]{python_focal_run()}}}
 
-\item{scenario_name}{Character string; Name of the landscape scenario being
-evaluated}
-
-\item{SDM}{Character string; Name of intended species distribution model:
-\code{"riparian"}, \code{"waterbird_fall"}, or \code{"waterbird_win"}.}
+\item{SDM}{Character string; the name of intended species distribution model
+and subdirectory within \code{pathin/landscape_name}: \code{"riparian"},
+\code{"waterbird_fall"}, or \code{"waterbird_win"}.}
 
 \item{scale}{Character string; Spatial scale over which focal stats are
-summarized: \code{50}, \code{2000}, \code{5000}, or \code{10000}.}
+summarized, and subdirectory within \code{pathin/landscape_name/SDM}: \code{50},
+\code{2000}, \code{5000}, or \code{10000}.}
 
 \item{pathout}{Character string; Filepath to directory where output rasters
 should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}

@@ -24,14 +24,15 @@
 #'   The final rasters are then written to the directory `pathout/scenario`,
 #'   which will be created if it doesn't yet exist.
 #'
-#' @param pathin Character string; Filepath to directory where source rasters
-#'   can be located; passed to [terra::rast()]
-#' @param scenario_name Character string; Name of the landscape scenario being
-#'   evaluated
-#' @param SDM Character string; Name of intended species distribution model:
-#'   `"riparian"`, `"waterbird_fall"`, or `"waterbird_win"`.
+#' @param pathin,landscape_name Character strings defining the filepath
+#'   (`pathin/landscape_name`) containing input rasters to be processed, such as
+#'   those created from running [python_focal_run()]
+#' @param SDM Character string; the name of intended species distribution model
+#'   and subdirectory within `pathin/landscape_name`: `"riparian"`,
+#'   `"waterbird_fall"`, or `"waterbird_win"`.
 #' @param scale Character string; Spatial scale over which focal stats are
-#'   summarized: `50`, `2000`, `5000`, or `10000`.
+#'   summarized, and subdirectory within `pathin/landscape_name/SDM`: `50`,
+#'   `2000`, `5000`, or `10000`.
 #' @param pathout Character string; Filepath to directory where output rasters
 #'   should be written; passed to [terra::writeRaster()]
 #' @param overwrite Logical; passed to [terra::writeRaster()]
@@ -48,7 +49,7 @@
 #' @examples
 #' # See vignette
 #'
-python_focal_finalize = function(pathin, scenario_name, SDM, scale, pathout,
+python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
                                  overwrite = FALSE, maskpath = NULL,
                                  cover = FALSE) {
 
@@ -57,7 +58,7 @@ python_focal_finalize = function(pathin, scenario_name, SDM, scale, pathout,
     stop('cover=TRUE but maskpath not provided')
   }
 
-  dat = list.files(file.path(pathin, scenario_name, SDM, scale),
+  dat = list.files(file.path(pathin, landscape_name, SDM, scale),
                    pattern = '.tif$', full.names = TRUE) %>% terra::rast()
 
   if (!is.null(mask)) {
@@ -85,9 +86,9 @@ python_focal_finalize = function(pathin, scenario_name, SDM, scale, pathout,
     terra::names(dat) = paste0(terra::names(dat), '_', as.numeric(scale)/1000, 'k')
   }
 
-  create_directory(file.path(pathout, scenario_name))
+  create_directory(file.path(pathout, landscape_name))
   terra::writeRaster(dat,
-                     paste0(file.path(pathout, scenario_name), '/',
+                     paste0(file.path(pathout, landscape_name), '/',
                             terra::names(dat), '.tif'),
                      overwrite = overwrite)
 }
