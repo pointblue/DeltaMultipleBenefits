@@ -5,35 +5,30 @@
 \title{Apply species distribution models to new landscapes.}
 \usage{
 fit_SDM(
-  modlist,
-  landscape_name,
   pathin,
-  pathout,
+  landscape_name,
+  modlist,
   constants = NULL,
   factors = NULL,
-  overwrite = FALSE,
   landscape = NULL,
-  unsuitable = NULL
+  unsuitable = NULL,
+  pathout,
+  overwrite = FALSE
 )
 }
 \arguments{
-\item{modlist}{List of model objects of class 'gbm' representing the
-distribution models to which new predictors should be fit.}
-
 \item{pathin, landscape_name}{Character strings defining the filepath
 (\code{pathin/landscape_name}) containing new predictor rasters to include in
 the model, such as those created from running \code{\link[=python_focal_finalize]{python_focal_finalize()}}}
 
-\item{pathout}{Filepath for the directory where results rasters should be
-written}
+\item{modlist}{List of model objects of class 'gbm' representing the
+distribution models to which new predictors should be fit.}
 
 \item{constants}{optional dataframe containing predictors with a constant
 value that should be applied to all pixels. See Details.}
 
 \item{factors}{optinal list of named lists defining categorical predictors
 included in distribution models. See Details.}
-
-\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 
 \item{landscape}{optional SpatRaster corresponding to the landscape
 represented by the predictors contained in \code{pathin/landscape_name}, used to
@@ -43,10 +38,15 @@ identify the locations of \code{unsuitable} land covers. Must be provided if
 \item{unsuitable}{optional vector of numerical values representing the land
 cover classifications that should be considered unsuitable \emph{a priori}. If
 not \code{NULL}, \code{landcape} must also be provided.}
+
+\item{pathout}{Filepath for the directory where results rasters should be
+written}
+
+\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
-each land cover class.
+each model in \code{modlist}
 }
 \description{
 Fit previously-developed species distribution models for riparian landbird

@@ -26,13 +26,11 @@
 #'   `landscape`, assigned a value of zero, and overlaid on the model
 #'   predictions.
 #'
-#' @param modlist List of model objects of class 'gbm' representing the
-#'   distribution models to which new predictors should be fit.
 #' @param pathin,landscape_name Character strings defining the filepath
 #'   (`pathin/landscape_name`) containing new predictor rasters to include in
 #'   the model, such as those created from running [python_focal_finalize()]
-#' @param pathout Filepath for the directory where results rasters should be
-#'   written
+#' @param modlist List of model objects of class 'gbm' representing the
+#'   distribution models to which new predictors should be fit.
 #' @param constants optional dataframe containing predictors with a constant
 #'   value that should be applied to all pixels. See Details.
 #' @param factors optinal list of named lists defining categorical predictors
@@ -44,10 +42,12 @@
 #'   represented by the predictors contained in `pathin/landscape_name`, used to
 #'   identify the locations of `unsuitable` land covers. Must be provided if
 #'   `unsuitable` is not `NULL`.
+#' @param pathout Filepath for the directory where results rasters should be
+#'   written
 #' @param overwrite Logical; passed to [terra::writeRaster()]
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
-#'   each land cover class.
+#'   each model in `modlist`
 #' @seealso [python_focal_prep()], [python_focal_run()],
 #'   [python_focal_finalize()], [update_covertype()], [update_pwater()],
 #'   [update_roosts()], [python_dist()]
@@ -57,9 +57,9 @@
 #' # See vignette
 #'
 
-fit_SDM = function(modlist, landscape_name, pathin, pathout,
-                   constants = NULL, factors = NULL, overwrite = FALSE,
-                   landscape = NULL, unsuitable = NULL) {
+fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
+                   factors = NULL, landscape = NULL, unsuitable = NULL,
+                   pathout, overwrite = FALSE) {
 
   if (is.null(landscape) & !is.null(unsuitable)) {
     stop('Landscape provided but unsuitable cover types not specified')
