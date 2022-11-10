@@ -60,7 +60,7 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
   res = res %>%
     dplyr::mutate(pathin = gsub(!!pathin, '', pathin),
            pathin = gsub('^\\/|.tif$', '', pathin)) %>%
-    dplyr::separate(pathin, sep = '/', into = c('SDM', 'scenario', 'spp')) %>%
+    tidyr::separate(pathin, sep = '/', into = c('SDM', 'scenario', 'spp')) %>%
     dplyr::mutate(
       METRIC_CATEGORY = 'Biodiversity Support',
       METRIC_SUBTYPE = dplyr::case_when(
