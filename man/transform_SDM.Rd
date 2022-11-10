@@ -8,8 +8,9 @@ transform_SDM(pathin, landscape_name, modist, stat, pathout, overwrite = FALSE)
 }
 \arguments{
 \item{pathin, landscape_name}{Character strings defining the filepath
-(\code{pathin/landscape_name}) containing new predictor rasters to include in
-the model, such as those created from running \code{\link[=fit_SDM]{fit_SDM()}}}
+(\code{pathin/landscape_name}) containing the predicted probability of presence
+resulting from each distribution model, such as those created from running
+\code{\link[=fit_SDM]{fit_SDM()}}}
 
 \item{stat}{Character string defining the threshold statistic to be used; see
 \code{\link[dismo:threshold]{dismo::threshold()}} for options}

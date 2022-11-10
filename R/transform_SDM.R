@@ -5,8 +5,9 @@
 #' of presence or absence.
 #'
 #' @param pathin,landscape_name Character strings defining the filepath
-#'   (`pathin/landscape_name`) containing new predictor rasters to include in
-#'   the model, such as those created from running [fit_SDM()]
+#'   (`pathin/landscape_name`) containing the predicted probability of presence
+#'   resulting from each distribution model, such as those created from running
+#'   [fit_SDM()]
 #' @param modlist List of model objects of class 'gbm' representing the
 #'   distribution models to which new predictors should be fit.
 #' @param stat Character string defining the threshold statistic to be used; see
