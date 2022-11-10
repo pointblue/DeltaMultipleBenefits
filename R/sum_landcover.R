@@ -70,7 +70,8 @@ sum_landcover = function(pathin, maskpath, pixel_area = 1, zonepath = NULL,
     res = res %>%
       dplyr::mutate(scenario = gsub(!!pathin, '', scenario),
                     scenario = gsub('^\\/|.tif$', '', scenario)) %>%
-      dplyr::select(scenario, CODE_NAME = label, area)
+      dplyr::select(scenario, CODE_NAME = label, area) %>%
+      dplyr::as_tibble()
 
     if(rollup) {
       # add roll-up of riparian & managed wetland subtypes
@@ -112,7 +113,8 @@ sum_landcover = function(pathin, maskpath, pixel_area = 1, zonepath = NULL,
       dplyr::mutate(area = count * pixel_area) %>%
       dplyr::mutate(scenario = gsub(!!pathin, '', scenario),
                     scenario = gsub('^\\/|.tif$', '', scenario)) %>%
-      dplyr::select(scenario, ZONE, CODE_NAME, area)
+      dplyr::select(scenario, ZONE, CODE_NAME, area) %>%
+      dplyr::as_tibble()
 
     if(rollup) {
       # add roll-up of riparian & managed wetland subtypes
