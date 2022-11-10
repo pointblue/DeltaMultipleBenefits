@@ -4,10 +4,27 @@
 \alias{update_roosts}
 \title{Update waterbird predictors: crane roost locations}
 \usage{
-update_roosts(landscape, roostpath, pathout, landscape_name, overwrite = FALSE)
+update_roosts(
+  landscape,
+  unsuitable = c(11:19, 60, 70:79, 100:120),
+  proportion = 0.2,
+  roostpath,
+  pathout,
+  landscape_name,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
+
+\item{unsuitable}{optional vector of numerical values representing the land
+cover classifications that should be considered incompatible with crane
+roosts; default values for the original land cover encoding include
+orchard, vineyard, riparian, woodland, scrub, urban}
+
+\item{proportion}{numerical value for the proportion cover by an unsuitable
+land cover class at which the roost should be considered unsuitable; see
+Details}
 
 \item{roostpath}{Filepath to a raster representing the location of
 traditional crane roosts.}
@@ -33,12 +50,17 @@ waterbird distribution models.
 For landscapes that represent a projected change from baseline
 conditions, this function facilitates evaluating historical crane roosts to
 determine whether the land cover overlaying them in \code{landscape} is
-projected to become unsuitable (>20\% cover with an unsuitable land cover
-class, including orchard, vineyard, riparian, woodland, scrub, urban).
-Unsuitable roost polygons are removed, and updated roost maps are
-generated, named as \code{scenario_name} in \code{pathout}. Use this function prior
-to using \link{python_dist} to calculate distance to roost and generate updated
-versions of \code{droost_km.tif} for each scenario.
+projected to become unsuitable, based on exceeding a threshold \code{proportion}
+covered by an unsuitable land cover class. Unsuitable roost polygons are
+removed, and updated roost maps are generated, named as \code{scenario_name} in
+\code{pathout}. Use this function prior to using \link{python_dist} to calculate
+distance to roost and generate updated versions of \code{droost_km.tif} for each
+scenario.
+
+The default values for \code{unsuitable} include the original encodings for
+orchard, vineyard, riparian, woodland, scrub, and urban, and the default
+threshold value for \code{proportion} is 0.2. Alternate values can be provided
+as desired.
 }
 \examples{
 # See vignette
