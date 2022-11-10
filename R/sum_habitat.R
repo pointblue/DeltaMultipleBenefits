@@ -37,9 +37,9 @@
 sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
                        keypath = NULL) {
   fl = list.files(pathin, '.tif$', recursive = TRUE, full.names = TRUE) %>%
-    set_names()
+    rlang::set_names()
 
-  if (is.null(zones)) {
+  if (is.null(zonepath)) {
     # sum total
     res = purrr::map_df(
       fl,
