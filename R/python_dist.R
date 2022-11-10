@@ -37,6 +37,8 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
                        filename = 'dist.tif', maskpath = NULL,
                        overwrite = FALSE) {
 
+  reticulate::source_python('dist_stats.py')
+
   # run dist_stats.py to calculate distance to roosts and put in same pathin
   # directory
   dist_stats(filename = 'roosts.tif',
