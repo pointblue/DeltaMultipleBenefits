@@ -52,7 +52,8 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
       fl,
       ~terra::rast(.x) %>%
         terra::zonal(terra::rast(zonepath), 'sum', na.rm = TRUE) %>%
-        setNames(c('ZONE', 'value')),
+        dplyr::as_tibble() %>%
+        rlang::set_names(c('ZONE', 'value')),
       .id = 'pathin'
     )
   }
