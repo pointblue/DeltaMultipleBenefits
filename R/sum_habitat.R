@@ -71,9 +71,11 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
       UNIT = 'ha')
 
   if (!is.null(keypath)) {
-    res = dplyr::left_join(
-      readr::read_csv(keypath, col_types = readr::cols()) %>%
-        dplyr::select(spp, METRIC = label), by = 'spp')
+    res = res %>%
+      dplyr::left_join(
+        readr::read_csv(keypath, col_types = readr::cols()) %>%
+          dplyr::select(spp, METRIC = label),
+        by = 'spp')
   } else {
     res = dplyr::rename(res, METRIC = spp)
   }
