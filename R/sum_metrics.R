@@ -42,6 +42,8 @@
 #'   which the area of land covers was estimated, such as by running
 #'   [sum_landcover()] with a `zonepath` provided; if ZONE is present, the
 #'   output will be summarized by zone.
+#'   * LABEL: optional character field with a more user-friendly version of the
+#'   land cover class names
 #'
 #' @param metricdat tibble; See Details
 #' @param areadat tibble; See Details
@@ -77,7 +79,7 @@ sum_metrics = function(metricdat, areadat) {
       dplyr::group_by(
         across(
           any_of(
-            c('scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
+            c('scenario', 'LABEL', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
               'METRIC', 'UNIT')))) %>%
       dplyr::summarize(
         SCORE_TOTAL = sum(SCORE_TOTAL),
@@ -90,7 +92,7 @@ sum_metrics = function(metricdat, areadat) {
       dplyr::group_by(
         across(
           any_of(
-            c('scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
+            c('scenario', 'LABEL', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
               'METRIC', 'UNIT')))) %>%
       dplyr::mutate(area_ag_total = sum(area),
                     area_prop = area / area_ag_total) %>%

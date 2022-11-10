@@ -65,6 +65,8 @@ to the UNITs by which the per-unit-area METRICS in \code{metricdat} were defined
 which the area of land covers was estimated, such as by running
 \code{\link[=sum_landcover]{sum_landcover()}} with a \code{zonepath} provided; if ZONE is present, the
 output will be summarized by zone.
+\item LABEL: optional character field with a more user-friendly version of the
+land cover class names
 }
 }
 \examples{
