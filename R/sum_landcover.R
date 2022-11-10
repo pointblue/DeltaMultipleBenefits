@@ -109,7 +109,7 @@ sum_landcover = function(pathin, maskpath, pixel_area = 1, zonepath = NULL,
     }
 
     res = res %>%
-      dplyr::pivot_longer(znames, names_to = 'ZONE', values_to = 'count') %>%
+      tidyr::pivot_longer(znames, names_to = 'ZONE', values_to = 'count') %>%
       dplyr::mutate(area = count * pixel_area) %>%
       dplyr::mutate(scenario = gsub(!!pathin, '', scenario),
                     scenario = gsub('^\\/|.tif$', '', scenario)) %>%
