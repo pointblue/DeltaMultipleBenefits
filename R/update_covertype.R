@@ -15,7 +15,7 @@
 #'   output, e.g. a study area boundary
 #' @param pathout Character string; Filepath to directory where output rasters
 #'   should be written; passed to [terra::writeRaster()]
-#' @param scenario_name Character string; Name of the landscape scenario being
+#' @param landscape_name Character string; Name of the landscape being
 #'   evaluated, corresponding to the directory in `pathout` where results will
 #'   be written.
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
@@ -28,7 +28,7 @@
 #' # See vignette
 
 update_covertype = function(landscape, SDM, maskpath = NULL, pathout,
-                              scenario_name, overwrite = FALSE) {
+                              landscape_name, overwrite = FALSE) {
 
   if (SDM == 'waterbird_fall') {
     key = terra::freq(landscape) %>%
@@ -83,8 +83,8 @@ update_covertype = function(landscape, SDM, maskpath = NULL, pathout,
     dplyr::arrange(covertype_code) %>%
     as.data.frame()
 
-  create_directory(file.path(pathout, scenario_name))
+  create_directory(file.path(pathout, landscape_name))
   terra::writeRaster(covertype,
-                     file.path(pathout, scenario_name, 'covertype.tif'),
+                     file.path(pathout, landscape_name, 'covertype.tif'),
                      overwrite = overwrite)
 }

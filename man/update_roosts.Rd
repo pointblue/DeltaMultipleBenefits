@@ -4,7 +4,7 @@
 \alias{update_roosts}
 \title{Update waterbird predictors: crane roost locations}
 \usage{
-update_roosts(landscape, roostpath, pathout, scenario_name, overwrite = FALSE)
+update_roosts(landscape, roostpath, pathout, landscape_name, overwrite = FALSE)
 }
 \arguments{
 \item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
@@ -15,7 +15,7 @@ traditional crane roosts.}
 \item{pathout}{Character string; Filepath to directory where output rasters
 should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 
-\item{scenario_name}{Character string; Name of the landscape scenario being
+\item{landscape_name}{Character string; Name of the landscape being
 evaluated, corresponding to the directory in \code{pathout} where results will
 be written.}
 

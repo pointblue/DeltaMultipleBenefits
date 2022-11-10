@@ -19,7 +19,7 @@
 #'   traditional crane roosts.
 #' @param pathout Character string; Filepath to directory where output rasters
 #'   should be written; passed to [terra::writeRaster()]
-#' @param scenario_name Character string; Name of the landscape scenario being
+#' @param landscape_name Character string; Name of the landscape being
 #'   evaluated, corresponding to the directory in `pathout` where results will
 #'   be written.
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
@@ -31,7 +31,7 @@
 #' @examples
 #' # See vignette
 
-update_roosts = function(landscape, roostpath, pathout, scenario_name,
+update_roosts = function(landscape, roostpath, pathout, landscape_name,
                          overwrite = FALSE) {
 
   # check how much traditional roosts overlap with incompatible land covers:
@@ -52,11 +52,11 @@ update_roosts = function(landscape, roostpath, pathout, scenario_name,
     dplyr::filter(landscape == 1 & prop > 0.2) %>%
     dplyr::arrange(dplyr::desc(prop))
 
-  create_directory(file.path(pathout, scenario_name))
+  create_directory(file.path(pathout, landscape_name))
 
   sf::read_sf(roostpath) %>%
     dplyr::filter(!Roost_ID %in% incompatible$ID) %>%
     terra::vect() %>% terra::rasterize(., landscape) %>%
-    terra::writeRaster(file.path(pathout, scenario_name, 'roosts.tif'),
+    terra::writeRaster(file.path(pathout, landscape_name, 'roosts.tif'),
                        overwrite = overwrite)
 }

@@ -9,7 +9,7 @@ update_covertype(
   SDM,
   maskpath = NULL,
   pathout,
-  scenario_name,
+  landscape_name,
   overwrite = FALSE
 )
 }
@@ -25,7 +25,7 @@ output, e.g. a study area boundary}
 \item{pathout}{Character string; Filepath to directory where output rasters
 should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 
-\item{scenario_name}{Character string; Name of the landscape scenario being
+\item{landscape_name}{Character string; Name of the landscape being
 evaluated, corresponding to the directory in \code{pathout} where results will
 be written.}
 
