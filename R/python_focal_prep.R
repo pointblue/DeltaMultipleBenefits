@@ -64,7 +64,8 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
 
   # split layer by land cover classes to represent presence/absence
   layernames = terra::freq(landscape) %>% dplyr::pull(label)
-  presence = terra::segregate(landscape, other = 0) %>% setNames(layernames)
+  presence = terra::segregate(landscape, other = 0) %>%
+    rlang::set_names(layernames)
 
   # reclassify according to riparian and waterbird model inputs
   presence_reclass = reclassify_landcover(presence, SDM = SDM)
@@ -81,11 +82,10 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
     # land cover)
     newstack_mask = terra::mask(mask, presence_reclass, maskvalue = 0,
                                 updatevalue = NA)
-    terra::names(newstack_mask) = paste0(terra::names(presence_reclass),
-                                         suffix[2])
+    names(newstack_mask) = paste0(names(presence_reclass), suffix[2])
     terra::writeRaster(newstack_mask,
                        filename = file.path(pathout, landscape_name, SDM,
-                                            paste0(terra::names(newstack_mask),
+                                            paste0(names(newstack_mask),
                                                    '.tif')),
                        overwrite = overwrite)
   }
@@ -99,13 +99,12 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
 
   # optional: add suffix
   if (!is.null(suffix)) {
-    terra::names(presence_reclass) = paste0(terra::names(presence_reclass),
-                                            suffix[1])
+    names(presence_reclass) = paste0(names(presence_reclass), suffix[1])
   }
 
   terra::writeRaster(presence_reclass,
                      filename = file.path(pathout, landscape_name, SDM,
-                                          paste0(terra::names(presence_reclass),
+                                          paste0(names(presence_reclass),
                                                  '.tif')),
                      overwrite = overwrite)
 }
