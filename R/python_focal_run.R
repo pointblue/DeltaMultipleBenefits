@@ -44,6 +44,10 @@
 python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
                         scale, fun = 'SUM', pathout) {
 
+  arcpy <- reticulate::import('arcpy')
+  arcpy$CheckOutExtension("Spatial")
+  reticulate::source_python(system.file("python", "focal_stats.py",
+                                        package = "DeltaMultipleBenefits"))
   # create necessary directories
   create_directory(file.path(pathout, landscape_name, SDM, scale))
 
