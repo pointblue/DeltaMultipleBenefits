@@ -66,7 +66,10 @@ sum_metrics = function(metricdat, areadat) {
                                    SCORE_MEAN, area * SCORE_MEAN),
       # propagate error: multiplication by a constant
       SCORE_TOTAL_SE = dplyr::if_else(METRIC == 'Annual Wages',
-                                      SCORE_SE, area * SCORE_SE)) %>%
+                                      SCORE_SE, area * SCORE_SE),
+      # remove "per ha" in the UNIT descriptions
+      UNIT = dplyr::if_else(METRIC == 'Annual Wages',
+                            UNIT, gsub(' per ha', '', UNIT))) %>%
     tidyr::replace_na(list(SCORE_TOTAL_SE = 0))
   # -->the only NA values are for land covers and metrics where value is
   # presumed zero and scores for climate change resilience to salinity
