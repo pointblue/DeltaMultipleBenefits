@@ -72,7 +72,7 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
 
   if (SDM == 'riparian') {
     # fix layer names to match model predictors
-    terra::names(dat) = paste0(terra::names(dat), '_', scale)
+    names(dat) = paste0(names(dat), '_', scale)
 
     # convert to proportion of total possible number of cells
     if (scale == '50') {
@@ -83,12 +83,12 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
 
   } else if (SDM %in% c('waterbird_fall', 'waterbird_win')) {
     # fix layer names to match model predictors
-    terra::names(dat) = paste0(terra::names(dat), '_', as.numeric(scale)/1000, 'k')
+    names(dat) = paste0(names(dat), '_', as.numeric(scale)/1000, 'k')
   }
 
   create_directory(file.path(pathout, landscape_name))
   terra::writeRaster(dat,
                      paste0(file.path(pathout, landscape_name), '/',
-                            terra::names(dat), '.tif'),
+                            names(dat), '.tif'),
                      overwrite = overwrite)
 }
