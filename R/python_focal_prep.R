@@ -65,7 +65,7 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
   # split layer by land cover classes to represent presence/absence
   layernames = terra::freq(landscape) %>% dplyr::pull(label)
   presence = terra::segregate(landscape, other = 0) %>%
-    rlang::set_names(layernames)
+    setNames(layernames)
 
   # reclassify according to riparian and waterbird model inputs
   presence_reclass = reclassify_landcover(presence, SDM = SDM)
