@@ -31,8 +31,8 @@ transform_SDM = function(pathin, landscape_name, modlist, stat, pathout,
                            pattern = '.tif$', full.names = TRUE) %>%
     terra::rast()
 
-  threshold_list = purrr::map(names(modlist) %>% setNames(names(modlist))
-                              ~function(x) {
+  threshold_list = purrr::map(names(modlist) %>% setNames(names(modlist)),
+                              function(x) {
                                 obs = modlist[[x]]$gbm.call$dataframe[modlist[[x]]$gbm.call$gbm.y]
                                 presence = modlist[[x]]$fitted[obs == 1]
                                 absence = modlist[[x]]$fitted[obs == 0]
