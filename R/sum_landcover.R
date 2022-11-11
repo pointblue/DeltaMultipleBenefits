@@ -45,7 +45,7 @@
 
 sum_landcover = function(pathin, maskpath, pixel_area = 1, zonepath = NULL,
                          rollup = TRUE) {
-  fl = list.files(pathin, '.tif$', full.names = TRUE) %>% set_names()
+  fl = list.files(pathin, '.tif$', full.names = TRUE) %>% rlang::set_names()
 
   if (is.null(zonepath)) {
 
