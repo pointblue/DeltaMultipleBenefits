@@ -68,11 +68,11 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
     stop('Unsuitable cover types specified but landscape not provided')
   }
 
-  create_directory(file.path(pathout, scenario_name))
+  create_directory(file.path(pathout, landscape_name))
 
   # scenario-independent predictors (in pathin) and scenario-specific predictors
   predictors = c(list.files(pathin, pattern = '.tif$', full.names = TRUE),
-                 list.files(file.path(pathin, scenario_name), pattern = '.tif$',
+                 list.files(file.path(pathin, landscape_name), pattern = '.tif$',
                             full.names = TRUE)) %>%
     terra::rast()
 
@@ -117,7 +117,7 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
                  factors = factors) %>%
                  terra::cover(
                    mask,
-                   filename = paste0(file.path(pathout, scenario_name), '/',
+                   filename = paste0(file.path(pathout, landscape_name), '/',
                                      .x, '.tif'),
                    overwrite = overwrite,
                    wopt = list(names = .x))
