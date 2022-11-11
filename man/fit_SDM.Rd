@@ -54,9 +54,11 @@ species and waterbird groups during the fall or winter to a new set of
 predictors, such as those derived from a new scenario of landscape change.
 }
 \details{
-New predictors must first be created and named to match the
-predictors included in the original models, e.g. using
-\code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_run]{python_focal_run()}}, and \code{\link[=python_focal_finalize]{python_focal_finalize()}}.
+This function is designed to fit multiple distribution models to the
+same set of predictors describing a given landscape. New predictors must
+first be created and named to match the predictors included in the original
+models, e.g. using \code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_run]{python_focal_run()}}, and
+\code{\link[=python_focal_finalize]{python_focal_finalize()}}.
 
 \code{constants} are passed to \code{\link[terra:predict]{terra::predict()}} and provide a way to include
 constant values for one or more predictors that should be applied to all
