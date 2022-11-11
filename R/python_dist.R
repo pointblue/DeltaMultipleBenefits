@@ -37,6 +37,8 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
                        filename = 'dist.tif', maskpath = NULL,
                        overwrite = FALSE) {
 
+  arcpy <- reticulate::import('arcpy')
+  arcpy$CheckOutExtension("Spatial")
   reticulate::source_python(system.file("python", "dist_stats.py",
                                         package = "DeltaMultipleBenefits"))
 
