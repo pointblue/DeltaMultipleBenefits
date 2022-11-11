@@ -4,7 +4,13 @@
 \alias{sum_habitat}
 \title{Summarize total habitat scores}
 \usage{
-sum_habitat(pathin, zonepath = NULL, subtype = "distributions", keypath = NULL)
+sum_habitat(
+  pathin,
+  zonepath = NULL,
+  subtype = "distributions",
+  rollup = TRUE,
+  keypath = NULL
+)
 }
 \arguments{
 \item{pathin}{Character string defining the filepath to the highest-level
@@ -17,6 +23,9 @@ encoding zones within which pixel values should be summarized}
 
 \item{subtype}{Character string appended to the field METRIC_SUBTYPE, such as
 for distinguishing probability of presence from presence/absence}
+
+\item{rollup}{Logical; If \code{TRUE} (default), summarize total habitat across
+all species/groups by set of SDMs}
 
 \item{keypath}{Optional filepath passed to \code{\link[readr:read_delim]{readr::read_csv()}} translating
 the individual species names as encoded in the file names in pathin to
@@ -34,8 +43,8 @@ rasters.
 This function will calculate the sum of all pixel values in each
 raster found in \code{pathin} and any subdirectories. The file structure within
 \code{pathin} is used to infer the name of the corresponding \code{SDM} and
-\code{landscape_name}. This function is designed to efficiently
-process multiple rasters located in the \code{pathin} directory at once.
+\code{landscape_name}. This function is designed to efficiently process multiple
+rasters located in the \code{pathin} directory at once.
 
 If provided, \code{keypath} should be a CSV containing the fields \code{spp} and
 \code{label}, used for converting the filenames of the rasters within \code{pathin}
