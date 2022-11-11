@@ -24,7 +24,7 @@
 #' @examples
 #' # See vignette
 
-transform_SDM = function(pathin, landscape_name, modist, stat, pathout,
+transform_SDM = function(pathin, landscape_name, modlist, stat, pathout,
                          overwrite = FALSE) {
 
   predictions = list.files(file.path(pathin, landscape_name),

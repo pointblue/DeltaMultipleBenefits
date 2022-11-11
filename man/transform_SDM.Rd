@@ -4,13 +4,23 @@
 \alias{transform_SDM}
 \title{Transform predictions from species distribution models to binary}
 \usage{
-transform_SDM(pathin, landscape_name, modist, stat, pathout, overwrite = FALSE)
+transform_SDM(
+  pathin,
+  landscape_name,
+  modlist,
+  stat,
+  pathout,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{pathin, landscape_name}{Character strings defining the filepath
 (\code{pathin/landscape_name}) containing the predicted probability of presence
 resulting from each distribution model, such as those created from running
 \code{\link[=fit_SDM]{fit_SDM()}}}
+
+\item{modlist}{List of model objects of class 'gbm' representing the
+distribution models to which new predictors should be fit.}
 
 \item{stat}{Character string defining the threshold statistic to be used; see
 \code{\link[dismo:threshold]{dismo::threshold()}} for options}
@@ -19,9 +29,6 @@ resulting from each distribution model, such as those created from running
 written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
-
-\item{modlist}{List of model objects of class 'gbm' representing the
-distribution models to which new predictors should be fit.}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
