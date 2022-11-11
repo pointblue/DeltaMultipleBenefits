@@ -28,14 +28,12 @@ reclassify_landcover = function(landscape_stack, SDM) {
     c(# sum of all riparian subclasses
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('RIPARIAN',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('RIPARIAN'),
       # sum of all wetland subclasses
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('WETLAND',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('WETLAND', names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('WETLAND'),
       # rename riparian and wetland subclasses
       terra::subset(landscape_stack,
@@ -52,18 +50,17 @@ reclassify_landcover = function(landscape_stack, SDM) {
       # sum of perennial crops, grassland/pasture, and other ag
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('ORCH|VINE',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('ORCH|VINE', names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('ORCHVIN'),
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('PASTURE|GRASS',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('PASTURE|GRASS',
+                                     names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('GRASSPAS'),
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('FIELD|GRAIN|ROW',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('FIELD|GRAIN|ROW',
+                                     names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('AG'),
       # keep rice, idle, urban, and water as-is
       terra::subset(landscape_stack, c('RICE', 'IDLE', 'URBAN', 'WATER'))
@@ -75,21 +72,20 @@ reclassify_landcover = function(landscape_stack, SDM) {
       # other wetlands, and woodland/scrub
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('RIPARIAN',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('woodw'),
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('ORCHARD|VINEYARD',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('ORCHARD|VINEYARD',
+                                     names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('orch'),
       terra::subset(
         landscape_stack, c('WETLAND_TIDAL', 'WETLAND_OTHER')) %>%
         sum(na.rm = TRUE) %>% setNames('wet'),
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('WETLAND_MANAGED',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('WETLAND_MANAGED',
+                                     names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('duwet'),
       terra::subset(
         landscape_stack, c('WOODLAND', 'SCRUB')) %>% sum(na.rm = TRUE) %>%
@@ -97,8 +93,7 @@ reclassify_landcover = function(landscape_stack, SDM) {
       # for fall, combine all grains
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('GRAIN',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('GRAIN', names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('grain'),
       # keep others as-is and rename to match model inputs
       terra::subset(landscape_stack,
@@ -114,21 +109,20 @@ reclassify_landcover = function(landscape_stack, SDM) {
       # other wetlands, and woodland/scrub
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('RIPARIAN',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('woodw'),
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('ORCHARD|VINEYARD',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('ORCHARD|VINEYARD',
+                                     names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('orch'),
       terra::subset(
         landscape_stack, c('WETLAND_TIDAL', 'WETLAND_OTHER')) %>%
         sum(na.rm = TRUE) %>% setNames('wet'),
       terra::subset(
         landscape_stack,
-        terra::names(landscape_stack)[grepl('WETLAND_MANAGED',
-                                            terra::names(landscape_stack))]) %>%
+        names(landscape_stack)[grepl('WETLAND_MANAGED',
+                                     names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('duwet'),
       terra::subset(
         landscape_stack, c('WOODLAND', 'SCRUB')) %>% sum(na.rm = TRUE) %>%
