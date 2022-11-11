@@ -9,7 +9,7 @@ python_dist(
   landscape_name,
   copyto = NULL,
   pathout,
-  filename = "dist.tif",
+  filename = "droost_km.tif",
   maskpath = NULL,
   overwrite = FALSE
 )
@@ -28,7 +28,7 @@ to which the results of \code{\link[=python_dist]{python_dist()}} should be copi
 written}
 
 \item{filename}{name of resulting layer, including file extension; default is
-'dist.tif'}
+'droost_km.tif', the name of the predictor required by the waterbird models}
 
 \item{maskpath}{Optional filepath to a raster that should be used to mask the
 output, e.g. a study area boundary}

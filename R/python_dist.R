@@ -20,7 +20,7 @@
 #' @param pathout filepath for the directory where output rasters should be
 #'   written
 #' @param filename name of resulting layer, including file extension; default is
-#'   'dist.tif'
+#'   'droost_km.tif', the name of the predictor required by the waterbird models
 #' @param maskpath Optional filepath to a raster that should be used to mask the
 #'   output, e.g. a study area boundary
 #' @param overwrite Logical; passed to [terra::writeRaster()]. Applies to
@@ -34,7 +34,7 @@
 #' # See vignette
 
 python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
-                       filename = 'dist.tif', maskpath = NULL,
+                       filename = 'droost_km.tif', maskpath = NULL,
                        overwrite = FALSE) {
 
   arcpy <- reticulate::import('arcpy')
