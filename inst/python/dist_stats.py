@@ -6,7 +6,7 @@ def dist_stats(fullpathin, filename, fullpathout):
   env.workspace = fullpathin
   
   # Calculate Euclidean Distance
-  outEucDistance = EucDistance(in_source_data = filename)/1000
+  outEucDistance = EucDistance(in_source_data = filename)
   
   # Save
   outEucDistance.save(fullpathout)
