@@ -6,17 +6,16 @@
 #' @details Calls the [dist_stats.py] function to calculate the Euclidean
 #'   distance for all cells in the input raster without a value to the nearest
 #'   cell with a value (e.g., for calculating distance to a crane roost or a
-#'   stream). Results are divided by 1000, presumably returning the distance in
-#'   km.
+#'   stream).
 #'
 #'   Resulting distances may be scaled using the `scale` argument. Currently
-#'   supported options include: `km` to divide the results by 1000 and
-#'   return distances in kilometers or `sqrt` to take the square root of the
-#'   results.
+#'   supported options include: `km` to divide the results by 1000 and return
+#'   distances in kilometers or `sqrt` to take the square root of the results.
 #'
 #'   Important: This function requires the availability of arcpy and Spatial
 #'   Analyst extensions. While these statistics can be entirely calculated in R,
-#'   arcpy is much faster. See vignette for more details.
+#'   arcpy is much faster. Note: the initial output of [dist_stats.py] will not
+#'   overwrite existing rasters; old versions must be deleted before re-running.
 #'
 #' @param pathin Filepath for the directory containing input rasters to be
 #'   processed, such as those created from running [python_focal_prep]
@@ -55,10 +54,10 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
   fname = list.files(file.path(pathin, landscape_name), '.tif$')
   dist_stats(filename = fname,
              fullpathin = file.path(pathin, landscape_name) %>% normalizePath(),
-             fullpathout =  file.path(pathout[1], landscape_name) %>%
-               normalizePath() %>% paste0('\\', filename))
+             fullpathout =  file.path(pathout[1], landscape_name, filename) %>%
+               normalizePath())
 
-  r = file.path(pathin, landscape_name, filename) %>% rast()
+  r = file.path(pathout[1], landscape_name, filename) %>% rast()
 
   if (scale == 'km') {
     r = r / 1000

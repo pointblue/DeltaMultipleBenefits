@@ -50,17 +50,16 @@ landscape rasters via arcpy.
 Calls the \link{dist_stats.py} function to calculate the Euclidean
 distance for all cells in the input raster without a value to the nearest
 cell with a value (e.g., for calculating distance to a crane roost or a
-stream). Results are divided by 1000, presumably returning the distance in
-km.
+stream).
 
 Resulting distances may be scaled using the \code{scale} argument. Currently
-supported options include: \code{km} to divide the results by 1000 and
-return distances in kilometers or \code{sqrt} to take the square root of the
-results.
+supported options include: \code{km} to divide the results by 1000 and return
+distances in kilometers or \code{sqrt} to take the square root of the results.
 
 Important: This function requires the availability of arcpy and Spatial
 Analyst extensions. While these statistics can be entirely calculated in R,
-arcpy is much faster. See vignette for more details.
+arcpy is much faster. Note: the initial output of \link{dist_stats.py} will not
+overwrite existing rasters; old versions must be deleted before re-running.
 }
 \examples{
 # See vignette
