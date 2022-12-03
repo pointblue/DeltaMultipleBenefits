@@ -3,9 +3,10 @@
 #' Function to call python script for calculating Euclidean distances on
 #' landscape rasters via arcpy.
 #'
-#' Calls the [dist_stats.py] function to calculate the Euclidean distance (in
-#' km) for all cells in the input raster without a value to the nearest cell
-#' with a value (e.g., for calculating distance to a crane roost or a stream).
+#' Calls the [dist_stats.py] function to calculate the Euclidean distance for
+#' all cells in the input raster without a value to the nearest cell with a
+#' value (e.g., for calculating distance to a crane roost or a stream). Results
+#' are divided by 1000, presumably returning the distance in km.
 #'
 #' Important: This function requires the availability of arcpy and Spatial
 #' Analyst extensions. While these statistics can be entirely calculated in R,
@@ -42,23 +43,23 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
   reticulate::source_python(system.file("python", "dist_stats.py",
                                         package = "DeltaMultipleBenefits"))
 
-  # run dist_stats.py to calculate distance to roosts and put in same pathin
-  # directory
+  create_directory(file.path(pathout[1], landscape_name))
+  # run dist_stats.py to calculate distance to roosts and put in same pathout[1]
   fname = list.files(file.path(pathin, landscape_name), '.tif$')
   dist_stats(filename = fname,
              fullpathin = file.path(pathin, landscape_name) %>% normalizePath(),
-             fullpathout =  file.path(pathin, landscape_name) %>%
+             fullpathout =  file.path(pathout[1], landscape_name) %>%
                normalizePath() %>% paste0('\\', filename))
 
   r = file.path(pathin, landscape_name, filename) %>% rast()
 
   if (!is.null(maskpath)) {
+    # overwrite dist.py output in pathout[1] with masked version
     r = mask(r, rast(maskpath))
+    writeRaster(r, file.path(pathout[1], landscape_name, filename),
+                wopt = list(names = gsub('.tif', '', filename)),
+                overwrite = TRUE)
   }
-  create_directory(file.path(pathout[1], landscape_name))
-  writeRaster(r, file.path(pathout[1], landscape_name, filename),
-              wopt = list(names = gsub('.tif', '', filename)),
-              overwrite = overwrite)
 
   if (!is.null(copyto)) {
     # copy from scenario_name/pathout[1] to copyto/pathout[2]
