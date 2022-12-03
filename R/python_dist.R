@@ -3,14 +3,20 @@
 #' Function to call python script for calculating Euclidean distances on
 #' landscape rasters via arcpy.
 #'
-#' Calls the [dist_stats.py] function to calculate the Euclidean distance for
-#' all cells in the input raster without a value to the nearest cell with a
-#' value (e.g., for calculating distance to a crane roost or a stream). Results
-#' are divided by 1000, presumably returning the distance in km.
+#' @details Calls the [dist_stats.py] function to calculate the Euclidean
+#'   distance for all cells in the input raster without a value to the nearest
+#'   cell with a value (e.g., for calculating distance to a crane roost or a
+#'   stream). Results are divided by 1000, presumably returning the distance in
+#'   km.
 #'
-#' Important: This function requires the availability of arcpy and Spatial
-#' Analyst extensions. While these statistics can be entirely calculated in R,
-#' arcpy is much faster. See vignette for more details.
+#'   Resulting distances may be scaled using the `scale` argument. Currently
+#'   supported options include: `km` to divide the results by 1000 and
+#'   return distances in kilometers or `sqrt` to take the square root of the
+#'   results.
+#'
+#'   Important: This function requires the availability of arcpy and Spatial
+#'   Analyst extensions. While these statistics can be entirely calculated in R,
+#'   arcpy is much faster. See vignette for more details.
 #'
 #' @param pathin Filepath for the directory containing input rasters to be
 #'   processed, such as those created from running [python_focal_prep]
@@ -22,6 +28,7 @@
 #'   written
 #' @param filename name of resulting layer, including file extension; default is
 #'   'droost_km.tif', the name of the predictor required by the waterbird models
+#' @param scale Optional character string for scaling the results; See Details
 #' @param maskpath Optional filepath to a raster that should be used to mask the
 #'   output, e.g. a study area boundary
 #' @param overwrite Logical; passed to [terra::writeRaster()]. Applies to
@@ -52,6 +59,12 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
                normalizePath() %>% paste0('\\', filename))
 
   r = file.path(pathin, landscape_name, filename) %>% rast()
+
+  if (scale == 'km') {
+    r = r / 1000
+  } else if (scale == 'sqrt') {
+    r = sqrt(r)
+  }
 
   if (!is.null(maskpath)) {
     # overwrite dist.py output in pathout[1] with masked version
