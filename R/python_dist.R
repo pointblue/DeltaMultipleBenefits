@@ -44,7 +44,8 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
 
   # run dist_stats.py to calculate distance to roosts and put in same pathin
   # directory
-  dist_stats(filename = 'roosts.tif',
+  fname = list.files(file.path(pathin, landscape_name), '.tif$')
+  dist_stats(filename = fname,
              fullpathin = file.path(pathin, landscape_name) %>% normalizePath(),
              fullpathout =  file.path(pathin, landscape_name) %>%
                normalizePath() %>% paste0('\\', filename))
