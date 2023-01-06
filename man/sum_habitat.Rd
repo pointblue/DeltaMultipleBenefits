@@ -9,7 +9,8 @@ sum_habitat(
   zonepath = NULL,
   subtype = "distributions",
   rollup = TRUE,
-  keypath = NULL
+  keypath = NULL,
+  scale = NULL
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ all species/groups by set of SDMs}
 \item{keypath}{Optional filepath passed to \code{\link[readr:read_delim]{readr::read_csv()}} translating
 the individual species names as encoded in the file names in pathin to
 METRIC names in the output table}
+
+\item{scale}{Optional value by which to scale the results; see Details}
 }
 \value{
 tibble
@@ -50,6 +53,10 @@ If provided, \code{keypath} should be a CSV containing the fields \code{spp} and
 \code{label}, used for converting the filenames of the rasters within \code{pathin}
 to a more readable label, which will be renamed \code{METRIC} in the final
 output.
+
+If provided, the sum of all pixel values will be multiplied by \code{scale}. For
+example, to rescale the total in terms of the total area, enter the area of
+each pixel.
 }
 \examples{
 # See vignette

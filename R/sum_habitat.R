@@ -15,6 +15,10 @@
 #'   to a more readable label, which will be renamed `METRIC` in the final
 #'   output.
 #'
+#'   If provided, the sum of all pixel values will be multiplied by `scale`. For
+#'   example, to rescale the total in terms of the total area, enter the area of
+#'   each pixel.
+#'
 #' @param pathin Character string defining the filepath to the highest-level
 #'   directory containing the predicted presence/absence or probability of
 #'   presence from species distribution models, such as those created from
@@ -28,6 +32,7 @@
 #' @param keypath Optional filepath passed to [readr::read_csv()] translating
 #'   the individual species names as encoded in the file names in pathin to
 #'   METRIC names in the output table
+#' @param scale Optional value by which to scale the results; see Details
 #'
 #' @return tibble
 #' @seealso [fit_SDM()], [transform_SDM()]
@@ -37,7 +42,7 @@
 #' # See vignette
 
 sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
-                       rollup = TRUE, keypath = NULL) {
+                       rollup = TRUE, keypath = NULL, scale = NULL) {
   fl = list.files(pathin, '.tif$', recursive = TRUE, full.names = TRUE) %>%
     rlang::set_names()
 
@@ -92,21 +97,6 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
 
   }
 
-  # if (rollup) {
-  #   # summarize total habitat for the group, by SDM
-  #   res = dplyr::bind_rows(
-  #     res,
-  #     res %>%
-  #       dplyr::group_by(
-  #         across(
-  #           any_of(
-  #             c('SDM', 'scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
-  #               'UNIT')))) %>%
-  #       dplyr::summarize(SCORE_TOTAL = sum(SCORE_TOTAL),
-  #                        .groups = 'drop') %>%
-  #       dplyr::mutate(spp = 'TOTAL'))
-  # }
-
   if (!is.null(keypath)) {
     res = res %>%
       dplyr::left_join(
@@ -128,9 +118,15 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
         SDM == 'waterbird_fall' ~ paste0(METRIC, ' (fall)'),
         SDM == 'waterbird_win' ~ paste0(METRIC, ' (winter)'),
         TRUE ~ METRIC),
-      SCORE_TOTAL = value / .09, # convert to ha
-      UNIT = 'ha') %>%
+      SCORE_TOTAL = value) %>%
     dplyr::select(scenario, any_of('ZONE'), METRIC_CATEGORY, METRIC_SUBTYPE,
-                  METRIC, UNIT, SCORE_TOTAL)
+                  METRIC, SCORE_TOTAL)
+
+  if (!is.null(scale)) {
+    res = res %>%
+      mutate(SCORE_TOTAL = SCORE_TOTAL * scale)
+  }
+
+  return(res)
 
 }
