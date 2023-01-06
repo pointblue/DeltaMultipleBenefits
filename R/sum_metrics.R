@@ -11,37 +11,36 @@
 #'
 #'   For most metrics, scores are calculated by multiplying the total area by
 #'   the corresponding per-unit-area metric and summing over the entire
-#'   landscape. However, one exception is for Annual Wages associated with
-#'   agricultural jobs. In this case, a weighted average is produced, based on
-#'   the average wage for an agricultural job associated with each land cover
-#'   class and the proportion of the landscape that has an associated wage
-#'   (i.e., only crop classes) that is made up by that land cover class.
+#'   landscape. However, for Annual Wages associated with agricultural jobs, a
+#'   weighted average is instead produced, based on the average wage for an
+#'   agricultural job associated with each land cover class and the proportion
+#'   of the landscape that has an associated wage (i.e., only crop classes) that
+#'   is made up by that land cover class. In addition, for the metrics
+#'   representing the Climate Change Resilience category, the overall landscape
+#'   average score is produced.
 #'
-#'   This function expects `metricdat` to contain the following fields:
-#'   * class: a character field containing the land cover classes; may be
-#'   called anything, but should match with a corresponding field in `areadat`
-#'   * METRIC: character field used to define specific metrics; expects a
-#'   METRIC called "Annual Wages"
-#'   * SCORE_MEAN, SCORE_SE: numeric fields containing the specific values for
-#'   each METRIC and `class` and an estimate of uncertainty
+#'   This function expects `metricdat` to contain the following fields: * class:
+#'   a character field containing the land cover classes; may be called
+#'   anything, but should match with a corresponding field in `areadat` *
+#'   METRIC: character field used to define specific metrics; expects a METRIC
+#'   called "Annual Wages" * SCORE_MEAN, SCORE_SE: numeric fields containing the
+#'   specific values for each METRIC and `class` and an estimate of uncertainty
 #'   * METRIC_CATEGORY, METRIC_SUBTYPE, UNIT: optional additional character
 #'   fields useful for grouping METRICS and tracking units; may contain
 #'   anything, will be retained in output
 #'
-#'   This function also expects `areadat` to contain the following fields:
-#'   * scenario: character field used to identify the name of the landscape
-#'   being examined
-#'   * class: as above, a character field containing the land cover classes;
-#'   may be called anything, but should match with a corresponding field in
-#'   `metricadat`
-#'   * area: numeric field containing the total area of each land cover class.
-#'   Take care that the units in which the area field was calculated correspond
-#'   to the UNITs by which the per-unit-area METRICS in `metricdat` were defined
-#'   (often ha). (See [sum_landcover()].)
-#'   * ZONE: optional character field identifying the name of a zone within
-#'   which the area of land covers was estimated, such as by running
-#'   [sum_landcover()] with a `zonepath` provided; if ZONE is present, the
-#'   output will be summarized by zone.
+#'   This function also expects `areadat` to contain the following fields: *
+#'   scenario: character field used to identify the name of the landscape being
+#'   examined * class: as above, a character field containing the land cover
+#'   classes; may be called anything, but should match with a corresponding
+#'   field in `metricdat` * area: numeric field containing the total area of
+#'   each land cover class. Take care that the units in which the area field was
+#'   calculated correspond to the UNITs by which the per-unit-area METRICS in
+#'   `metricdat` were defined (often ha). (See [sum_landcover()].) * ZONE:
+#'   optional character field identifying the name of a zone within which the
+#'   area of land covers was estimated, such as by running [sum_landcover()]
+#'   with a `zonepath` provided; if ZONE is present, the output will be
+#'   summarized by zone.
 #'
 #' @param metricdat tibble; See Details
 #' @param areadat tibble; See Details
@@ -83,10 +82,16 @@ sum_metrics = function(metricdat, areadat) {
             c('scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
               'METRIC', 'UNIT')))) %>%
       dplyr::summarize(
+        area = sum(area),
         SCORE_TOTAL = sum(SCORE_TOTAL),
         SCORE_TOTAL_SE = sqrt(sum(SCORE_TOTAL_SE^2)),
-        .groups = 'drop'
-      ),
+        .groups = 'drop') %>%
+      # for climate change resilience, divide by the area
+      dplyr::mutate(
+        across(c(SCORE_TOTAL, SCORE_TOTAL_SE),
+               ~if_else(METRIC_CATEGORY == 'Climate Change Resilience',
+                        ./area, .))) %>%
+      select(-area),
     # for annual wages: multiply the average wage per-landcover by the
     # proportion of the total ag landscape made up by that land cover
     dat_join %>% dplyr::filter(METRIC == 'Annual Wages' & SCORE_TOTAL > 0) %>%
