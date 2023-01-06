@@ -7,14 +7,17 @@
 <!-- badges: end -->
 
 The goal of DeltaMultipleBenefits is to supports land use planning,
-management, conservation, and community engagement by projecting the net
-impacts of alternative scenarios of land cover change on multiple
-benefits of interest, such as wildlife distributions and ecosystem
-services associated with land covers. It applies existing models to
-user-supplied landscapes and compares to a baseline landscape to project
-the net change for each benefit. It also summarizes the net change for
-multiple benefits to communicate synergies and trade-offs among benefits
-of interest under each scenario.
+management, conservation, and community engagement in the Sacramento-San
+Joaquin River Delta. This package provides tools for applying existing
+models and data to user-supplied landscapes to estimate the multiple
+benefits resulting from each landscape, such as metrics representing
+agricultural livelihoods, water quality, climate change resilience, and
+biodiversity support associated with individual land covers. It was
+designed to compare the metrics resulting from a baseline landscape
+representing current conditions to those from a projected landscape
+under a proposed or anticipated future scenario. The results provide
+insights into the net change in each metric expected from a change in
+the landscape and the synergies and trade-offs among multiple metrics.
 
 ## Installation
 

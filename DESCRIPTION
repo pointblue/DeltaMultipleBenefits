@@ -1,5 +1,5 @@
 Package: DeltaMultipleBenefits
-Title: Project the Multiple Benefits of Land Cover Change in the Sacramento-San Joaquin Delta
+Title: Project the Multiple Benefits of Land Cover Change in the Sacramento-San Joaquin River Delta
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Kristen",
@@ -8,18 +8,25 @@ Authors@R:
            email = "kdybala@pointblue.org",
            comment = c(ORCID = "0000-0002-2787-4600"))
 Description: Supports land use planning, management, conservation, and 
-    community engagement by projecting the net impacts of alternative scenarios 
-    of land cover change on multiple benefits of interest, such as wildlife 
-    distributions and ecosystem services associated with land covers. It applies
-    existing models to user-supplied landscapes and compares to a baseline 
-    landscape to project the net change for each benefit. It also summarizes the 
-    net change for multiple benefits to communicate synergies and trade-offs 
-    among benefits of interest under each scenario. 
+    community engagement in the Sacramento-San Joaquin River Delta by providing
+    tools for applying existing models and data to user-supplied landscapes and 
+    estimate the multiple benefits resulting from each landscape, such as 
+    metrics representing agricultural livelihoods, water quality, climate change
+    resilience, and biodiversity support associated with individual land covers. 
+    It was designed to compare the metrics resulting from a baseline landscape 
+    representing current conditions to those from a projected landscape under a 
+    proposed or anticipated future scenario. The results provide insights into 
+    the net change in each metric expected from a change in the landscape and 
+    the synergies and trade-offs among multiple metrics. 
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 URL: https://github.com/pointblue/DeltaMultipleBenefits
 BugReports: https://github.com/pointblue/DeltaMultipleBenefits/issues
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
