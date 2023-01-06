@@ -34,10 +34,12 @@ sum_change = function(scoredat) {
     scoredat %>% dplyr::filter(scenario == 'baseline') %>%
       dplyr::rename(BASELINE = SCORE_TOTAL, BASELINE_SE = SCORE_TOTAL_SE) %>%
       dplyr::select(-scenario)) %>%
-    dplyr::mutate(net_change = SCENARIO - BASELINE,
-           net_change_se = sqrt(SCENARIO_SE^2 + BASELINE_SE^2),
-           change_prop = net_change/BASELINE,
-           change_prop_se = abs(change_prop) * sqrt((net_change_se/net_change)^2 + (BASELINE_SE/BASELINE)^2),
-           change_pct = change_prop * 100,
-           change_pct_se = change_prop_se * 100)
+    dplyr::mutate(
+      net_change = SCENARIO - BASELINE,
+      net_change_se = sqrt(SCENARIO_SE^2 + BASELINE_SE^2),
+      # change_prop = net_change/BASELINE,
+      # change_prop_se = abs(change_prop) * sqrt((net_change_se/net_change)^2 + (BASELINE_SE/BASELINE)^2),
+      # change_pct = change_prop * 100,
+      # change_pct_se = change_prop_se * 100
+      )
   }
