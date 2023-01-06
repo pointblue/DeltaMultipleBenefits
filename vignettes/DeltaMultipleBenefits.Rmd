@@ -1,0 +1,50 @@
+---
+title: "DeltaMultipleBenefits"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DeltaMultipleBenefits}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+The functions contained in the DeltaMultipleBenefits package are intended to facilitate estimation of the net impacts of scenarios of landscape change in the Sacramento-San Joaquin River Delta. It provides tools for applying included data and species distribution models to user-supplied landscapes to estimate a range of benefits to the Delta community: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. By comparing metrics from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the estimated net change in each metric helps identify synergies and trade-offs among multiple benefits. The results provide insights into the direction and expected magnitude of change in each metric, are intended to help establish a common understanding among members of the Delta community and facilitate land use planning, management, conservation, and community engagement.
+
+This tutorial outlines the major steps of analyzing a new scenario of landscape change or reproducing the results in Dybala et al. (2023), including:
+1. Preparing a new scenario
+2. Summarizing the total extent of each land cover
+3. Estimating the total landscape scores for each metric
+4. Estimating the change from baseline scores
+
+```{r setup}
+library(DeltaMultipleBenefits)
+```
+
+# 1. Preparing a new scenario
+
+From polygons --> map to key --> rasterize
+Or use our baseline/scenario landscapes (CDFW BIOS)
+
+# 2. Summarizing the total extent of each land cover
+
+
+# 3. Estimating the total landscape scores for each metric
+
+data required:
+- species models and spp key (in R package)
+- landcover-specific metrics
+- baseline scores (and other scenario scores for comparison)
+
+for biodiversity support: generate predictors for spatial models --> fit spatial models and produce predicted distributions (with/without thresholds) -- compare to our results (CDFW BIOS)
+
+# 4. Estimating the change from baseline scores
+
+repeat process above for your own baseline, or use our baseline/scenario scores (provide in R package)
