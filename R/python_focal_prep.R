@@ -42,17 +42,17 @@
 #' @export
 #'
 #' @examples
-#' f <- system.file("ex/elev.tif", package="terra")
-#' r <- rast(f) # add an example
-#' python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
+#' #f <- system.file("ex/elev.tif", package="terra")
+#' #r <- terra::rast(f) # add an example
+#' #python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
 #'
-#' try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#' pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra')))
-#' # suffix is required if maskpath is not `NULL`
+#' #try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
+#' #pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra')))
+#' ## suffix is required if maskpath is not `NULL`
 #'
-#' python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#' pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
-#' suffix = c('_area', '_elev'))
+#' #python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
+#' #pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
+#' #suffix = c('_area', '_elev'))
 
 python_focal_prep = function(landscape, SDM, pathout, landscape_name,
                              suffix = NULL, mask = NULL, pixel_value = NULL,
