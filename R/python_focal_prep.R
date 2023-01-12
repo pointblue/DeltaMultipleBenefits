@@ -26,7 +26,7 @@
 #'   `"riparian"`, `"waterbird_fall"`, or `"waterbird_win"`
 #' @param pathout Character string; Optional filepath to directory where output
 #'   rasters should be written; passed to [terra::writeRaster()]
-#' @param scenario_name Character string; Name of the landscape scenario being
+#' @param landscape_name Character string; Name of the landscape scenario being
 #'   evaluated, corresponding to the subdirectory in `pathout` where results
 #'   will be written.
 #' @param suffix Character string; custom suffix appended to layer names
