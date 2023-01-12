@@ -1,6 +1,6 @@
 #' Final processing of focal stats for SDMs
 #'
-#' Renames and rescales output from [python_focal()] as needed to match expected
+#' Renames and rescales output from [python_focal_run()] as needed to match expected
 #' inputs for species distribution models (SDMs). Includes options to mask by
 #' another raster and fill missing values with zero.
 #'

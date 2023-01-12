@@ -3,7 +3,7 @@
 #' Function to call python script for calculating Euclidean distances on
 #' landscape rasters via arcpy.
 #'
-#' @details Calls the [dist_stats.py] function to calculate the Euclidean
+#' @details Calls the `dist_stats.py` function to calculate the Euclidean
 #'   distance for all cells in the input raster without a value to the nearest
 #'   cell with a value (e.g., for calculating distance to a crane roost or a
 #'   stream).
@@ -14,11 +14,11 @@
 #'
 #'   Important: This function requires the availability of arcpy and Spatial
 #'   Analyst extensions. While these statistics can be entirely calculated in R,
-#'   arcpy is much faster. Note: the initial output of [dist_stats.py] will not
+#'   arcpy is much faster. Note: the initial output of `dist_stats.py` will not
 #'   overwrite existing rasters; old versions must be deleted before re-running.
 #'
 #' @param pathin Filepath for the directory containing input rasters to be
-#'   processed, such as those created from running [python_focal_prep]
+#'   processed, such as those created from running [python_focal_prep()]
 #' @param landscape_name Subdirectory containing the rasters for a target
 #'   landscape scenario for generating focal_stats
 #' @param copyto Optional character string containing alternate `landscape_name`
@@ -34,7 +34,6 @@
 #'   `copyto` only.
 #'
 #' @return Nothing; all files written to `pathout`
-#' @seealso [python_focal()]
 #' @export
 #'
 #' @examples

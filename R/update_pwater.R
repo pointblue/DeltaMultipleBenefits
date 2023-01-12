@@ -22,7 +22,7 @@
 #'   predictors for waterbird distribution models.
 #'
 #'   This same pwater.tif file is also necessary as an input for using
-#'   [python_focal_prep()] and then [python_focal()] to generate the pfld focal
+#'   [python_focal_prep()] and then [python_focal_run()] to generate the pfld focal
 #'   stats, which represent the proportion of the area of each land cover class
 #'   within a given distance that has open surface water. However, this version
 #'   of pwater.tif file must be unmasked by any study area boundary to allow
