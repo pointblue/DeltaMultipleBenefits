@@ -15,13 +15,13 @@
 #' @export
 #'
 #' @examples
-#' r <- terra::rast(matrix(sample(c(0:4), size = 100, replace = TRUE),
-#'         ncol = 10, nrow = 10)
-#' levels(r) <- c('RIPARIAN_FOREST_POFR', 'RIPARIAN_FOREST_QULO', 'WETLAND', 'ORCHARD', 'VINEYARD')
-#' layernames = terra::freq(r)$label
-#' s = terra::segregate(r, other = 0)
-#' names(s) = terra::freq(r)$label
-#' example = reclassify_landcover(s, SDM = 'RIPARIAN')
+#' #r <- terra::rast(matrix(sample(c(0:4), size = 100, replace = TRUE),
+#' #         ncol = 10, nrow = 10)
+#' #levels(r) <- c('RIPARIAN_FOREST_POFR', 'RIPARIAN_FOREST_QULO', 'WETLAND', 'ORCHARD', 'VINEYARD')
+#' #layernames = terra::freq(r)$label
+#' #s = terra::segregate(r, other = 0)
+#' #names(s) = terra::freq(r)$label
+#' #example = reclassify_landcover(s, SDM = 'RIPARIAN')
 
 reclassify_landcover = function(landscape_stack, SDM) {
   if (SDM == 'riparian') {
