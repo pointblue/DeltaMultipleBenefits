@@ -44,13 +44,13 @@ Nothing returned to R environment. Writes rasters to \code{pathout} for
 each land cover class.
 }
 \description{
-Renames and rescales output from \code{\link[=python_focal]{python_focal()}} as needed to match expected
+Renames and rescales output from \code{\link[=python_focal_run]{python_focal_run()}} as needed to match expected
 inputs for species distribution models (SDMs). Includes options to mask by
 another raster and fill missing values with zero.
 }
 \details{
 Function expects source files to be in a directory structure created
-by \code{\link[=python_focal]{python_focal()}}, which is also used to inform the final processing
+by \code{\link[=python_focal_run]{python_focal_run()}}, which is also used to inform the final processing
 steps: \code{pathin/scenario_name/SDM/scale}. All .tif files in this source
 directory will be read in, and optionally masked by the raster at
 \code{maskpath}. If \code{cover = TRUE}, pixels in \code{maskpath} with a value of 1 will

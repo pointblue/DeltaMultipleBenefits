@@ -17,7 +17,7 @@ python_dist(
 }
 \arguments{
 \item{pathin}{Filepath for the directory containing input rasters to be
-processed, such as those created from running \link{python_focal_prep}}
+processed, such as those created from running \code{\link[=python_focal_prep]{python_focal_prep()}}}
 
 \item{landscape_name}{Subdirectory containing the rasters for a target
 landscape scenario for generating focal_stats}
@@ -47,7 +47,7 @@ Function to call python script for calculating Euclidean distances on
 landscape rasters via arcpy.
 }
 \details{
-Calls the \link{dist_stats.py} function to calculate the Euclidean
+Calls the \code{dist_stats.py} function to calculate the Euclidean
 distance for all cells in the input raster without a value to the nearest
 cell with a value (e.g., for calculating distance to a crane roost or a
 stream).
@@ -58,12 +58,9 @@ distances in kilometers or \code{sqrt} to take the square root of the results.
 
 Important: This function requires the availability of arcpy and Spatial
 Analyst extensions. While these statistics can be entirely calculated in R,
-arcpy is much faster. Note: the initial output of \link{dist_stats.py} will not
+arcpy is much faster. Note: the initial output of \code{dist_stats.py} will not
 overwrite existing rasters; old versions must be deleted before re-running.
 }
 \examples{
 # See vignette
-}
-\seealso{
-\code{\link[=python_focal]{python_focal()}}
 }

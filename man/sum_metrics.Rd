@@ -10,10 +10,6 @@ sum_metrics(metricdat, areadat)
 \item{metricdat}{tibble; See Details}
 
 \item{areadat}{tibble; See Details}
-
-\item{class}{Character string containing the name of the field containing
-land cover classes by which \code{metricdat} and \code{areadat} should be joined;
-passed to \code{\link[dplyr:mutate-joins]{dplyr::full_join()}}.}
 }
 \value{
 tibble
@@ -39,30 +35,35 @@ is made up by that land cover class. In addition, for the metrics
 representing the Climate Change Resilience category, the overall landscape
 average score is produced.
 
-This function expects \code{metricdat} to contain the following fields: * class:
-a character field containing the land cover classes; may be called
-anything, but should match with a corresponding field in \code{areadat} *
-METRIC: character field used to define specific metrics; expects a METRIC
-called "Annual Wages" * SCORE_MEAN, SCORE_SE: numeric fields containing the
-specific values for each METRIC and \code{class} and an estimate of uncertainty
+This function expects \code{metricdat} to contain the following fields:
 \itemize{
+\item class: a character field containing the land cover classes; may be called
+anything, but should match with a corresponding field in \code{areadat}
+\item METRIC: character field used to define specific metrics; expects a METRIC
+called "Annual Wages"
+\item SCORE_MEAN, SCORE_SE: numeric fields containing the specific values for
+each METRIC and an estimate of uncertainty
 \item METRIC_CATEGORY, METRIC_SUBTYPE, UNIT: optional additional character
 fields useful for grouping METRICS and tracking units; may contain
 anything, will be retained in output
 }
 
-This function also expects \code{areadat} to contain the following fields: *
-scenario: character field used to identify the name of the landscape being
-examined * class: as above, a character field containing the land cover
-classes; may be called anything, but should match with a corresponding
-field in \code{metricdat} * area: numeric field containing the total area of
-each land cover class. Take care that the units in which the area field was
-calculated correspond to the UNITs by which the per-unit-area METRICS in
-\code{metricdat} were defined (often ha). (See \code{\link[=sum_landcover]{sum_landcover()}}.) * ZONE:
-optional character field identifying the name of a zone within which the
+This function also expects \code{areadat} to contain the following fields:
+\itemize{
+\item scenario: character field used to identify the name of the landscape being
+examined
+\item class: as above, a character field containing the land cover classes; may
+be called anything, but should match with a corresponding field in
+\code{metricdat}
+\item area: numeric field containing the total area of each land cover class.
+Take care that the units in which the area field was calculated correspond
+to the UNITs by which the per-unit-area METRICS in \code{metricdat} were defined
+(often ha). (See \code{\link[=sum_landcover]{sum_landcover()}}.)
+\item ZONE: optional character field identifying the name of a zone within which the
 area of land covers was estimated, such as by running \code{\link[=sum_landcover]{sum_landcover()}}
 with a \code{zonepath} provided; if ZONE is present, the output will be
 summarized by zone.
+}
 }
 \examples{
 # See vignette

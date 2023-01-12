@@ -43,7 +43,7 @@ Function to call python script for calculating focal statistics on landscape
 rasters via arcpy.
 }
 \details{
-This function calls the \link{focal_stats.py} function to summarize cell
+This function calls the \code{focal_stats.py} function to summarize cell
 values for the input raster within a buffer distance defined by \code{scale}.
 Summary functions may include \code{'SUM'} or \code{'MEAN'}. The default of \verb{fun = SUM'} is intended to be called only after first running
 \code{\link[=python_focal_prep]{python_focal_prep()}}, which prepares rasters representing the

@@ -26,6 +26,10 @@ subdirectory within \code{pathout/scenario_name} where results will be written:
 \item{pathout}{Character string; Optional filepath to directory where output
 rasters should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 
+\item{landscape_name}{Character string; Name of the landscape scenario being
+evaluated, corresponding to the subdirectory in \code{pathout} where results
+will be written.}
+
 \item{suffix}{Character string; custom suffix appended to layer names
 (optional unless \code{maskpath} is not \code{NULL})}
 
@@ -35,10 +39,6 @@ rasters should be written; passed to \code{\link[terra:writeRaster]{terra::write
 default \code{NULL}}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
-
-\item{scenario_name}{Character string; Name of the landscape scenario being
-evaluated, corresponding to the subdirectory in \code{pathout} where results
-will be written.}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
@@ -66,17 +66,17 @@ surface water data). To distinguish these layers, \code{suffix} is required to
 have two values. See examples.
 }
 \examples{
-f <- system.file("ex/elev.tif", package="terra")
-r <- rast(f) # add an example
-python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
+#f <- system.file("ex/elev.tif", package="terra")
+#r <- terra::rast(f) # add an example
+#python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
 
-try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra')))
-# suffix is required if maskpath is not `NULL`
+#try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
+#pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra')))
+## suffix is required if maskpath is not `NULL`
 
-python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
-suffix = c('_area', '_elev'))
+#python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
+#pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
+#suffix = c('_area', '_elev'))
 }
 \seealso{
 \code{\link[=python_focal_run]{python_focal_run()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
