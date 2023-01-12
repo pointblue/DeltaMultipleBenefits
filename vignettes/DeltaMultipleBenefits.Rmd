@@ -28,6 +28,11 @@ This tutorial outlines the major steps of analyzing a new scenario of landscape 
 
 ```{r setup}
 library(DeltaMultipleBenefits)
+library(sf)
+library(terra)
+library(dplyr)
+library(tidyr)
+library(magrittr)
 ```
 
 # Step 1. Preparing a new scenario
@@ -46,19 +51,16 @@ head(key)
 As an example of how to align the land cover classifications for a new landscape scenario represented by polygons, we'll work with the `olinda1` dataset from a file contained in the `sf` package. This data set includes place names instead of land cover classifications, but we'll treat them as though they represented land covers.
 
 ```{r classify_poly1}
-library(sf)
-olinda <- sf::st_read(system.file("shape/olinda1.shp", package = "sf"), quiet = TRUE)
+olinda <- st_read(system.file("shape/olinda1.shp", package = "sf"), quiet = TRUE)
 head(olinda)
 ```
 
 Using the `dplyr` package, it is straightforward to translate existing land cover names in your landscape scenario to those used in the existing `key`. Then, make sure all of your original land cover names have been translated.
 
 ```{r classify_poly2}
-library(dplyr)
-
 new_shp <- olinda %>% 
-  dplyr::mutate(
-    CODE_NAME = dplyr::case_when(
+  mutate(
+    CODE_NAME = case_when(
       NM_BAIR %in% c('Ouro Preto', 'Sítio Novo', 'Sapucaia', 'Salgadinho') ~ 'ORCHARD_DECIDUOUS',
       NM_BAIR %in% c('Tabajara', "Caixa D'Água", 'Águas Compridas', 
                      'São Benedito') ~ 'ORCHARD_CITRUS&SUBTROPICAL',
@@ -74,36 +76,34 @@ new_shp <- olinda %>%
         'WETLAND_MANAGED_SEASONAL',
       is.na(NM_BAIR) ~ 'PASTURE_ALFALFA',
       TRUE ~ 'UNKNOWN'))
-new_shp %>% dplyr::filter(CODE_NAME == 'UNKNOWN') # should be none!
+new_shp %>% filter(CODE_NAME == 'UNKNOWN') # should be none!
 ```
 
 Then, convert the polygons to a raster format encoded with land cover classification codes. First join the key to match `CODE_BASELINE` values, then create a raster template with the desired resolution (or read in an existing raster with the desired extent and resolution), and finally assign values from the polygons to the new raster. You can also assign factor levels and color codings to help with plotting.
 
 ```{r classify_poly3}
-library(terra)
-
 # transfer CODE_BASELINE values from key
-y = new_shp %>% dplyr::left_join(key, by = 'CODE_NAME') %>% 
-  dplyr::select(CODE_NAME, CODE_BASELINE, LABEL)
+y = new_shp %>% left_join(key, by = 'CODE_NAME') %>% 
+  select(CODE_NAME, CODE_BASELINE, LABEL)
 
 # create raster template with desired resolution (must first use vect to convert
 # to SpatVector for use with terra)
-r = terra::vect(y) %>% terra::rast(ncols = 100, nrows = 100)
+r = vect(y) %>% rast(ncols = 100, nrows = 100)
 # transfer CODE_BASELINE values to the new raster
-z = terra::vect(y) %>% terra::rasterize(r, field = 'CODE_BASELINE')
+z = vect(y) %>% rasterize(r, field = 'CODE_BASELINE')
 
 # assign factor levels:
 levels(z) <-  key %>% 
-  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) %>% 
-  tidyr::drop_na() %>%
+  select(id = CODE_BASELINE, label = CODE_NAME) %>% 
+  drop_na() %>%
   as.data.frame()
-terra::freq(z)
+freq(z)
 
 # assign color coding
-terra::coltab(z) <- key %>% select(CODE_BASELINE, COLOR) %>%
-  tidyr::drop_na() %>% tidyr::complete(CODE_BASELINE = c(0:255)) %>% 
-  dplyr::pull(COLOR)
-terra::plot(z)
+coltab(z) <- key %>% select(CODE_BASELINE, COLOR) %>%
+  drop_na() %>% complete(CODE_BASELINE = c(0:255)) %>% 
+  pull(COLOR)
+plot(z)
 
 ```
 
@@ -112,10 +112,10 @@ terra::plot(z)
 If the new landscape scenario is in a raster format already, the values encoded can similarly be translated to the values in the existing land cover classification scheme. Let's use the `elev` data set from the `terra` package, treating the elevation data as if it were instead land cover classifications. As above, assign factor levels and color coding to assist with plotting.
 
 ```{r classify_raster}
-elev <- terra::rast(system.file("ex/elev.tif", package = "terra"))
+elev <- rast(system.file("ex/elev.tif", package = "terra"))
 
 new_rast <- elev %>% 
-  terra::classify(rcl = matrix(
+  classify(rcl = matrix(
     c(140, 160, 11,
       160, 180, 15,
       180, 200, 19,
@@ -129,16 +129,16 @@ new_rast <- elev %>%
 
 # assign factor levels
 levels(new_rast) <-  key %>% 
-  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) %>% 
-  tidyr::drop_na() %>%
+  select(id = CODE_BASELINE, label = CODE_NAME) %>% 
+  drop_na() %>%
   as.data.frame()
-terra::freq(new_rast)
+freq(new_rast)
 
 # assign color coding
-terra::coltab(new_rast) <- key %>% select(CODE_BASELINE, COLOR) %>%
-  tidyr::drop_na() %>% tidyr::complete(CODE_BASELINE = c(0:255)) %>% 
-  dplyr::pull(COLOR)
-terra::plot(new_rast)
+coltab(new_rast) <- key %>% select(CODE_BASELINE, COLOR) %>%
+  drop_na() %>% complete(CODE_BASELINE = c(0:255)) %>% 
+  pull(COLOR)
+plot(new_rast)
 ```
 
 
