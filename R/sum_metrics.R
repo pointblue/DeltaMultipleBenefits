@@ -19,34 +19,34 @@
 #'   representing the Climate Change Resilience category, the overall landscape
 #'   average score is produced.
 #'
-#'   This function expects `metricdat` to contain the following fields: * class:
-#'   a character field containing the land cover classes; may be called
-#'   anything, but should match with a corresponding field in `areadat` *
-#'   METRIC: character field used to define specific metrics; expects a METRIC
-#'   called "Annual Wages" * SCORE_MEAN, SCORE_SE: numeric fields containing the
-#'   specific values for each METRIC and `class` and an estimate of uncertainty
+#'   This function expects `metricdat` to contain the following fields:
+#'   * class: a character field containing the land cover classes; may be called
+#'   anything, but should match with a corresponding field in `areadat`
+#'   * METRIC: character field used to define specific metrics; expects a METRIC
+#'   called "Annual Wages"
+#'   * SCORE_MEAN, SCORE_SE: numeric fields containing the specific values for
+#'   each METRIC and an estimate of uncertainty
 #'   * METRIC_CATEGORY, METRIC_SUBTYPE, UNIT: optional additional character
 #'   fields useful for grouping METRICS and tracking units; may contain
 #'   anything, will be retained in output
 #'
-#'   This function also expects `areadat` to contain the following fields: *
-#'   scenario: character field used to identify the name of the landscape being
-#'   examined * class: as above, a character field containing the land cover
-#'   classes; may be called anything, but should match with a corresponding
-#'   field in `metricdat` * area: numeric field containing the total area of
-#'   each land cover class. Take care that the units in which the area field was
-#'   calculated correspond to the UNITs by which the per-unit-area METRICS in
-#'   `metricdat` were defined (often ha). (See [sum_landcover()].) * ZONE:
-#'   optional character field identifying the name of a zone within which the
+#'   This function also expects `areadat` to contain the following fields:
+#'   * scenario: character field used to identify the name of the landscape being
+#'   examined
+#'   * class: as above, a character field containing the land cover classes; may
+#'   be called anything, but should match with a corresponding field in
+#'   `metricdat`
+#'   * area: numeric field containing the total area of each land cover class.
+#'   Take care that the units in which the area field was calculated correspond
+#'   to the UNITs by which the per-unit-area METRICS in `metricdat` were defined
+#'   (often ha). (See [sum_landcover()].)
+#'   * ZONE: optional character field identifying the name of a zone within which the
 #'   area of land covers was estimated, such as by running [sum_landcover()]
 #'   with a `zonepath` provided; if ZONE is present, the output will be
 #'   summarized by zone.
 #'
 #' @param metricdat tibble; See Details
 #' @param areadat tibble; See Details
-#' @param class Character string containing the name of the field containing
-#'   land cover classes by which `metricdat` and `areadat` should be joined;
-#'   passed to [dplyr::full_join()].
 #'
 #' @return tibble
 #' @seealso [sum_landcover()]
