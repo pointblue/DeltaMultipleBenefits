@@ -4,10 +4,10 @@
 \alias{sum_change}
 \title{Summarize net change between scenario and baseline landscapes}
 \usage{
-sum_change(scoredat)
+sum_change(dat)
 }
 \arguments{
-\item{scoredat}{tibble; see Details}
+\item{dat}{tibble; see Details}
 }
 \value{
 tibble
@@ -25,12 +25,12 @@ one or more scenario landscapes to calculate a net change and the
 proportion and percent change from baseline, along with propagation of
 uncertainty.
 
-This function expects \code{scoredat} to contain the following fields, in
-alignment with the output of \code{\link[=sum_habitat]{sum_habitat()}} and \code{\link[=sum_metrics]{sum_metrics()}}:
+This function expects \code{dat} to contain the following fields:
 \itemize{
-\item scenario: a character field used to identify the name of the landscape
+\item \code{scenario}: a character field used to identify the name of the landscape
 being examined; at least one should be called \code{'baseline'}
-\item SCORE_TOTAL, SCORE_TOTAL_SE: numeric fields representing the total
+\item either \code{area} (resulting from \code{\link[=sum_habitat]{sum_habitat()}}) or \code{SCORE_TOTAL} and
+\code{SCORE_TOTAL_SE} (resulting from \code{\link[=sum_metrics]{sum_metrics()}}): numeric fields representing the total
 landscape-level values for each metric and associated uncertainty
 }
 }

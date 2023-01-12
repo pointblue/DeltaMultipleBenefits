@@ -11,35 +11,40 @@
 #'   proportion and percent change from baseline, along with propagation of
 #'   uncertainty.
 #'
-#'   This function expects `scoredat` to contain the following fields, in
-#'   alignment with the output of [sum_habitat()] and [sum_metrics()]:
-#'   * scenario: a character field used to identify the name of the landscape
+#'   This function expects `dat` to contain the following fields:
+#'   * `scenario`: a character field used to identify the name of the landscape
 #'   being examined; at least one should be called `'baseline'`
-#'   * SCORE_TOTAL, SCORE_TOTAL_SE: numeric fields representing the total
+#'   * either `area` (resulting from [sum_habitat()]) or `SCORE_TOTAL` and
+#'   `SCORE_TOTAL_SE` (resulting from [sum_metrics()]): numeric fields representing the total
 #'   landscape-level values for each metric and associated uncertainty
 #'
-#' @param scoredat tibble; see Details
+#' @param dat tibble; see Details
 #'
 #' @return tibble
 #' @seealso [sum_habitat()], [sum_metrics()]
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
 #' # See vignette
 
-sum_change = function(scoredat) {
-  dplyr::left_join(
-    scoredat %>% dplyr::filter(scenario != 'baseline') %>%
-      dplyr::rename(SCENARIO = SCORE_TOTAL, SCENARIO_SE = SCORE_TOTAL_SE),
-    scoredat %>% dplyr::filter(scenario == 'baseline') %>%
-      dplyr::rename(BASELINE = SCORE_TOTAL, BASELINE_SE = SCORE_TOTAL_SE) %>%
-      dplyr::select(-scenario)) %>%
-    dplyr::mutate(
-      net_change = SCENARIO - BASELINE,
-      net_change_se = sqrt(SCENARIO_SE^2 + BASELINE_SE^2),
-      # change_prop = net_change/BASELINE,
-      # change_prop_se = abs(change_prop) * sqrt((net_change_se/net_change)^2 + (BASELINE_SE/BASELINE)^2),
-      # change_pct = change_prop * 100,
-      # change_pct_se = change_prop_se * 100
-      )
+sum_change = function(dat) {
+  dat = dplyr::rename_with(dat, ~gsub('area|SCORE_TOTAL', 'value', .x))
+
+  res = dplyr::left_join(
+    dat %>% dplyr::filter(.data$scenario != 'baseline') %>%
+      dplyr::rename_with(~gsub('value', 'SCENARIO', .x)),
+    dat %>% dplyr::filter(.data$scenario == 'baseline') %>%
+      dplyr::rename_with(~gsub('value', 'BASELINE', .x)) %>%
+      dplyr::select(-.data$scenario)) %>%
+    dplyr::mutate(net_change = .data$SCENARIO - .data$BASELINE)
+
+  if ('value_SE' %in% names(dat)) {
+    res = dplyr::mutate(res,
+                        net_change_se = sqrt(.data$SCENARIO_SE^2 + .data$BASELINE_SE^2))
+  }
+
+  return(res)
+
   }
