@@ -5,7 +5,7 @@
 #' another raster and fill missing values with zero.
 #'
 #' @details Function expects source files to be in a directory structure created
-#'   by [python_focal()], which is also used to inform the final processing
+#'   by [python_focal_run()], which is also used to inform the final processing
 #'   steps: `pathin/scenario_name/SDM/scale`. All .tif files in this source
 #'   directory will be read in, and optionally masked by the raster at
 #'   `maskpath`. If `cover = TRUE`, pixels in `maskpath` with a value of 1 will
