@@ -1,34 +1,40 @@
 Package: DeltaMultipleBenefits
-Title: Project the Multiple Benefits of Land Cover Change in the Sacramento-San Joaquin River Delta
+Title: Project the Multiple Benefits of Land Cover Change in the
+    Sacramento-San Joaquin River Delta
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Kristen",
-           family = "Dybala",
-           role = c("aut", "cre"),
-           email = "kdybala@pointblue.org",
+    person("Kristen", "Dybala", , "kdybala@pointblue.org", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2787-4600"))
-Description: Supports land use planning, management, conservation, and 
-    community engagement in the Sacramento-San Joaquin River Delta by providing
-    tools for applying existing models and data to user-supplied landscapes and 
-    estimate the multiple benefits resulting from each landscape, such as 
-    metrics representing agricultural livelihoods, water quality, climate change
-    resilience, and biodiversity support associated with individual land covers. 
-    It was designed to compare the metrics resulting from a baseline landscape 
-    representing current conditions to those from a projected landscape under a 
-    proposed or anticipated future scenario. The results provide insights into 
-    the net change in each metric expected from a change in the landscape and 
-    the synergies and trade-offs among multiple metrics. 
+Description: Supports land use planning, management, conservation, and
+    community engagement in the Sacramento-San Joaquin River Delta by
+    providing tools for applying existing models and data to user-supplied
+    landscapes and estimate the multiple benefits resulting from each
+    landscape, such as metrics representing agricultural livelihoods,
+    water quality, climate change resilience, and biodiversity support
+    associated with individual land covers.  It was designed to compare
+    the metrics resulting from a baseline landscape representing current
+    conditions to those from a projected landscape under a proposed or
+    anticipated future scenario. The results provide insights into the net
+    change in each metric expected from a change in the landscape and the
+    synergies and trade-offs among multiple metrics.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
+URL: https://github.com/pointblue/DeltaMultipleBenefits
+BugReports: https://github.com/pointblue/DeltaMultipleBenefits/issues
+Depends: 
+    R (>= 2.10)
+Suggests: 
+    knitr,
+    rmarkdown,
+    sf,
+    terra
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
-URL: https://github.com/pointblue/DeltaMultipleBenefits
-BugReports: https://github.com/pointblue/DeltaMultipleBenefits/issues
-Suggests: 
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
-Depends: 
-    R (>= 2.10)
+Imports: 
+    dplyr,
+    magrittr,
+    tidyr
