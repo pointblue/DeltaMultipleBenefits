@@ -1,0 +1,18 @@
+#' Metrics by land cover class and benefits category
+#'
+#' Estimated mean value and standard error for each metric and land cover class,
+#' used within the `DeltaMultipleBenefits` framework to estimate the total score
+#' for a given landscape and the net change expected to result from a change between landscapes.
+#'
+#' @format ## `metrics` A data frame with 276 rows and 7 columns:
+#' \describe{
+#'   \item{METRIC_CATEGORY}{Character string; metrics are organized into groups of benefits categories}
+#'   \item{METRIC}{Character string; metric name}
+#'   \item{UNIT}{Character string; units in which the metric is presented, usually per hectare}
+#'   \item{CODE_NAME}{Text string joining major land cover classes to subclasses with a '_'}
+#'   \item{LABEL}{Default value for labels used to represent CODE_NAME in maps and plots}
+#'   \item{SCORE_MEAN}{Numeric; mean value for each metric and land cover class}
+#'   \item{SCORE_SE}{Numeric; standard error of the mean}
+#' }
+#' @source Dybala et al. In prep (URL to be determined)
+"metrics"
