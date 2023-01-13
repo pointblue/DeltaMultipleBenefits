@@ -43,9 +43,9 @@ anything, but should match with a corresponding field in \code{areadat}
 called "Annual Wages"
 \item SCORE_MEAN, SCORE_SE: numeric fields containing the specific values for
 each METRIC and an estimate of uncertainty
-\item METRIC_CATEGORY, METRIC_SUBTYPE, UNIT: optional additional character
+\item METRIC_CATEGORY, UNIT: optional additional character
 fields useful for grouping METRICS and tracking units; may contain
-anything, will be retained in output
+anything, will be retained in output. If UNIT is present, "/ha" will be removed from the results before returning, as a reminder that the resulting total scores are no longer per-hectare.
 }
 
 This function also expects \code{areadat} to contain the following fields:

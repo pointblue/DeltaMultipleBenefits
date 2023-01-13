@@ -26,9 +26,9 @@
 #'   called "Annual Wages"
 #'   * SCORE_MEAN, SCORE_SE: numeric fields containing the specific values for
 #'   each METRIC and an estimate of uncertainty
-#'   * METRIC_CATEGORY, METRIC_SUBTYPE, UNIT: optional additional character
+#'   * METRIC_CATEGORY, UNIT: optional additional character
 #'   fields useful for grouping METRICS and tracking units; may contain
-#'   anything, will be retained in output
+#'   anything, will be retained in output. If UNIT is present, "/ha" will be removed from the results before returning, as a reminder that the resulting total scores are no longer per-hectare.
 #'
 #'   This function also expects `areadat` to contain the following fields:
 #'   * scenario: character field used to identify the name of the landscape being
@@ -50,6 +50,8 @@
 #'
 #' @return tibble
 #' @seealso [sum_landcover()]
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
@@ -61,49 +63,65 @@ sum_metrics = function(metricdat, areadat) {
     dplyr::mutate(
       # retain mean value for Annual Wages for now, otherwise multiply by area
       # for total score
-      SCORE_TOTAL = dplyr::if_else(METRIC == 'Annual Wages',
-                                   SCORE_MEAN, area * SCORE_MEAN),
+      SCORE_TOTAL = dplyr::if_else(.data$METRIC == 'Annual Wages',
+                                   .data$SCORE_MEAN,
+                                   .data$area * .data$SCORE_MEAN),
       # propagate error: multiplication by a constant
-      SCORE_TOTAL_SE = dplyr::if_else(METRIC == 'Annual Wages',
-                                      SCORE_SE, area * SCORE_SE),
-      # remove "per ha" in the UNIT descriptions
-      UNIT = dplyr::if_else(METRIC == 'Annual Wages',
-                            UNIT, gsub(' per ha', '', UNIT))) %>%
-    tidyr::replace_na(list(SCORE_TOTAL_SE = 0))
-  # -->the only NA values are for land covers and metrics where value is
-  # presumed zero and scores for climate change resilience to salinity
+      SCORE_TOTAL_SE = dplyr::if_else(.data$METRIC == 'Annual Wages',
+                                      .data$SCORE_SE,
+                                      .data$area * .data$SCORE_SE)
+      )
 
-  bind_rows(
+  # check for missing land covers (since we did a full join)
+  tmp = dat_join %>% dplyr::filter(is.na(.data$area))
+  if (nrow(tmp) > 0) {
+    warning('Area estimates missing from "areadat" for one or more land cover classes in "metricdat"')
+  }
+
+  res = dplyr::bind_rows(
     # for all but annual wages, sum over all land cover classes:
-    dat_join %>% dplyr::filter(METRIC != 'Annual Wages') %>%
+    dat_join %>%
+      dplyr::filter(.data$METRIC != 'Annual Wages') %>%
       dplyr::group_by(
-        across(
-          any_of(
+        dplyr::across(
+          dplyr::any_of(
             c('scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
               'METRIC', 'UNIT')))) %>%
       dplyr::summarize(
-        area = sum(area),
-        SCORE_TOTAL = sum(SCORE_TOTAL),
-        SCORE_TOTAL_SE = sqrt(sum(SCORE_TOTAL_SE^2)),
+        area = sum(.data$area, na.rm = TRUE),
+        SCORE_TOTAL = sum(.data$SCORE_TOTAL, na.rm = TRUE),
+        SCORE_TOTAL_SE = sqrt(sum(.data$SCORE_TOTAL_SE^2, na.rm = TRUE)),
         .groups = 'drop') %>%
       # for climate change resilience, divide by the area
       dplyr::mutate(
-        across(c(SCORE_TOTAL, SCORE_TOTAL_SE),
-               ~if_else(METRIC_CATEGORY == 'Climate Change Resilience',
-                        ./area, .))) %>%
-      select(-area),
+        dplyr::across(
+          c(SCORE_TOTAL, SCORE_TOTAL_SE),
+          ~dplyr::if_else(.data$METRIC_CATEGORY == 'Climate Change Resilience',
+                          ./.data$area,
+                          .))) %>%
+      dplyr::select(-.data$area),
     # for annual wages: multiply the average wage per-landcover by the
     # proportion of the total ag landscape made up by that land cover
-    dat_join %>% dplyr::filter(METRIC == 'Annual Wages' & SCORE_TOTAL > 0) %>%
+    dat_join %>%
+      dplyr::filter(.data$METRIC == 'Annual Wages' & .data$SCORE_TOTAL > 0) %>%
       dplyr::group_by(
-        across(
-          any_of(
+        dplyr::across(
+          dplyr::any_of(
             c('scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
               'METRIC', 'UNIT')))) %>%
-      dplyr::mutate(area_ag_total = sum(area),
-                    area_prop = area / area_ag_total) %>%
-      dplyr::summarize(SCORE_TOTAL = sum(SCORE_TOTAL * area_prop),
-                SCORE_TOTAL_SE = sqrt(sum((SCORE_TOTAL_SE * area_prop)^2)),
-                .groups = 'drop')
+      dplyr::mutate(
+        area_ag_total = sum(.data$area, na.rm = TRUE),
+        area_prop = .data$area / .data$area_ag_total) %>%
+      dplyr::summarize(
+        SCORE_TOTAL = sum(.data$SCORE_TOTAL * .data$area_prop, na.rm = TRUE),
+        SCORE_TOTAL_SE = sqrt(sum((.data$SCORE_TOTAL_SE * .data$area_prop)^2,
+                                  na.rm = TRUE)),
+        .groups = 'drop')
   )
+
+  if ('UNIT' %in% names(res)) {
+    res = res %>%
+      dplyr::mutate(UNIT = gsub('/ha', '', .data$UNIT))
+  }
+  return(res)
 }
