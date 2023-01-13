@@ -152,7 +152,7 @@ plot(rasters) #Note the orange wheat cells have changed to red riparian cells
 
 Use built-in functions to summarize the total area of each unique land cover class in one or more rasters. Options in the [sum_landcover()] function provide ways to mask out portions of the raster, and/or to summarize the total area by zone. Here, we summarize the total area of the example baseline and scenario rasters created above, and separately demonstrate summarizing the total area by zone. We first use the original `elev` raster to create zones arbitrarily defined by elevation.
 
-```{r}
+```{r landcover1}
 landcover_totals = DeltaMultipleBenefits::sum_landcover(
   rasters = rasters, 
   pixel_area = 0.09,
@@ -176,7 +176,7 @@ landcover_totals_zone = DeltaMultipleBenefits::sum_landcover(
 
 Then estimate the net change in the area of each land cover class between the baseline and scenario rasters. Note that the function `sum_change()` expects the data given to include the field `scenario` with at least one scenario named "baseline"; all other values in the `scenario` field will be assumed to represent an alternative scenario.
 
-```{r}
+```{r landcover2}
 landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
 
 # also works for version with zones
@@ -186,15 +186,54 @@ landcover_change_zone = DeltaMultipleBenefits::sum_change(landcover_totals_zone)
 
 # Step 3. Estimating the net change in non-spatial metrics
 
-data required: 
-- landcover-specific metrics (from Zenodo, or included in package)
-- baseline scores (and other scenarios for comparison) -- or just point to existing scenarios at CDFW BIOS for their own estimation
+We developed metrics representing several categories of benefits that are non-spatial, including: agricultural livelihoods, water quality, climate change resilience. These are non-spatial metrics in the sense that each land cover class has a defined value per unit area, regardless of where in the Delta the that land cover is located. Thus, they represent the mean value for that land cover class throughout the Delta, along with the uncertainty in that estimate (as the standard error of the mean). These non-spatial metrics are relatively straight-forward and simple in contrast to the distribution models used for estimating biodiversity support benefits (see below), which require incorporating information about the surrounding landscape as well as the specific land cover class in question to estimate whether it provides suitable habitat. However, estimating the net change in these non-spatial metrics also requires accounting for the uncertainty in the underlying estimates. The current non-spatial metrics are available to download via Zenodo, doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874), but are also included in this package. 
 
-- estimate net change
--- summarize total scores by landscape (sum_metrics)
--- net change (sum_change)
+First use the built-in function to combine total area of each land cover class in each raster landscape, as estimated above, with the per-unit-area metrics for each land cover class, and estimate the total score for each metric in each raster landscape. For most metrics, this involves multiplying the per-unit-area metrics by the total area of each land cover class and summing over the entire landscape. For Annual Wages (as part of the Agricultural Livelihoods category of benefits), it is the new weighted average wage across all agricultural hectares (i.e., those supporting agricultural jobs with an associated wage value), and for metrics in the Climate Change Resilience category, it is the new overall average score for resilience to Drought, Heat, or Flood on a scale of 1 (low resilience) to 10 (high resilience). Then, use the results to check the difference in each metric between our baseline and scenario landscapes.
 
+*Note: Because landcover totals include the roll-up total area of riparian and managed wetlands subclasses as well as the total area of each subclass individually, filter out the subclasses so they are not double-counted in the landscape totals. We will also get a warning message here, because our example landscapes do not include all land cover classes present in our metrics data.*
 
+```{r metrics}
+data(metrics, package = 'DeltaMultipleBenefits')
+head(metrics)
+
+scores = DeltaMultipleBenefits::sum_metrics(
+  metricdat = metrics %>%
+    dplyr::filter(!(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME))),
+  areadat = landcover_totals %>%
+    filter(!(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME)))) 
+
+scores_change = DeltaMultipleBenefits::sum_change(scores)
+```
+
+The total landscape scores and net changes can also be calculated by zone:
+
+```{r metrics_zone}
+scores_zone = DeltaMultipleBenefits::sum_metrics(
+  metricdat = metrics %>%
+    dplyr::filter(!(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME))),
+  areadat = landcover_totals_zone %>%
+    filter(!(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME)))) 
+
+scores_change_zone = DeltaMultipleBenefits::sum_change(scores_zone)
+```
+
+Visualize the resulting changes:
+```{r metrics_plot}
+scores_change %>% 
+  # invert water quality scores so a reduction in pesticide use is a net benefit
+  dplyr::mutate(
+    net_change = dplyr::if_else(
+      METRIC_CATEGORY == 'Water Quality',
+      -1 * net_change,
+      net_change)) %>% 
+  ggplot2::ggplot(ggplot2::aes(net_change, METRIC)) +
+  ggplot2::facet_wrap(~METRIC_CATEGORY, ncol = 1, scales = 'free_y') +
+  ggplot2::geom_col() + 
+  ggplot2::geom_errorbar(
+    ggplot2::aes(xmin = net_change - net_change_se,
+                 xmax = net_change + net_change_se), width=0.25) +
+  ggplot2::theme_minimal()
+```
 # Step 4. Estimating the net change in metrics informed by spatial models
 
 data required:
