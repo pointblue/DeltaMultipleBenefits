@@ -25,7 +25,7 @@
 
 reclassify_landcover = function(landscape_stack, SDM) {
   if (SDM == 'riparian') {
-    c(# sum of all riparian subclasses
+    res = c(# sum of all riparian subclasses
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) %>%
@@ -35,18 +35,6 @@ reclassify_landcover = function(landscape_stack, SDM) {
         landscape_stack,
         names(landscape_stack)[grepl('WETLAND', names(landscape_stack))]) %>%
         sum(na.rm = TRUE) %>% setNames('WETLAND'),
-      # rename riparian and wetland subclasses
-      terra::subset(landscape_stack,
-                    c('WETLAND_MANAGED_PERENNIAL',
-                      'RIPARIAN_FOREST_POFR',
-                      'RIPARIAN_FOREST_QULO',
-                      'RIPARIAN_FOREST_SALIX',
-                      'RIPARIAN_FOREST_MIXED',
-                      'RIPARIAN_SCRUB_MIXED',
-                      'RIPARIAN_SCRUB_SALIX',
-                      'RIPARIAN_SCRUB_INTRO')) %>%
-        setNames(c('PERM', 'POFR', 'QULO','SALIX', 'MIXEDFOREST',
-                   'MIXEDSHRUB', 'SALIXSHRUB', 'INTROSCRUB')),
       # sum of perennial crops, grassland/pasture, and other ag
       terra::subset(
         landscape_stack,
@@ -61,13 +49,58 @@ reclassify_landcover = function(landscape_stack, SDM) {
         landscape_stack,
         names(landscape_stack)[grepl('FIELD|GRAIN|ROW',
                                      names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>% setNames('AG'),
-      # keep rice, idle, urban, and water as-is
-      terra::subset(landscape_stack, c('RICE', 'IDLE', 'URBAN', 'WATER'))
+        sum(na.rm = TRUE) %>% setNames('AG')
     )
+    # rename riparian and wetland subclasses if present:
+    if ('WETLAND_MANAGED_PERENNIAL' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'WETLAND_MANAGED_PERENNIAL') %>%
+                setNames('PERM'))
+    }
+    if ('RIPARIAN_FOREST_POFR' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'RIPARIAN_FOREST_POFR') %>%
+                setNames('POFR'))
+    }
+    if ('RIPARIAN_FOREST_QULO' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'RIPARIAN_FOREST_QULO') %>%
+                setNames('QULO'))
+    }
+    if ('RIPARIAN_FOREST_SALIX' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'RIPARIAN_FOREST_SALIX') %>%
+                setNames('SALIX'))
+    }
+    if ('RIPARIAN_FOREST_MIXED' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'RIPARIAN_FOREST_MIXED') %>%
+                setNames('MIXEDFOREST'))
+    }
+    if ('RIPARIAN_SCRUB_MIXED' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'RIPARIAN_SCRUB_MIXED') %>%
+                setNames('MIXEDSHRUB'))
+    }
+    if ('RIPARIAN_SCRUB_SALIX' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'RIPARIAN_SCRUB_SALIX') %>%
+                setNames('SALIXSHRUB'))
+    }
+    if ('RIPARIAN_SCRUB_INTRO' %in% names(landscape_stack)) {
+      res = c(res,
+              terra::subset(landscape_stack, 'RIPARIAN_SCRUB_INTRO') %>%
+                setNames('INTROSCRUB'))
+    }
+    if (any(c('RICE', 'IDLE', 'URBAN', 'WATER') %in% names(landscape_stack))) {
+      res = c(res,
+              terra::subset(landscape_stack,
+                            which(names(landscape_stack) %in%
+                                    c('RICE', 'IDLE', 'URBAN', 'WATER'))))
+    }
 
   } else if (SDM == 'waterbird_fall') {
-    c(
+    res = c(
       # combine all riparian, perennial crops, managed wetlands,
       # other wetlands, and woodland/scrub
       terra::subset(
@@ -104,7 +137,7 @@ reclassify_landcover = function(landscape_stack, SDM) {
                    'row', 'field', 'water', 'dev', 'barren'))
     )
   } else if (SDM == 'waterbird_win') {
-    c(
+    res = c(
       # combine all riparian, perennial crops, managed wetlands,
       # other wetlands, and woodland/scrub
       terra::subset(
@@ -141,4 +174,5 @@ reclassify_landcover = function(landscape_stack, SDM) {
                    'row', 'field', 'water', 'dev', 'barren'))
     )
   }
+  return(res)
 }
