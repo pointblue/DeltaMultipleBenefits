@@ -22,7 +22,7 @@
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param SDM The name of intended species distribution model, for which
 #'   `landscape` will be reclassified, and corresponding name of the
-#'   subdirectory within `pathout/scenario_name` where results will be written:
+#'   subdirectory within `pathout/landscape_name` where results will be written:
 #'   `"riparian"`, `"waterbird_fall"`, or `"waterbird_win"`
 #' @param pathout Character string; Optional filepath to directory where output
 #'   rasters should be written; passed to [terra::writeRaster()]

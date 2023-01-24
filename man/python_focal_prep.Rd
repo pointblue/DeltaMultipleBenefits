@@ -20,7 +20,7 @@ python_focal_prep(
 
 \item{SDM}{The name of intended species distribution model, for which
 \code{landscape} will be reclassified, and corresponding name of the
-subdirectory within \code{pathout/scenario_name} where results will be written:
+subdirectory within \code{pathout/landscape_name} where results will be written:
 \code{"riparian"}, \code{"waterbird_fall"}, or \code{"waterbird_win"}}
 
 \item{pathout}{Character string; Optional filepath to directory where output
