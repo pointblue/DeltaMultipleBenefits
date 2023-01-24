@@ -6,7 +6,7 @@
 #'
 #' @details Function expects source files to be in a directory structure created
 #'   by [python_focal_run()], which is also used to inform the final processing
-#'   steps: `pathin/scenario_name/SDM/scale`. All .tif files in this source
+#'   steps: `pathin/landscape_name/SDM/scale`. All .tif files in this source
 #'   directory will be read in, and optionally masked by the raster at
 #'   `maskpath`. If `cover = TRUE`, pixels in `maskpath` with a value of 1 will
 #'   also be replaced with a value of 0, and passed to [terra::cover()] to fill
@@ -21,7 +21,7 @@
 #'   appended to the predictor name in the format "_2k", "_5k", or "_10k", as
 #'   expected by the waterbird SDMs.
 #'
-#'   The final rasters are then written to the directory `pathout/scenario`,
+#'   The final rasters are then written to the directory `pathout/landscape_name`,
 #'   which will be created if it doesn't yet exist.
 #'
 #' @param pathin,landscape_name Character strings defining the filepath
@@ -36,8 +36,8 @@
 #' @param pathout Character string; Filepath to directory where output rasters
 #'   should be written; passed to [terra::writeRaster()]
 #' @param overwrite Logical; passed to [terra::writeRaster()]
-#' @param maskpath Optional filepath to a raster that should be used to mask the
-#'   output, e.g. a study area boundary
+#' @param mask Optional `SpatRaster` or character string giving the filepath to
+#'   a raster that should be used to mask the output, e.g. a study area boundary
 #' @param cover Logical; default is `FALSE`. If `TRUE`, `maskpath` must not be
 #'   NULL; See Details.
 #'
@@ -50,7 +50,7 @@
 #' # See vignette
 #'
 python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
-                                 overwrite = FALSE, maskpath = NULL,
+                                 overwrite = FALSE, mask = NULL,
                                  cover = FALSE) {
 
   # troubleshooting
@@ -62,7 +62,11 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
                    pattern = '.tif$', full.names = TRUE) %>% terra::rast()
 
   if (!is.null(mask)) {
-    mask = terra::rast(maskpath)
+    if (is(mask, 'character')) {
+      mask = terra::rast(mask)
+    } else if (!is(mask, 'SpatRaster')) {
+      stop('function expects "mask" to be either a character string or a SpatRaster')
+    }
     dat = terra::mask(dat, mask)
 
     if (cover) { # fill NAs within mask boundary with zero (e.g. pfld)

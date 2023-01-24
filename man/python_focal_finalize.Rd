@@ -11,7 +11,7 @@ python_focal_finalize(
   scale,
   pathout,
   overwrite = FALSE,
-  maskpath = NULL,
+  mask = NULL,
   cover = FALSE
 )
 }
@@ -33,8 +33,8 @@ should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 
-\item{maskpath}{Optional filepath to a raster that should be used to mask the
-output, e.g. a study area boundary}
+\item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
+a raster that should be used to mask the output, e.g. a study area boundary}
 
 \item{cover}{Logical; default is \code{FALSE}. If \code{TRUE}, \code{maskpath} must not be
 NULL; See Details.}
@@ -51,7 +51,7 @@ another raster and fill missing values with zero.
 \details{
 Function expects source files to be in a directory structure created
 by \code{\link[=python_focal_run]{python_focal_run()}}, which is also used to inform the final processing
-steps: \code{pathin/scenario_name/SDM/scale}. All .tif files in this source
+steps: \code{pathin/landscape_name/SDM/scale}. All .tif files in this source
 directory will be read in, and optionally masked by the raster at
 \code{maskpath}. If \code{cover = TRUE}, pixels in \code{maskpath} with a value of 1 will
 also be replaced with a value of 0, and passed to \code{\link[terra:cover]{terra::cover()}} to fill
@@ -66,7 +66,7 @@ If \code{SDM = "waterbird_fall"} or \code{SDM = "waterbird_win"}, the \code{scal
 appended to the predictor name in the format "_2k", "_5k", or "_10k", as
 expected by the waterbird SDMs.
 
-The final rasters are then written to the directory \code{pathout/scenario},
+The final rasters are then written to the directory \code{pathout/landscape_name},
 which will be created if it doesn't yet exist.
 }
 \examples{
