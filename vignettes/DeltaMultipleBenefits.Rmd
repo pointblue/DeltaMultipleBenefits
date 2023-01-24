@@ -104,10 +104,12 @@ plot(z)
 
 ## Working with existing rasters
 
-If the new landscape scenario is in a raster format already, the values encoded can similarly be translated to the values in the existing land cover classification scheme. Let's use the `elev` data set from the `terra` package, treating the elevation data as if it were instead land cover classifications. We'll create two versions of the raster, using one to act as our "baseline" landscape and the second to act as our scenario of landscape change. As above, we'll assign factor levels and color coding to each one to assist with plotting.
+If the new landscape scenario is in a raster format already, the values encoded can similarly be translated to the values in the existing land cover classification scheme. Let's use the `elev` data set from the `terra` package, treating the elevation data as if it were instead land cover classifications. We'll convert it to the same coordinate reference system and approximate resolution as the original rasters used in this project, and we'll create two versions of the raster, using one to act as our "baseline" landscape and the second to act as our scenario of landscape change. As above, we'll assign factor levels and color coding to each one to assist with plotting.
 
 ```{r classify_raster}
-elev <- terra::rast(system.file("ex/elev.tif", package = "terra"))
+elev <- terra::rast(system.file("ex/elev.tif", package = "terra")) %>% 
+  terra::project(y = 'epsg:32610') %>% 
+  terra::disagg(fact = res(.)/30)
 
 # treat elevation values as land cover classifications, and assign to land cover codes in the land cover "key"
 baseline <- elev %>% 
@@ -190,7 +192,7 @@ We developed metrics representing several categories of benefits that are non-sp
 
 First use the built-in function to combine total area of each land cover class in each raster landscape, as estimated above, with the per-unit-area metrics for each land cover class, and estimate the total score for each metric in each raster landscape. For most metrics, this involves multiplying the per-unit-area metrics by the total area of each land cover class and summing over the entire landscape. For Annual Wages (as part of the Agricultural Livelihoods category of benefits), it is the new weighted average wage across all agricultural hectares (i.e., those supporting agricultural jobs with an associated wage value), and for metrics in the Climate Change Resilience category, it is the new overall average score for resilience to Drought, Heat, or Flood on a scale of 1 (low resilience) to 10 (high resilience). Then, use the results to check the difference in each metric between our baseline and scenario landscapes.
 
-*Note: Because landcover totals include the roll-up total area of riparian and managed wetlands subclasses as well as the total area of each subclass individually, filter out the subclasses so they are not double-counted in the landscape totals. We will also get a warning message here, because our example landscapes do not include all land cover classes present in our metrics data.*
+*Note: Because landcover totals include the roll-up total area of riparian and managed wetlands subclasses as well as the total area of each subclass individually, we filter out the subclasses so they are not double-counted in the landscape totals. We will also get a warning message here, because our example landscapes do not include all land cover classes present in our metrics data.*
 
 ```{r metrics}
 data(metrics, package = 'DeltaMultipleBenefits')
@@ -234,7 +236,73 @@ scores_change %>%
                  xmax = net_change + net_change_se), width=0.25) +
   ggplot2::theme_minimal()
 ```
+
 # Step 4. Estimating the net change in metrics informed by spatial models
+
+In addition to the non-spatial metrics evaluated above, the scenarios can be used to predict values for metrics that depend on the spatial configuration of the landscape. Currently, the only spatial models supported are distribution models for riparian landbird species and groups of waterbird species that predict the probability of their presence in a given location based on the local land cover as well as information about the surrounding landscape. The development of these models is described in a manuscript (link TBD), and the models are available to download via Zenodo, doi:[10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945). (They are a bit too large to include in this package.)
+
+## Riparian landbirds--------
+Beginning with the models for riparian landbird species, first use built-in functions to generate focal statistics for each pixel in the scenario raster that represent features of the landscape within a certain distance of each survey location. The steps are to: (1) prepare the scenario raster for generating focal stats, (2) use Python to run the focal stats, and (3) finalize the predictors for use with the models. For ease of use with Python, each of these functions are intended to write to or read from a directory defined in the functions arguments, rather than work with rasters in memory.
+
+The first step separates the scenario raster into separate layers for each distinct land cover class, and writes them to a directory located at: `pathout/landscape_name/SDM`. If the directory does not already exist, it will be created. In addition, this function calls the function `reclassify_landcover` to aggregate and rename the land cover classes as needed, depending on the value of `SDM`. The default is for the resulting raster layers to have a `1` everywhere the land cover class is present, and a `0` otherwise. *Note: the function will expect the values in `landscape` to have labels assigned, for use in defining the names of the new layers.*
+
+```{r riparian1, eval = FALSE}
+DeltaMultipleBenefits::python_focal_prep(landscape = rasters$scenario,
+                                         landscape_name = 'scenario_example',
+                                         SDM = 'riparian',
+                                         pathout = 'SDM_predictors/cover',
+                                         overwrite = TRUE)
+```
+
+The second step is to generate focal stats for each of the raster layers located at `pathin/landscape_name/SDM` (generated from the previous step), and write them to `pathout/landscape_name/SDM/scale`. *Note that `pathin` in this function should be the same as `pathout` in the previous step, and that `landscape_name` and `SDM` should be identical.*
+
+This function currently requires Python to be installed on your system and specifically arcpy with the Spatial Analyst extension; it will use the R package `reticulate` to run a simple python script for generating focal statistics for each pixel in the scenario raster layer. Although these statistics can be generated entirely in R, Python is much faster. 
+
+By specifying the function `SUM`, the result will represent the total number of cells of each land cover class within a distance of each pixel defined by the `scale` argument. The riparian landbird models require focal stats summarizing the landscape within 50m and within 2000m, so we can run this function twice with two different `scale` arguments, or use the `purrr::map` function:
+
+```{r riparian2, eval = FALSE}
+purrr::map(c('50', '2000'),
+           DeltaMultipleBenefits::python_focal_run,
+           pathin = 'SDM_predictors/cover',
+           landscape_name = 'scenario_example',
+           SDM = 'riparian',
+           scale = .x,
+           pathout = 'SDM_predictors/focal_stats',
+           fun = 'SUM')
+```
+
+The third step is to finalize the results of the focal stats in the previous step to generate predictors for use with the riparian distribution models. For `SDM = 'riparian'`, this will result in converting the results of the previous step, which provide the total number of cells of each land cover class, to a proportion of the total number of cells and appending the `scale` value to the predictor name as `_50` or `_2000`, as expected by the original model. This function expects the input rasters to be located in `pathin/landscape_name/SDM/scale`, and the results are written to the directory `pathout/landscape_name`.
+
+As above, we can run this function twice with two different `scale` arguments, or use the `purrr::map` function. Also as above, note that `pathin` in this function should be the same as `pathout` in the previous step, and that `landscape_name` and `SDM` should be identical. 
+
+```{r riparian3, eval = FALSE}
+purrr::map(c('50', '2000'),
+           DeltaMultipleBenefits::python_focal_finalize,
+           pathin = 'SDM_predictors/focal_stats',
+           landscape_name = 'scenario_example',
+           SDM = 'riparian',
+           scale = .x,
+           pathout = 'SDM_predictors/predictors_riparian',
+           overwrite = TRUE)
+```
+
+
+```{r riparian4, eval = FALSE}
+# riparian
+purrr::map(names(scenarios)[-which(grepl('win', names(scenarios)))],
+           ~DeltaMultipleBenefits::fit_SDM(
+             pathin = 'GIS/landscape_rasters/predictors_riparian',
+             landscape_name = .x,
+             modlist = BRT_riparian,
+             constants = data.frame(region = 1,
+                                    area.ha = 3.141593),
+             unsuitable = 90, #open water
+             landscape = scenarios[[.x]] %>%
+               mask(rast('GIS/boundaries/delta.tif')),
+             pathout = 'GIS/prediction_rasters/riparian',
+             overwrite = TRUE
+           ))
+```
 
 data required:
 - species models and spp key (in R package and/or Zenodo?)
