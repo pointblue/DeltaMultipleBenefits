@@ -7,7 +7,7 @@
 sum_habitat(
   pathin,
   zonepath = NULL,
-  subtype = "distributions",
+  subtype = NULL,
   rollup = TRUE,
   keypath = NULL,
   scale = NULL
@@ -22,8 +22,9 @@ running \code{\link[=fit_SDM]{fit_SDM()}} or \code{\link[=transform_SDM]{transfo
 \item{zonepath}{Optional character string defining the filepath to a raster
 encoding zones within which pixel values should be summarized}
 
-\item{subtype}{Character string appended to the field METRIC_SUBTYPE, such as
-for distinguishing probability of presence from presence/absence}
+\item{subtype}{Optional character string appended to the field
+METRIC_SUBTYPE, such as for distinguishing probability of presence from
+presence/absence}
 
 \item{rollup}{Logical; If \code{TRUE} (default), summarize total habitat across
 all species/groups by set of SDMs}

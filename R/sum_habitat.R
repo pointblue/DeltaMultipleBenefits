@@ -25,8 +25,9 @@
 #'   running [fit_SDM()] or [transform_SDM()]
 #' @param zonepath Optional character string defining the filepath to a raster
 #'   encoding zones within which pixel values should be summarized
-#' @param subtype Character string appended to the field METRIC_SUBTYPE, such as
-#'   for distinguishing probability of presence from presence/absence
+#' @param subtype Optional character string appended to the field
+#'   METRIC_SUBTYPE, such as for distinguishing probability of presence from
+#'   presence/absence
 #' @param rollup Logical; If `TRUE` (default), summarize total habitat across
 #'   all species/groups by set of SDMs
 #' @param keypath Optional filepath passed to [readr::read_csv()] translating
@@ -41,7 +42,7 @@
 #' @examples
 #' # See vignette
 
-sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
+sum_habitat = function(pathin, zonepath = NULL, subtype = NULL,
                        rollup = TRUE, keypath = NULL, scale = NULL) {
   fl = list.files(pathin, '.tif$', recursive = TRUE, full.names = TRUE) %>%
     rlang::set_names()
@@ -74,7 +75,7 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
     # first find max value across all rasters for a scenario and SDM, then sum over landscape
 
     totals = purrr::pmap_df(
-      res %>% dplyr::select(SDM, scenario) %>% dplyr::distinct(),
+      res %>% dplyr::select(.data$SDM, .data$scenario) %>% dplyr::distinct(),
       function(SDM, scenario) {
         combined = list.files(file.path(pathin, SDM, scenario),
                               '.tif$', full.names = TRUE) %>%
@@ -89,9 +90,11 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
         }
       }) %>%
       dplyr::bind_cols(res %>%
-                         dplyr::select(SDM, dplyr::any_of('ZONE'), scenario) %>%
-                         dplyr::distinct() %>% select(-any_of('ZONE'))) %>%
-      mutate(spp = 'TOTAL')
+                         dplyr::select(.data$SDM, dplyr::any_of('ZONE'),
+                                       .data$scenario) %>%
+                         dplyr::distinct() %>%
+                         dplyr::select(-dplyr::any_of('ZONE'))) %>%
+      dplyr::mutate(spp = 'TOTAL')
 
       res = dplyr::bind_rows(res, totals)
 
@@ -101,30 +104,32 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = 'distributions',
     res = res %>%
       dplyr::left_join(
         readr::read_csv(keypath, col_types = readr::cols()) %>%
-          dplyr::select(spp, METRIC = label),
+          dplyr::select(.data$spp, METRIC = .data$label),
         by = 'spp')
   } else {
-    res = dplyr::rename(res, METRIC = spp)
+    res = dplyr::rename(res, METRIC = .data$spp)
   }
 
   res = res %>%
     dplyr::mutate(
       METRIC_CATEGORY = 'Biodiversity Support',
       METRIC_SUBTYPE = dplyr::case_when(
-        SDM == 'riparian' ~ paste('Riparian landbird', subtype),
-        SDM %in% c('waterbird_fall', 'waterbird_win') ~
-          paste('Waterbird', subtype)),
+        SDM == 'riparian' ~ 'Riparian landbird',
+        SDM %in% c('waterbird_fall', 'waterbird_win') ~ 'Waterbird'),
+      METRIC_SUBTYPE = dplyr::if_else(!is.null(subtype),
+                                      paste(.data$METRIC_SUBTYPE, subtype),
+                                      .data$METRIC_SUBTYPE),
       METRIC = dplyr::case_when(
-        SDM == 'waterbird_fall' ~ paste0(METRIC, ' (fall)'),
-        SDM == 'waterbird_win' ~ paste0(METRIC, ' (winter)'),
+        SDM == 'waterbird_fall' ~ paste0(.data$METRIC, ' (fall)'),
+        SDM == 'waterbird_win' ~ paste0(.data$METRIC, ' (winter)'),
         TRUE ~ METRIC),
       SCORE_TOTAL = value) %>%
-    dplyr::select(scenario, any_of('ZONE'), METRIC_CATEGORY, METRIC_SUBTYPE,
-                  METRIC, SCORE_TOTAL)
+    dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
+                  .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
 
   if (!is.null(scale)) {
     res = res %>%
-      mutate(SCORE_TOTAL = SCORE_TOTAL * scale)
+      dplyr::mutate(SCORE_TOTAL = .data$SCORE_TOTAL * scale)
   }
 
   return(res)
