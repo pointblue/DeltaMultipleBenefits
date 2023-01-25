@@ -6,10 +6,10 @@
 \usage{
 sum_habitat(
   pathin,
-  zonepath = NULL,
+  zones = NULL,
   subtype = NULL,
   rollup = TRUE,
-  keypath = NULL,
+  key = NULL,
   scale = NULL
 )
 }
@@ -19,8 +19,8 @@ directory containing the predicted presence/absence or probability of
 presence from species distribution models, such as those created from
 running \code{\link[=fit_SDM]{fit_SDM()}} or \code{\link[=transform_SDM]{transform_SDM()}}}
 
-\item{zonepath}{Optional character string defining the filepath to a raster
-encoding zones within which pixel values should be summarized}
+\item{zones}{Optional \code{SpatRaster} or character string giving the filepath to
+a raster encoding zones within which pixel values should be summarized}
 
 \item{subtype}{Optional character string appended to the field
 METRIC_SUBTYPE, such as for distinguishing probability of presence from
@@ -29,9 +29,10 @@ presence/absence}
 \item{rollup}{Logical; If \code{TRUE} (default), summarize total habitat across
 all species/groups by set of SDMs}
 
-\item{keypath}{Optional filepath passed to \code{\link[readr:read_delim]{readr::read_csv()}} translating
-the individual species names as encoded in the file names in pathin to
-METRIC names in the output table}
+\item{key}{Optional tibble, dataframe, or character string defining the
+filepath passed to \code{\link[readr:read_delim]{readr::read_csv()}}, used to translate the individual
+species names as encoded in the file names in pathin to readable METRIC
+names in the output table; see Details}
 
 \item{scale}{Optional value by which to scale the results; see Details}
 }
@@ -50,10 +51,10 @@ raster found in \code{pathin} and any subdirectories. The file structure within
 \code{landscape_name}. This function is designed to efficiently process multiple
 rasters located in the \code{pathin} directory at once.
 
-If provided, \code{keypath} should be a CSV containing the fields \code{spp} and
-\code{label}, used for converting the filenames of the rasters within \code{pathin}
-to a more readable label, which will be renamed \code{METRIC} in the final
-output.
+If provided, \code{key} should refer to a tibble, dataframe, or filepath to a
+CSV containing the fields \code{spp} and \code{label}, used for converting the
+filenames of the rasters within \code{pathin} to a more readable label, which
+will be renamed \code{METRIC} in the final output.
 
 If provided, the sum of all pixel values will be multiplied by \code{scale}. For
 example, to rescale the total in terms of the total area, enter the area of

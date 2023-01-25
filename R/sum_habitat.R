@@ -10,10 +10,10 @@
 #'   `landscape_name`. This function is designed to efficiently process multiple
 #'   rasters located in the `pathin` directory at once.
 #'
-#'   If provided, `keypath` should be a CSV containing the fields `spp` and
-#'   `label`, used for converting the filenames of the rasters within `pathin`
-#'   to a more readable label, which will be renamed `METRIC` in the final
-#'   output.
+#'   If provided, `key` should refer to a tibble, dataframe, or filepath to a
+#'   CSV containing the fields `spp` and `label`, used for converting the
+#'   filenames of the rasters within `pathin` to a more readable label, which
+#'   will be renamed `METRIC` in the final output.
 #'
 #'   If provided, the sum of all pixel values will be multiplied by `scale`. For
 #'   example, to rescale the total in terms of the total area, enter the area of
@@ -23,31 +23,35 @@
 #'   directory containing the predicted presence/absence or probability of
 #'   presence from species distribution models, such as those created from
 #'   running [fit_SDM()] or [transform_SDM()]
-#' @param zonepath Optional character string defining the filepath to a raster
-#'   encoding zones within which pixel values should be summarized
+#' @param zones Optional `SpatRaster` or character string giving the filepath to
+#'   a raster encoding zones within which pixel values should be summarized
 #' @param subtype Optional character string appended to the field
 #'   METRIC_SUBTYPE, such as for distinguishing probability of presence from
 #'   presence/absence
 #' @param rollup Logical; If `TRUE` (default), summarize total habitat across
 #'   all species/groups by set of SDMs
-#' @param keypath Optional filepath passed to [readr::read_csv()] translating
-#'   the individual species names as encoded in the file names in pathin to
-#'   METRIC names in the output table
+#' @param key Optional tibble, dataframe, or character string defining the
+#'   filepath passed to [readr::read_csv()], used to translate the individual
+#'   species names as encoded in the file names in pathin to readable METRIC
+#'   names in the output table; see Details
 #' @param scale Optional value by which to scale the results; see Details
 #'
 #' @return tibble
 #' @seealso [fit_SDM()], [transform_SDM()]
+#' @importFrom methods is
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
 #' # See vignette
 
-sum_habitat = function(pathin, zonepath = NULL, subtype = NULL,
-                       rollup = TRUE, keypath = NULL, scale = NULL) {
+sum_habitat = function(pathin, zones = NULL, subtype = NULL,
+                       rollup = TRUE, key = NULL, scale = NULL) {
   fl = list.files(pathin, '.tif$', recursive = TRUE, full.names = TRUE) %>%
     rlang::set_names()
 
-  if (is.null(zonepath)) {
+  if (is.null(zones)) {
     # sum total
     res = purrr::map_df(
       fl,
@@ -55,11 +59,18 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = NULL,
         dplyr::as_tibble(),
       .id = 'pathin')
   } else {
+
+    if (is(zones, 'character')) {
+      zones = terra::rast(zones)
+    } else if (!is(zones, 'SpatRaster')) {
+      stop('function expects "zones" to be either a character string or a SpatRaster')
+    }
+
     # zonal total
     res = purrr::map_df(
       fl,
       ~terra::rast(.x) %>%
-        terra::zonal(terra::rast(zonepath), 'sum', na.rm = TRUE) %>%
+        terra::zonal(zones, 'sum', na.rm = TRUE) %>%
         dplyr::as_tibble() %>%
         rlang::set_names(c('ZONE', 'value')),
       .id = 'pathin'
@@ -80,11 +91,11 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = NULL,
         combined = list.files(file.path(pathin, SDM, scenario),
                               '.tif$', full.names = TRUE) %>%
           terra::rast() %>% max(na.rm = TRUE)
-        if (is.null(zonepath)) {
+        if (is.null(zones)) {
           terra::values(combined) %>% sum(na.rm = TRUE) %>%
             dplyr::as_tibble()
         } else {
-          terra::zonal(combined, terra::rast(zonepath), 'sum', na.rm = TRUE) %>%
+          terra::zonal(combined, zones, 'sum', na.rm = TRUE) %>%
             dplyr::as_tibble() %>%
             rlang::set_names(c('ZONE', 'value'))
         }
@@ -100,12 +111,16 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = NULL,
 
   }
 
-  if (!is.null(keypath)) {
+  if (!is.null(key)) {
+    if (is(key, 'character')) {
+      key = readr::read_csv(key, col_types = readr::cols())
+    } else if (!(is(key, 'tbl') | is(key, 'data.frame'))) {
+      stop('function expects "key" to be a character string, tibble, or data.frame')
+    }
+
     res = res %>%
-      dplyr::left_join(
-        readr::read_csv(keypath, col_types = readr::cols()) %>%
-          dplyr::select(.data$spp, METRIC = .data$label),
-        by = 'spp')
+      dplyr::left_join(key %>% dplyr::select(.data$spp, METRIC = .data$label),
+                       by = 'spp')
   } else {
     res = dplyr::rename(res, METRIC = .data$spp)
   }
@@ -123,7 +138,7 @@ sum_habitat = function(pathin, zonepath = NULL, subtype = NULL,
         SDM == 'waterbird_fall' ~ paste0(.data$METRIC, ' (fall)'),
         SDM == 'waterbird_win' ~ paste0(.data$METRIC, ' (winter)'),
         TRUE ~ METRIC),
-      SCORE_TOTAL = value) %>%
+      SCORE_TOTAL = .data$value) %>%
     dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
                   .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
 
