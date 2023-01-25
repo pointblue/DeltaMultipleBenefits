@@ -241,7 +241,9 @@ scores_change %>%
 
 In addition to the non-spatial metrics evaluated above, the scenarios can be used to predict values for metrics that depend on the spatial configuration of the landscape. Currently, the only spatial models supported are distribution models for riparian landbird species and groups of waterbird species that predict the probability of their presence in a given location based on the local land cover as well as information about the surrounding landscape. The development of these models is described in a manuscript (link TBD), and the models are available to download via Zenodo, doi:[10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945). (They are a bit too large to include in this package.)
 
-## Riparian landbirds--------
+## Riparian landbirds
+
+### Prepare model predictors
 Beginning with the models for riparian landbird species, first use built-in functions to generate focal statistics for each pixel in the scenario raster that represent features of the landscape within a certain distance of each survey location. The steps are to: (1) prepare the scenario raster for generating focal stats, (2) use Python to run the focal stats, and (3) finalize the predictors for use with the models. For ease of use with Python, each of these functions are intended to write to or read from a directory defined in the functions arguments, rather than work with rasters in memory.
 
 The first step separates the scenario raster into separate layers for each distinct land cover class, and writes them to a directory located at: `pathout/landscape_name/SDM`. If the directory does not already exist, it will be created. In addition, this function calls the function `reclassify_landcover` to aggregate and rename the land cover classes as needed, depending on the value of `SDM`. The default is for the resulting raster layers to have a `1` everywhere the land cover class is present, and a `0` otherwise. *Note: the function will expect the values in `landscape` to have labels assigned, for use in defining the names of the new layers.*
@@ -256,19 +258,24 @@ DeltaMultipleBenefits::python_focal_prep(landscape = rasters$scenario,
 
 The second step is to generate focal stats for each of the raster layers located at `pathin/landscape_name/SDM` (generated from the previous step), and write them to `pathout/landscape_name/SDM/scale`. *Note that `pathin` in this function should be the same as `pathout` in the previous step, and that `landscape_name` and `SDM` should be identical.*
 
-This function currently requires Python to be installed on your system and specifically arcpy with the Spatial Analyst extension; it will use the R package `reticulate` to run a simple python script for generating focal statistics for each pixel in the scenario raster layer. Although these statistics can be generated entirely in R, Python is much faster. 
+This function currently requires Python to be installed on your system and specifically `arcpy` with the Spatial Analyst extension; it will use the R package `reticulate` to run a simple python script for generating focal statistics for each pixel in the scenario raster layer. Although these statistics can be generated entirely in R, Python is much faster. To ensure the `arcpy` can be found, you may need to specify which version of Python to use. For example (change the filepath as needed to reflect your system):
+
+```{r python, eval = FALSE}
+reticulate::use_python('C:/Python27/ArcGISx6410.8/python.exe', required = TRUE)
+```
 
 By specifying the function `SUM`, the result will represent the total number of cells of each land cover class within a distance of each pixel defined by the `scale` argument. The riparian landbird models require focal stats summarizing the landscape within 50m and within 2000m, so we can run this function twice with two different `scale` arguments, or use the `purrr::map` function:
 
 ```{r riparian2, eval = FALSE}
 purrr::map(c('50', '2000'),
-           DeltaMultipleBenefits::python_focal_run,
-           pathin = 'SDM_predictors/cover',
-           landscape_name = 'scenario_example',
-           SDM = 'riparian',
-           scale = .x,
-           pathout = 'SDM_predictors/focal_stats',
-           fun = 'SUM')
+           ~DeltaMultipleBenefits::python_focal_run(
+             pathin = 'SDM_predictors/cover',
+             landscape_name = 'scenario_example',
+             SDM = 'riparian',
+             scale = .x,
+             pathout = 'SDM_predictors/focal_stats',
+             fun = 'SUM'
+           ))
 ```
 
 The third step is to finalize the results of the focal stats in the previous step to generate predictors for use with the riparian distribution models. For `SDM = 'riparian'`, this will result in converting the results of the previous step, which provide the total number of cells of each land cover class, to a proportion of the total number of cells and appending the `scale` value to the predictor name as `_50` or `_2000`, as expected by the original model. This function expects the input rasters to be located in `pathin/landscape_name/SDM/scale`, and the results are written to the directory `pathout/landscape_name`.
@@ -277,49 +284,121 @@ As above, we can run this function twice with two different `scale` arguments, o
 
 ```{r riparian3, eval = FALSE}
 purrr::map(c('50', '2000'),
-           DeltaMultipleBenefits::python_focal_finalize,
-           pathin = 'SDM_predictors/focal_stats',
-           landscape_name = 'scenario_example',
-           SDM = 'riparian',
-           scale = .x,
-           pathout = 'SDM_predictors/predictors_riparian',
-           overwrite = TRUE)
-```
-
-
-```{r riparian4, eval = FALSE}
-# riparian
-purrr::map(names(scenarios)[-which(grepl('win', names(scenarios)))],
-           ~DeltaMultipleBenefits::fit_SDM(
-             pathin = 'GIS/landscape_rasters/predictors_riparian',
-             landscape_name = .x,
-             modlist = BRT_riparian,
-             constants = data.frame(region = 1,
-                                    area.ha = 3.141593),
-             unsuitable = 90, #open water
-             landscape = scenarios[[.x]] %>%
-               mask(rast('GIS/boundaries/delta.tif')),
-             pathout = 'GIS/prediction_rasters/riparian',
+           ~DeltaMultipleBenefits::python_focal_finalize(
+             pathin = 'SDM_predictors/focal_stats',
+             landscape_name = 'scenario_example',
+             SDM = 'riparian',
+             scale = .x,
+             mask = NULL,
+             pathout = 'SDM_predictors/predictors_riparian',
              overwrite = TRUE
            ))
 ```
 
-data required:
-- species models and spp key (in R package and/or Zenodo?)
-- pwater
-- baseline scores (and other scenario scores for comparison)
+### Generate model predictions
 
+Next, draw on the finalized predictors created in the last step to fit the distribution models for each of the 9 riparian landbird species. As above, note that `pathin` in this function should be the same as `pathout` in the previous step, and that `landscape_name` should be identical. The `modlist` should refer to an R object containing a list of the riparian landbird models, downloaded via Zenodo, doi:[10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945) and loaded into the R environment. Because the original models included `area.ha`, referring to the survey effort, and `region`, referring to whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1), these constant values must be passed in as a dataframe. In addition, we considered open water to be unsuitable land cover *a priori*, and so we specified `unsuitable = 90` (the land cover class value for open water), which will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used as a mask to replace the predicted values from the model. 
+
+Thus, the original call to this function in our analyses for the Delta looked like this:
+```{r riparian4, eval = FALSE}
+
+DeltaMultipleBenefits::fit_SDM(pathin = 'SDM_predictors/predictors_riparian',
+                               landscape_name = 'scenario_example',
+                               modlist = BRT_riparian,
+                               constants = data.frame(region = 1,
+                                                      area.ha = 3.141593),
+                               unsuitable = 90, #open water
+                               landscape = rasters$scenario,
+                               pathout = 'SDM_results/riparian',
+                               overwrite = TRUE)
+```
+
+However, this code will not work correctly on our example scenario for two reasons: (1) the unsuitable land cover class value of 90 does not exist in our example scenario, and so will result in a mask landscape of all NA values, throwing an error, and (2) our example scenario does not include ALL of the predictors required in the original distribution model, including all land cover classes, climate variables, and distance to stream. To predict riparian landbird distributions for our example landscape, we need to include all required predictors, either as additional raster files in the `pathin` directory, or as constant values. For this example, we will treat the missing landcover classes as truly absent from the landscape, with a value of 0 for every pixel, and we will also assume the climate and distance to stream does not vary across our example landscape. We will also refrain from specifying any of these land covers as unsuitable *a priori*. 
+
+*Note 1: Any predictor provided as a constant will take precedence over any predictor provided as a raster in the `pathin` directory.*
+
+*Note 2: In this example, we have included only one distribution model in `modlist` for speed, but the function is designed to accept and predict distributions for all 9 models at once.*
+
+```{r riparian5, eval = FALSE}
+# riparian
+DeltaMultipleBenefits::fit_SDM(pathin = 'SDM_predictors/predictors_riparian',
+                               landscape_name = 'scenario_example',
+                               modlist = BRT_riparian[1],
+                               constants = data.frame(region = 1,
+                                                      area.ha = 3.141593,
+                                                      streamdist = 20,
+                                                      bio_1 = 15.5,
+                                                      bio_12 = 400,
+                                                      SALIX_50 = 0,
+                                                      MIXEDFOREST_50 = 0,
+                                                      SALIXSHRUB_50 = 0,
+                                                      MIXEDSHRUB_50 = 0,
+                                                      INTROSCRUB_50 = 0,
+                                                      WATER_50 = 0,
+                                                      URBAN_50 = 0,
+                                                      IDLE_50 = 0,
+                                                      RICE_50 = 0,
+                                                      SALIX_2000 = 0,
+                                                      MIXEDFOREST_2000 = 0,
+                                                      SALIXSHRUB_2000 = 0,
+                                                      MIXEDSHRUB_2000 = 0,
+                                                      INTROSCRUB_2000 = 0,
+                                                      WATER_2000 = 0,
+                                                      IDLE_2000 = 0,
+                                                      URBAN_2000 = 0,
+                                                      RICE_2000 = 0),
+                               # unsuitable = 90, #open water
+                               # landscape = rasters$scenario,
+                               pathout = 'SDM_results/riparian',
+                               overwrite = TRUE)
+```
+
+In addition, because the riparian landbird species varied in their prevalence across the landscape and in the precision of the distribution models, different thresholds in their predicted probability of presence are useful for separating locations where they are most likely to be present or absent. Therefore, to estimate the total area of suitable habitat for each species, and for riparian landbirds collectively, it is useful to convert the continuous probabilities of species presence predicted in the previous step to binary predictions of presence or absence. Again, this function will write new rasters to a new directory; `pathin` in this function should be the same as `pathout` in the previous step, and `landscape_name` should be identical. We still need the original list of models to access embedded detection data from which thresholds can be calculated. Here, as in our original analysis, we use the statistic `equal_sens_spec` to identify the threshold value for the predicted probability of presence at which specificity (the probability of correctly predicting species absence) and sensitivity (the probability of correctly predicting species presence) are equal, but other statistics can be used as in `dismo::threshold`.
+
+```{r riparian6, eval = FALSE}
+DeltaMultipleBenefits::transform_SDM(
+  modlist = BRT_riparian[1],
+  pathin = 'SDM_results/riparian',
+  landscape_name = 'scenario_example',
+  stat = 'equal_sens_spec',
+  pathout = 'SDM_results_threshold/riparian',
+  overwrite = TRUE)
+```
+
+### Estimate the net change in habitat
+- summarize total habitat by landscape (sum_habitat)
+- net change (sum_change)
+
+## Waterbirds
+
+### Prepare model predictors
 steps:
 - generate predictors for spatial models: 
 -- waterbirds: covertype (update_covertype), pwater (update_pwater), droost (update_roosts, python_dist)
 -- focal stats: python_focal_prep (by SDM type, waterbirds require pwater as an input; calls reclassify_landcover), python_focal_run (waterbirds rquire SUM area and MEAN pfld)
 -- finalize predictors: python_focal_finalize (by SDM type)
 
-- fit spatial models and produce predicted distributions (with/without thresholds)
---fit_SDM (by set)
---transform_SDM (threshold)
+### Generate model predictions
+-fit_SDM (by set)
+-transform_SDM (threshold)
 
-- estimate net change
--- summarize total habitat by landscape (sum_habitat)
--- net change (sum_change)
+### Estimate the net change in habitat
+- summarize total habitat by landscape (sum_habitat)
+- net change (sum_change)
+
+
+
+additional data required:
+- species models and spp key (in R package and/or Zenodo?)
+- pwater
+- streamdist
+- bio_1
+- bio_12
+- droost
+- baseline scores (and other scenario scores for comparison)
+
+
+
+
+
 
