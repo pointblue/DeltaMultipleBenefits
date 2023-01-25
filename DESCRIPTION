@@ -2,6 +2,7 @@ Package: DeltaMultipleBenefits
 Title: Projecting the Multiple Benefits of Land Cover Change in the
     Sacramento-San Joaquin River Delta
 Version: 0.0.0.9000
+Year: 2023
 Authors@R: 
     person("Kristen", "Dybala", , "kdybala@pointblue.org", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2787-4600"))
@@ -39,4 +40,5 @@ Imports:
     tidyr,
     magrittr,
     methods,
-    rlang
+    rlang,
+    gbm
