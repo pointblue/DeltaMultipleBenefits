@@ -53,6 +53,8 @@
 #' @seealso [python_focal_prep()], [python_focal_run()],
 #'   [python_focal_finalize()], [update_covertype()], [update_pwater()],
 #'   [update_roosts()], [python_dist()]
+#' @importFrom gbm predict.gbm
+#' @importFrom magrittr %>%
 #' @export
 #'
 #' @examples
@@ -64,10 +66,10 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
                    pathout, overwrite = FALSE) {
 
   if (is.null(landscape) & !is.null(unsuitable)) {
-    stop('Landscape provided but unsuitable cover types not specified')
+    stop('Unsuitable cover types specified but landscape not provided')
   }
   if (!is.null(landscape) & is.null(unsuitable)) {
-    stop('Unsuitable cover types specified but landscape not provided')
+    warning('Landscape provided but unsuitable cover types not specified')
   }
 
   create_directory(file.path(pathout, landscape_name))
@@ -93,7 +95,7 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
                  type = 'response',
                  const = constants,
                  factors = factors,
-                 filename = paste0(file.path(pathout, scenario_name), '/',
+                 filename = paste0(file.path(pathout, landscape_name), '/',
                                    .x, '.tif'),
                  overwrite = overwrite,
                  wopt = list(names = .x)
