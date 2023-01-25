@@ -6,6 +6,8 @@
 \usage{
 sum_habitat(
   pathin,
+  SDM = NULL,
+  landscape_name = NULL,
   zones = NULL,
   subtype = NULL,
   rollup = TRUE,
@@ -18,6 +20,11 @@ sum_habitat(
 directory containing the predicted presence/absence or probability of
 presence from species distribution models, such as those created from
 running \code{\link[=fit_SDM]{fit_SDM()}} or \code{\link[=transform_SDM]{transform_SDM()}}}
+
+\item{SDM, landscape_name}{Optional character strings defining the
+subdirectories within \code{pathin} for which habitat should be summarized; see
+Details; SDM must be one of \code{"riparian"}, \code{"waterbird_fall"}, or
+\code{"waterbird_win"}.}
 
 \item{zones}{Optional \code{SpatRaster} or character string giving the filepath to
 a raster encoding zones within which pixel values should be summarized}
@@ -45,11 +52,13 @@ presence from species distribution models corresponding to a set of landscape
 rasters.
 }
 \details{
-This function will calculate the sum of all pixel values in each
-raster found in \code{pathin} and any subdirectories. The file structure within
-\code{pathin} is used to infer the name of the corresponding \code{SDM} and
-\code{landscape_name}. This function is designed to efficiently process multiple
-rasters located in the \code{pathin} directory at once.
+By default, this function will calculate the sum of all pixel values
+in each raster found in \code{pathin} and any subdirectories, to efficiently
+process multiple rasters located in the \code{pathin} directory at once. The
+file structure within \code{pathin} is used to infer the name of the
+corresponding \code{SDM} and \code{landscape_name}. However, \code{SDM} or both \code{SDM} and
+\code{landscape_name} can be optionally specified to only process a subset of
+these.
 
 If provided, \code{key} should refer to a tibble, dataframe, or filepath to a
 CSV containing the fields \code{spp} and \code{label}, used for converting the

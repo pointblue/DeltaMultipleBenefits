@@ -4,11 +4,13 @@
 #' presence from species distribution models corresponding to a set of landscape
 #' rasters.
 #'
-#' @details This function will calculate the sum of all pixel values in each
-#'   raster found in `pathin` and any subdirectories. The file structure within
-#'   `pathin` is used to infer the name of the corresponding `SDM` and
-#'   `landscape_name`. This function is designed to efficiently process multiple
-#'   rasters located in the `pathin` directory at once.
+#' @details By default, this function will calculate the sum of all pixel values
+#'   in each raster found in `pathin` and any subdirectories, to efficiently
+#'   process multiple rasters located in the `pathin` directory at once. The
+#'   file structure within `pathin` is used to infer the name of the
+#'   corresponding `SDM` and `landscape_name`. However, `SDM` or both `SDM` and
+#'   `landscape_name` can be optionally specified to only process a subset of
+#'   these.
 #'
 #'   If provided, `key` should refer to a tibble, dataframe, or filepath to a
 #'   CSV containing the fields `spp` and `label`, used for converting the
@@ -23,6 +25,10 @@
 #'   directory containing the predicted presence/absence or probability of
 #'   presence from species distribution models, such as those created from
 #'   running [fit_SDM()] or [transform_SDM()]
+#' @param SDM,landscape_name Optional character strings defining the
+#'   subdirectories within `pathin` for which habitat should be summarized; see
+#'   Details; SDM must be one of `"riparian"`, `"waterbird_fall"`, or
+#'   `"waterbird_win"`.
 #' @param zones Optional `SpatRaster` or character string giving the filepath to
 #'   a raster encoding zones within which pixel values should be summarized
 #' @param subtype Optional character string appended to the field
@@ -46,10 +52,27 @@
 #' @examples
 #' # See vignette
 
-sum_habitat = function(pathin, zones = NULL, subtype = NULL,
+sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL,
+                       zones = NULL, subtype = NULL,
                        rollup = TRUE, key = NULL, scale = NULL) {
-  fl = list.files(pathin, '.tif$', recursive = TRUE, full.names = TRUE) %>%
-    rlang::set_names()
+
+  if (is.null(SDM)) {
+    # assume landscape_name also NULL (and ignore if not)
+    # recursively pull in anything in pathin
+    fl = list.files(pathin, '.tif$', recursive = TRUE, full.names = TRUE) %>%
+      rlang::set_names()
+  } else {
+    if (is.null(landscape_name)) {
+      #recursively pull in anything in pathin/SDM
+      fl = list.files(file.path(pathin, SDM), '.tif$', recursive = TRUE,
+                      full.names = TRUE) %>%
+        rlang::set_names()
+    } else {
+      fl = list.files(file.path(pathin, SDM, landscape_name), '.tif$',
+                      full.names = TRUE) %>%
+        rlang::set_names()
+    }
+  }
 
   if (is.null(zones)) {
     # sum total
@@ -80,7 +103,8 @@ sum_habitat = function(pathin, zones = NULL, subtype = NULL,
   res = res %>%
     dplyr::mutate(pathin = gsub(!!pathin, '', pathin),
            pathin = gsub('^\\/|.tif$', '', pathin)) %>%
-    tidyr::separate(pathin, sep = '/', into = c('SDM', 'scenario', 'spp'))
+    tidyr::separate(pathin, sep = '/', into = c('SDM', 'scenario', 'spp'),
+                    fill = 'left')
 
   if (rollup) {
     # first find max value across all rasters for a scenario and SDM, then sum over landscape
@@ -131,9 +155,6 @@ sum_habitat = function(pathin, zones = NULL, subtype = NULL,
       METRIC_SUBTYPE = dplyr::case_when(
         SDM == 'riparian' ~ 'Riparian landbird',
         SDM %in% c('waterbird_fall', 'waterbird_win') ~ 'Waterbird'),
-      METRIC_SUBTYPE = dplyr::if_else(!is.null(subtype),
-                                      paste(.data$METRIC_SUBTYPE, subtype),
-                                      .data$METRIC_SUBTYPE),
       METRIC = dplyr::case_when(
         SDM == 'waterbird_fall' ~ paste0(.data$METRIC, ' (fall)'),
         SDM == 'waterbird_win' ~ paste0(.data$METRIC, ' (winter)'),
@@ -141,6 +162,11 @@ sum_habitat = function(pathin, zones = NULL, subtype = NULL,
       SCORE_TOTAL = .data$value) %>%
     dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
                   .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
+
+  if (!is.null(subtype)) {
+    res = res %>%
+      dplyr::mutate(METRIC_SUBTYPE = paste(.data$METRIC_SUBTYPE, subtype))
+  }
 
   if (!is.null(scale)) {
     res = res %>%
