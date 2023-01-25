@@ -36,7 +36,7 @@ should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()
 \item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
 a raster that should be used to mask the output, e.g. a study area boundary}
 
-\item{cover}{Logical; default is \code{FALSE}. If \code{TRUE}, \code{maskpath} must not be
+\item{cover}{Logical; default is \code{FALSE}. If \code{TRUE}, \code{mask} must not be
 NULL; See Details.}
 }
 \value{
@@ -53,7 +53,7 @@ Function expects source files to be in a directory structure created
 by \code{\link[=python_focal_run]{python_focal_run()}}, which is also used to inform the final processing
 steps: \code{pathin/landscape_name/SDM/scale}. All .tif files in this source
 directory will be read in, and optionally masked by the raster at
-\code{maskpath}. If \code{cover = TRUE}, pixels in \code{maskpath} with a value of 1 will
+\code{mask}. If \code{cover = TRUE}, pixels in \code{mask} with a value of 1 will
 also be replaced with a value of 0, and passed to \code{\link[terra:cover]{terra::cover()}} to fill
 in missing values in source data with zero.
 

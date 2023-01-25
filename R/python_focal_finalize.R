@@ -8,7 +8,7 @@
 #'   by [python_focal_run()], which is also used to inform the final processing
 #'   steps: `pathin/landscape_name/SDM/scale`. All .tif files in this source
 #'   directory will be read in, and optionally masked by the raster at
-#'   `maskpath`. If `cover = TRUE`, pixels in `maskpath` with a value of 1 will
+#'   `mask`. If `cover = TRUE`, pixels in `mask` with a value of 1 will
 #'   also be replaced with a value of 0, and passed to [terra::cover()] to fill
 #'   in missing values in source data with zero.
 #'
@@ -38,7 +38,7 @@
 #' @param overwrite Logical; passed to [terra::writeRaster()]
 #' @param mask Optional `SpatRaster` or character string giving the filepath to
 #'   a raster that should be used to mask the output, e.g. a study area boundary
-#' @param cover Logical; default is `FALSE`. If `TRUE`, `maskpath` must not be
+#' @param cover Logical; default is `FALSE`. If `TRUE`, `mask` must not be
 #'   NULL; See Details.
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
@@ -54,8 +54,8 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
                                  cover = FALSE) {
 
   # troubleshooting
-  if (cover & is.null(maskpath)) {
-    stop('cover=TRUE but maskpath not provided')
+  if (cover & is.null(mask)) {
+    stop('cover=TRUE but mask not provided')
   }
 
   dat = list.files(file.path(pathin, landscape_name, SDM, scale),
