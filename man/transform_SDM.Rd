@@ -6,6 +6,7 @@
 \usage{
 transform_SDM(
   pathin,
+  SDM,
   landscape_name,
   modlist,
   stat,
@@ -14,10 +15,11 @@ transform_SDM(
 )
 }
 \arguments{
-\item{pathin, landscape_name}{Character strings defining the filepath
-(\code{pathin/landscape_name}) containing the predicted probability of presence
-resulting from each distribution model, such as those created from running
-\code{\link[=fit_SDM]{fit_SDM()}}}
+\item{pathin, SDM, landscape_name}{Character strings defining the filepath
+(\code{pathin/SDM/landscape_name}) containing the predicted probability of
+presence resulting from each distribution model, such as those created from
+running \code{\link[=fit_SDM]{fit_SDM()}}; SDM must be one of \code{"riparian"}, \code{"waterbird_fall"},
+or \code{"waterbird_win"}.}
 
 \item{modlist}{List of model objects of class 'gbm' representing the
 distribution models to which new predictors should be fit.}
@@ -26,13 +28,13 @@ distribution models to which new predictors should be fit.}
 \code{\link[dismo:threshold]{dismo::threshold()}} for options}
 
 \item{pathout}{Filepath for the directory where results rasters should be
-written}
+written (\code{pathout/SDM/landscape_name})}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{
-Nothing returned to R environment. Writes rasters to \code{pathout} for
-each model in \code{modlist}
+Nothing returned to R environment. Writes rasters to
+\code{pathout/SDM/landscape_name} for each model in \code{modlist}
 }
 \description{
 Use model-specific threshold values to transform predicted probabilities of
