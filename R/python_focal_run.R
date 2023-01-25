@@ -42,7 +42,7 @@
 #' # See vignette
 
 python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
-                        scale, fun = 'SUM', pathout) {
+                            scale, fun = 'SUM', pathout) {
 
   arcpy <- reticulate::import('arcpy')
   arcpy$CheckOutExtension("Spatial")
