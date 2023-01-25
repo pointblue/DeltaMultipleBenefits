@@ -31,7 +31,7 @@ evaluated, corresponding to the subdirectory in \code{pathout} where results
 will be written.}
 
 \item{suffix}{Character string; custom suffix appended to layer names
-(optional unless \code{maskpath} is not \code{NULL})}
+(optional unless \code{mask} is not \code{NULL})}
 
 \item{mask}{Optional SpatRaster; see Details}
 
@@ -71,11 +71,11 @@ have two values. See examples.
 #python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
 
 #try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra')))
-## suffix is required if maskpath is not `NULL`
+#pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra')))
+## suffix is required if mask is not `NULL`
 
 #python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
+#pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra'),
 #suffix = c('_area', '_elev'))
 }
 \seealso{

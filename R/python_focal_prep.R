@@ -30,7 +30,7 @@
 #'   evaluated, corresponding to the subdirectory in `pathout` where results
 #'   will be written.
 #' @param suffix Character string; custom suffix appended to layer names
-#'   (optional unless `maskpath` is not `NULL`)
+#'   (optional unless `mask` is not `NULL`)
 #' @param mask Optional SpatRaster; see Details
 #' @param pixel_value Numeric value to replace cell values with (optional);
 #'   default `NULL`
@@ -39,6 +39,8 @@
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
 #'   each land cover class.
 #' @seealso [python_focal_run()], [python_focal_finalize()]
+#' @importFrom rlang .data
+#' @importFrom magrittr %>%
 #' @export
 #'
 #' @examples
@@ -47,11 +49,11 @@
 #' #python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
 #'
 #' #try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#' #pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra')))
-#' ## suffix is required if maskpath is not `NULL`
+#' #pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra')))
+#' ## suffix is required if mask is not `NULL`
 #'
 #' #python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#' #pixel_value = 0.09, maskpath = system.file('ex/elev.tif', package = 'terra'),
+#' #pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra'),
 #' #suffix = c('_area', '_elev'))
 
 python_focal_prep = function(landscape, SDM, pathout, landscape_name,
@@ -63,9 +65,9 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
   }
 
   # split layer by land cover classes to represent presence/absence
-  layernames = terra::freq(landscape) %>% dplyr::pull(label)
+  layernames = terra::freq(landscape) %>% dplyr::pull(.data$label)
   presence = terra::segregate(landscape, other = 0) %>%
-    setNames(layernames)
+    stats::setNames(layernames)
 
   # reclassify according to riparian and waterbird model inputs
   presence_reclass = reclassify_landcover(presence, SDM = SDM)
@@ -77,7 +79,7 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
   # --> expect two values provided for "suffix" to distinguish them (e.g., _area
   # and _pfld)
   if (!is.null(mask)) {
-    # where presence_reclass is 0 (land cover not present), change maskpath to
+    # where presence_reclass is 0 (land cover not present), change mask to
     # NA (allowing values in mask path to be summarized only for that specific
     # land cover)
     newstack_mask = terra::mask(mask, presence_reclass, maskvalue = 0,
