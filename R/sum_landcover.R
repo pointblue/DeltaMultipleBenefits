@@ -94,7 +94,7 @@ sum_landcover = function(rasters, mask = NULL, zones = NULL, pixel_area = 1,
     if (is(zones, 'character')) {
       zones = terra::rast(zones)
     } else if (!is(zones, 'SpatRaster')) {
-      stop('function expects "mask" to be either a character string or a SpatRaster')
+      stop('function expects "zones" to be either a character string or a SpatRaster')
     }
     znames = terra::freq(zones)$label
     zseg = terra::segregate(zones, other = NA)
