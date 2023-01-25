@@ -233,7 +233,7 @@ scores_change %>%
   ggplot2::geom_col() + 
   ggplot2::geom_errorbar(
     ggplot2::aes(xmin = net_change - net_change_se,
-                 xmax = net_change + net_change_se), width=0.25) +
+                 xmax = net_change + net_change_se), width = 0.25) +
   ggplot2::theme_minimal()
 ```
 
@@ -353,21 +353,50 @@ DeltaMultipleBenefits::fit_SDM(pathin = 'SDM_predictors/predictors_riparian',
                                overwrite = TRUE)
 ```
 
-In addition, because the riparian landbird species varied in their prevalence across the landscape and in the precision of the distribution models, different thresholds in their predicted probability of presence are useful for separating locations where they are most likely to be present or absent. Therefore, to estimate the total area of suitable habitat for each species, and for riparian landbirds collectively, it is useful to convert the continuous probabilities of species presence predicted in the previous step to binary predictions of presence or absence. Again, this function will write new rasters to a new directory; `pathin` in this function should be the same as `pathout` in the previous step, and `landscape_name` should be identical. We still need the original list of models to access embedded detection data from which thresholds can be calculated. Here, as in our original analysis, we use the statistic `equal_sens_spec` to identify the threshold value for the predicted probability of presence at which specificity (the probability of correctly predicting species absence) and sensitivity (the probability of correctly predicting species presence) are equal, but other statistics can be used as in `dismo::threshold`.
+In addition, because the riparian landbird species varied in their prevalence across the landscape and in the precision of the distribution models, different thresholds in their predicted probability of presence are useful for separating locations where they are most likely to be present or absent. Therefore, to estimate the total area of suitable habitat for each species, and for riparian landbirds collectively, it is useful to convert the continuous probabilities of species presence predicted in the previous step to binary predictions of presence or absence. Again, this function will write new rasters to a new directory; `pathin` in this function should be the same as `pathout` in the previous step, and `SDM` and `landscape_name` should be identical. We still need the original list of models to access embedded detection data from which thresholds can be calculated. Here, as in our original analysis, we use the statistic `equal_sens_spec` to identify the threshold value for the predicted probability of presence at which specificity (the probability of correctly predicting species absence) and sensitivity (the probability of correctly predicting species presence) are equal, but other statistics can be used as in `dismo::threshold`.
 
 ```{r riparian6, eval = FALSE}
 DeltaMultipleBenefits::transform_SDM(
   modlist = BRT_riparian[1],
-  pathin = 'SDM_results/riparian',
+  pathin = 'SDM_results',
+  SDM = 'riparian',
   landscape_name = 'scenario_example',
   stat = 'equal_sens_spec',
-  pathout = 'SDM_results_threshold/riparian',
+  pathout = 'SDM_results_threshold',
   overwrite = TRUE)
 ```
 
 ### Estimate the net change in habitat
-- summarize total habitat by landscape (sum_habitat)
-- net change (sum_change)
+
+First estimate the total habitat predicted for each species distribution model using the built-in function `sum_habitat`. By default, the function will recursively find all prediction rasters in the `pathin` argument, which should reflect the output of the previous step. Thus, if predictions have been made for riparian landbirds for multiple scenarios, or if `pathin` already contains predictions for waterbirds, this function only needs to be run once to summarize the total habitat predicted from each model. However, `SDM` or both `SDM` and `landscape_name` can optionally be provided to limit the predictions evaluated. 
+
+By including the option `rollup = TRUE`, this function will also calculate the total habitat for all species in the set. To define the units in which the area is calculated, optionally provide a value for the `scale` argument that reflects the area of each pixel in the scenario raster in the desired units, and optionally add a `mutate` argument to the results to specify the units. If a `scale` value is not provided, the result is equivalent to the count of pixels.
+
+```{r riparian7, eval = FALSE}
+habitat_totals = DeltaMultipleBenefits::sum_habitat(
+  pathin = 'SDM_results_threshold',
+  rollup = TRUE,
+  key = key,
+  scale = 0.09) %>%
+  dplyr::mutate(UNIT = 'ha')
+```
+
+Thus far, we have only been demonstrating the application of the riparian species distribution models to the example scenario, but to estimate the net change in habitat from the baseline landscape, all of these same steps would be repeated for the baseline landscape, and the habitat totals calculated in the previous step would include estimates under baseline conditions. The change in total habitat between each scenario and the baseline can then be readily calculated. Here, we will simulate baseline estimates and demonstrate calculating the net change. 
+
+*Note that these habitat totals can be appended to the `scores` data developed in Step 3 above, reflecting the total landscape scores for each of the non-spatial metrics, and the same `sum_change` function can be used to simultaneously estimate the net change for non-spatial and spatial metrics.*
+
+```{r riparian8, eval = FALSE}
+habitat_baseline = tibble(
+  scenario = 'baseline',
+  METRIC_CATEGORY = 'Biodiversity Support',
+  METRIC_SUBTYPE = 'Riparian landbird',
+  METRIC = c('Ash-throated Flycatcher', 'Total'),
+  SCORE_TOTAL = c(42, 42),
+  UNIT = 'ha')
+
+scores_change_habitat = DeltaMultipleBenefits::sum_change(
+  bind_rows(habitat_totals, habitat_baseline))
+```
 
 ## Waterbirds
 
