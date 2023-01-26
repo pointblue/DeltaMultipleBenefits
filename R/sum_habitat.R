@@ -47,6 +47,7 @@
 #' @importFrom methods is
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
+#' @importFrom readr read_csv
 #' @export
 #'
 #' @examples

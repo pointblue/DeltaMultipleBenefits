@@ -36,6 +36,8 @@
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
 #'   each land cover class.
 #' @seealso [python_focal_prep()], [python_focal_finalize()]
+#' @importFrom reticulate import
+#' @importFrom reticulate source_python
 #' @export
 #'
 #' @examples

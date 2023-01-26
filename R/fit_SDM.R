@@ -55,6 +55,7 @@
 #'   [update_roosts()], [python_dist()]
 #' @importFrom gbm predict.gbm
 #' @importFrom magrittr %>%
+#' @importFrom purrr map
 #' @export
 #'
 #' @examples

@@ -20,6 +20,8 @@
 #' @return Nothing returned to R environment. Writes rasters to
 #'   `pathout/SDM/landscape_name` for each model in `modlist`
 #' @seealso [fit_SDM()]
+#' @importFrom dismo evaluate
+#' @importFrom dismo threshold
 #' @export
 #'
 #' @examples
