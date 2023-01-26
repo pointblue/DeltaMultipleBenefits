@@ -75,7 +75,7 @@ sum_metrics = function(metricdat, areadat) {
   # check for missing land covers (since we did a full join)
   tmp = dat_join %>% dplyr::filter(is.na(.data$area))
   if (nrow(tmp) > 0) {
-    warning('Area estimates missing from "areadat" for one or more land cover classes in "metricdat"')
+    warning('\n\nArea estimates missing from "areadat" for one or more land cover classes in "metricdat"')
   }
 
   res = dplyr::bind_rows(
