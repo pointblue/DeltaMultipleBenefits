@@ -41,4 +41,8 @@ Imports:
     magrittr,
     methods,
     rlang,
-    gbm
+    gbm,
+    dismo,
+    purrr,
+    readr,
+    reticulate
