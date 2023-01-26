@@ -35,7 +35,7 @@
 #'   be summarized, and the names of each region should be defined (see
 #'   [terra::levels()]).
 #'
-#' @param rasters Either a `SpatRaster` with one or more layers, or a character
+#' @param landscapes Either a `SpatRaster` with one or more layers, or a character
 #'   string giving the filepath to a directory containing one or more raster
 #'   landscapes (e.g. scenarios) to be summarized.
 #' @param mask Optional `SpatRaster` or character string giving the filepath to
@@ -59,16 +59,16 @@
 #' @examples
 #' # See vignette
 
-sum_landcover = function(rasters, mask = NULL, zones = NULL, pixel_area = 1,
+sum_landcover = function(landscapes, mask = NULL, zones = NULL, pixel_area = 1,
                          rollup = TRUE) {
 
-  if (is(rasters, 'character')) {
+  if (is(landscapes, 'character')) {
     # treat as filepath, and bring in file names:
-    fl = list.files(rasters, '.tif$', full.names = TRUE) %>%
-      rlang::set_names(gsub('.tif', '', list.files(rasters, '.tif$')))
-    rasters = purrr::map(fl, ~terra::rast(.x)) %>% terra::rast()
-  } else if (!is(rasters, 'SpatRaster')) {
-    stop('function expects "rasters" to be either a character string or a SpatRaster')
+    fl = list.files(landscapes, '.tif$', full.names = TRUE) %>%
+      rlang::set_names(gsub('.tif', '', list.files(landscapes, '.tif$')))
+    landscapes = purrr::map(fl, ~terra::rast(.x)) %>% terra::rast()
+  } else if (!is(landscapes, 'SpatRaster')) {
+    stop('function expects "landscapes" to be either a character string or a SpatRaster')
   }
 
   if (!is.null(mask)) {
@@ -77,12 +77,12 @@ sum_landcover = function(rasters, mask = NULL, zones = NULL, pixel_area = 1,
     } else if (!is(mask, 'SpatRaster')) {
       stop('function expects "mask" to be either a character string or a SpatRaster')
     }
-    rasters = terra::mask(rasters, mask)
+    landscapes = terra::mask(landscapes, mask)
   }
 
   if (is.null(zones)) {
     # total area of each unique value for each layer in rasters
-    res = terra::freq(rasters, bylayer = TRUE, usenames = TRUE) %>%
+    res = terra::freq(landscapes, bylayer = TRUE, usenames = TRUE) %>%
       as.data.frame() %>%
       dplyr::mutate(area = .data$count * pixel_area) %>%
       dplyr::select(scenario = .data$layer, CODE_NAME = .data$label, .data$area) %>%
@@ -100,7 +100,7 @@ sum_landcover = function(rasters, mask = NULL, zones = NULL, pixel_area = 1,
     zseg = terra::segregate(zones, other = NA)
 
     res = purrr::map_df(
-      terra::as.list(rasters) %>% rlang::set_names(names(rasters)),
+      terra::as.list(landscapes) %>% rlang::set_names(names(landscapes)),
       ~terra::zonal(zseg, .x, 'sum', na.rm = TRUE) %>%
         rlang::set_names(c('label', znames)),
       .id = 'layer') %>%

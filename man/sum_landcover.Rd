@@ -5,7 +5,7 @@
 \title{Summarize total area of land cover classes}
 \usage{
 sum_landcover(
-  rasters,
+  landscapes,
   mask = NULL,
   zones = NULL,
   pixel_area = 1,
@@ -13,7 +13,7 @@ sum_landcover(
 )
 }
 \arguments{
-\item{rasters}{Either a \code{SpatRaster} with one or more layers, or a character
+\item{landscapes}{Either a \code{SpatRaster} with one or more layers, or a character
 string giving the filepath to a directory containing one or more raster
 landscapes (e.g. scenarios) to be summarized.}
 
