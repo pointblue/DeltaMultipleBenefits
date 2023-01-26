@@ -5,78 +5,88 @@
 \title{Update waterbird predictors: pwater & pfld}
 \usage{
 update_pwater(
-  landscape,
-  scenario_landscape = NULL,
+  waterdat,
+  mask = NULL,
   pathout,
-  scenario_name = NULL,
+  landscape_name = NULL,
   overwrite = FALSE,
-  waterdatpath,
-  floor = TRUE,
-  maskpath = NULL
+  baseline_landscape = NULL,
+  scenario_landscape = NULL,
+  floor = FALSE
 )
 }
 \arguments{
-\item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
+\item{waterdat}{\code{SpatRaster} or character string giving the filepath to a
+raster representing the probability of open water (pwater) in each cell,
+specific to the time frames for each waterbird SDM}
 
-\item{scenario_landscape}{Optional secondary SpatRaster created by
-\code{\link[terra:rast]{terra::rast()}} to compare against baseline_landscape; see Details.}
+\item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
+a raster that should be used to mask the output, e.g. a study area boundary}
 
 \item{pathout}{Vector of two character strings providing filepaths where
 output rasters should be written; see Details}
 
-\item{scenario_name}{Character string; Name of the landscape scenario being
-evaluated, corresponding to the directory in \code{pathout} where results will
-be written.}
+\item{landscape_name}{Character string; Name of the landscape scenario being
+evaluated, either corresponding to landscape scenario represented by
+\code{waterdat}, or the \code{scenario_landscape}, if given; also corresponds to the
+directory in \code{pathout} where results will be written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
 
-\item{waterdatpath}{Filepath to a raster representing the probability of open
-water (pwater) in each cell, specific to the time frames for each waterbird
-SDM}
+\item{baseline_landscape, scenario_landscape}{Optional SpatRasters created by
+\code{\link[terra:rast]{terra::rast()}} to compare with each other for estimating \code{pwater} for the
+changed portions of the \code{scenario_landscape}; see Details}
 
 \item{floor}{Logical; if \code{TRUE}, don't allow new values of pwater to be lower
 than baseline values}
-
-\item{maskpath}{Optional filepath to a raster that should be used to mask the
-output, e.g. a study area boundary}
 }
 \value{
 Nothing; all files written to \code{pathout}
 }
 \description{
-Helper function for updating pwater and pfld predictors for the waterbird
+Helper function for updating \code{pwater} and \code{pfld} predictors for the waterbird
 distribution models.
 }
 \details{
-Uses surface water data in \code{waterdatpath} to create updated pwater
-predictors and inform pfld predictors for use with water bird models.
+The waterbird distribution models incorporate information about
+surface water data in two ways: as \code{pwater}, the expected probability of
+open surface water in each cell of the landscape raster, specific to the
+waterbird season being modeled and perhaps averaged over multiple years,
+and as \code{pfld} focal statistics which represent the proportion of each land
+cover class within a given distance of each cell that is flooded (see
+\code{\link[=python_focal_prep]{python_focal_prep()}} and \code{\link[=python_focal_run]{python_focal_run()}}). Therefore, \code{pwater} data
+must be available for every landscape under analysis before the \code{pfld}
+focal statistics can be generated and distribution models fit.
 
-Pwater represents the direct probability of local open surface water at
-each pixel. If only \code{landscape} is provided, the water data from
-\code{waterdatpath} is directly used. If \code{scenario_landscape} is also provided,
-\code{landscape} is assumed to represent a baseline condition against which
-\code{scenario_landscape} should be compared. In this case, new cell-specific
-probabilities of open surface water for the \code{scenario_landscape} are
-generated for cells that have changed land cover classes, based on the mean
-probability of open surface water for that land cover class in the
-baseline. If \code{floor = TRUE}, new probabilities of open water will be
-assigned only if they are higher than the baseline values. If \code{maskpath} is
-not NULL, will also optionally mask by the provided study area. Generates
-file: \code{pwater.tif} at location \code{pathout[2]/scenario_name}, where
-\code{pathout[2]} is intended to be the ultimate directory holding all
-predictors for waterbird distribution models.
+Due to the dual needs for generating \code{pwater} and \code{pfld} predictors, this
+function writes results in two places, and \code{pathout} should therefore be a
+vector containing two filepath character strings: \code{pathout[1]} should
+provide the filepath to a directory containing intermediate files for later
+use with \code{\link[=python_focal_prep]{python_focal_prep()}} and generating \code{pfld} predictors, and
+\code{pathout[2]} should provide the filepath to a directory containing all
+final predictors for later use with \code{\link[=fit_SDM]{fit_SDM()}} in fitting waterbird
+models.
 
-This same pwater.tif file is also necessary as an input for using
-\code{\link[=python_focal_prep]{python_focal_prep()}} and then \code{\link[=python_focal_run]{python_focal_run()}} to generate the pfld focal
-stats, which represent the proportion of the area of each land cover class
-within a given distance that has open surface water. However, this version
-of pwater.tif file must be unmasked by any study area boundary to allow
-flooding from the surrounding buffer to be incorporated in the pfld focal
-stats. Thus, this function also generates a separate file: \code{pwater.tif} at
-location \code{pathout[1]/scenario_name}, where \code{pathout[1]} is intended to
-contain intermediate files for use in \code{\link[=python_focal_prep]{python_focal_prep()}} with \code{mask = 'pwater.tif'}. The argument \code{pathout} must therefore provide two
-directories to provide a location for each version of \code{pwater.tif}. For
-example: \verb{pathout = c('GIS/landscape_rasters/pwater', GIS/landscape_rasters/predictors_waterbird_fall')}.
+In addition, this function has two modes of operation. If only \code{waterdat}
+and \code{landscape_name} are provided, the \code{waterdat} is assumed to to
+represent \code{pwater} data for the \code{landscape_name}, and is simply renamed and
+copied to both \code{pathout} locations for use in later steps of analysis,
+optionally masking before \code{pathout[2]} is written. The \code{mask} is never
+applied to the \code{pathout[1]} output intended for later focal statistics to
+avoid errors in processing near the boundaries of the study area.
+
+Alternatively, in the second mode, if both \code{baseline_landscape} and
+\code{scenario_landscape} rasters are also provided, this function will estimate
+new \code{pwater} values for cells in the \code{scenario_landscape} that have changed
+cover class, based on the mean probability of open surface water for that
+land cover class in the \code{baseline_landscape}. Optionally, if \code{floor = TRUE}, new probabilities of open water will be assigned only if they are
+higher than the baseline values. In this mode, the result represents
+\code{pwater} for the \code{scenario_landscape}, and \code{landscape_name} should reflect
+the name of the scenario.
+
+The original \code{pwater} baseline data used in the development of these models
+was derived from Point Blue's \href{https://www.pointblue.org/autowater}{Water Tracker} and may be downloaded from
+\link{link TBD}.
 }
 \examples{
 # See vignette
