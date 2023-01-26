@@ -61,7 +61,7 @@ to the UNITs by which the per-unit-area METRICS in \code{metricdat} were defined
 (often ha). (See \code{\link[=sum_landcover]{sum_landcover()}}.)
 \item ZONE: optional character field identifying the name of a zone within which the
 area of land covers was estimated, such as by running \code{\link[=sum_landcover]{sum_landcover()}}
-with a \code{zonepath} provided; if ZONE is present, the output will be
+with \code{zones} provided; if ZONE is present, the output will be
 summarized by zone.
 }
 }

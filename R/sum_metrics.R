@@ -42,7 +42,7 @@
 #'   (often ha). (See [sum_landcover()].)
 #'   * ZONE: optional character field identifying the name of a zone within which the
 #'   area of land covers was estimated, such as by running [sum_landcover()]
-#'   with a `zonepath` provided; if ZONE is present, the output will be
+#'   with `zones` provided; if ZONE is present, the output will be
 #'   summarized by zone.
 #'
 #' @param metricdat tibble; See Details
@@ -95,7 +95,7 @@ sum_metrics = function(metricdat, areadat) {
       # for climate change resilience, divide by the area
       dplyr::mutate(
         dplyr::across(
-          c(SCORE_TOTAL, SCORE_TOTAL_SE),
+          c(.data$SCORE_TOTAL, .data$SCORE_TOTAL_SE),
           ~dplyr::if_else(.data$METRIC_CATEGORY == 'Climate Change Resilience',
                           ./.data$area,
                           .))) %>%
