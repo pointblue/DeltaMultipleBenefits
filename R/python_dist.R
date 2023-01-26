@@ -34,6 +34,8 @@
 #'   `copyto` only.
 #'
 #' @return Nothing; all files written to `pathout`
+#' @importFrom reticulate import
+#' @importFrom reticulate source_python
 #' @export
 #'
 #' @examples
@@ -56,7 +58,7 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
              fullpathout =  file.path(pathout[1], landscape_name, filename) %>%
                normalizePath())
 
-  r = file.path(pathout[1], landscape_name, filename) %>% rast()
+  r = file.path(pathout[1], landscape_name, filename) %>% terra::rast()
 
   if (scale == 'km') {
     r = r / 1000
@@ -66,17 +68,17 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
 
   if (!is.null(maskpath)) {
     # overwrite dist.py output in pathout[1] with masked version
-    r = mask(r, rast(maskpath))
-    writeRaster(r, file.path(pathout[1], landscape_name, filename),
-                wopt = list(names = gsub('.tif', '', filename)),
-                overwrite = TRUE)
+    r = terra::mask(r, terra::rast(maskpath))
+    terra::writeRaster(r, file.path(pathout[1], landscape_name, filename),
+                       wopt = list(names = gsub('.tif', '', filename)),
+                       overwrite = TRUE)
   }
 
   if (!is.null(copyto)) {
     # copy from scenario_name/pathout[1] to copyto/pathout[2]
     create_directory(file.path(pathout[2], copyto))
-    writeRaster(r, file.path(pathout[2], copyto, filename),
-                wopt = list(names = gsub('.tif', '', filename)),
-                overwrite = overwrite)
+    terra::writeRaster(r, file.path(pathout[2], copyto, filename),
+                       wopt = list(names = gsub('.tif', '', filename)),
+                       overwrite = overwrite)
   }
 }

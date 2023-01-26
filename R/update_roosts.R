@@ -56,20 +56,20 @@ update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
 
   # identify polygons to exclude with >20% incompatible landcover
   incompatible = roost_overlay %>% setNames(c('ID', 'landscape')) %>%
-    dplyr::group_by(ID, landscape) %>%
+    dplyr::group_by(.data$ID, .data$landscape) %>%
     dplyr::count() %>%
     dplyr::ungroup() %>%
-    dplyr::group_by(ID) %>%
-    dplyr::mutate(ncell = sum(n), prop = n/ncell) %>%
+    dplyr::group_by(.data$ID) %>%
+    dplyr::mutate(ncell = sum(.data$n), prop = .data$n/.data$ncell) %>%
     dplyr::ungroup() %>%
-    dplyr::filter(landscape == 1 & prop > proportion) %>%
-    dplyr::arrange(dplyr::desc(prop))
+    dplyr::filter(.data$landscape == 1 & .data$prop > proportion) %>%
+    dplyr::arrange(dplyr::desc(.data$prop))
 
   create_directory(file.path(pathout, landscape_name))
 
   sf::read_sf(roostpath) %>%
-    dplyr::filter(!Roost_ID %in% incompatible$ID) %>%
-    terra::vect() %>% terra::rasterize(., landscape) %>%
+    dplyr::filter(!.data$Roost_ID %in% incompatible$ID) %>%
+    terra::vect() %>% terra::rasterize(.data, landscape) %>%
     terra::writeRaster(file.path(pathout, landscape_name, 'roosts.tif'),
                        overwrite = overwrite)
 }

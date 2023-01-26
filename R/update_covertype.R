@@ -73,14 +73,15 @@ update_covertype = function(landscape, SDM, maskpath = NULL, pathout,
     landscape = terra::mask(landscape, terra::rast(maskpath))
   }
 
-  covertype = terra::classify(landscape,
-                       rcl = key %>%
-                         dplyr::select(from = value, to = covertype_code),
-                       othersNA = TRUE)
-  levels(covertype) = key %>% dplyr::select(covertype_code, covertype) %>%
+  covertype = terra::classify(
+    landscape,
+    rcl = key %>% dplyr::select(from = .data$value, to = .data$covertype_code),
+    othersNA = TRUE)
+  levels(covertype) = key %>%
+    dplyr::select(.data$covertype_code, .data$covertype) %>%
     dplyr::distinct() %>%
     tidyr::drop_na() %>%
-    dplyr::arrange(covertype_code) %>%
+    dplyr::arrange(.data$covertype_code) %>%
     as.data.frame()
 
   create_directory(file.path(pathout, landscape_name))

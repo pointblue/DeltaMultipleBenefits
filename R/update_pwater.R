@@ -80,7 +80,8 @@ update_pwater = function(landscape, scenario_landscape = NULL,
       terra::classify(rcl = matrix(c(-Inf, Inf, 1), nrow = 1)) # all others = 1
 
     pwater_new = scenario_landscape %>% terra::mask(changes) %>%
-      terra::classify(rcl = mwater %>% dplyr::select(value, pwater) %>%
+      terra::classify(rcl = mwater %>%
+                        dplyr::select(.data$value, .data$pwater) %>%
                         as.matrix(), othersNA = TRUE)
 
     if (floor) {
@@ -107,7 +108,7 @@ update_pwater = function(landscape, scenario_landscape = NULL,
   # write masked or unmasked version as a direct model predictor
   if (!is.null(maskpath)) {
     # use masked version as a direct predictor
-    pwater_scenario = terra::mask(pwater_scenario, rast(maskpath))
+    pwater_scenario = terra::mask(pwater_scenario, terra::rast(maskpath))
   }
   create_directory(file.path(pathout[2], scenario_name))
   terra::writeRaster(pwater_scenario,
