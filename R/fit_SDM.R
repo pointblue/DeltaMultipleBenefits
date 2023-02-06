@@ -119,9 +119,11 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
                  na.rm = TRUE,
                  type = 'response',
                  const = constants,
-                 factors = factors) %>%
+                 factors = factors
+               ) %>%
                  terra::cover(
-                   mask,
+                   x = mask,
+                   y = .,
                    filename = paste0(file.path(pathout, landscape_name), '/',
                                      .x, '.tif'),
                    overwrite = overwrite,
