@@ -1,8 +1,7 @@
 #' Update waterbird predictors: crane roost locations
 #'
-#' Helper function for estimating impact of landscape changes on known crane
-#' roosts, to generate updated estimates of the distance to roost for use with
-#' waterbird distribution models.
+#' Helper function for estimating impact of landscape changes on the locations
+#' of known crane roosts.
 #'
 #' @details For landscapes that represent a projected change from baseline
 #'   conditions, this function facilitates evaluating historical crane roosts to
@@ -15,28 +14,28 @@
 #'   scenario.
 #'
 #'   The default values for `unsuitable` include the original encodings for
-#'   orchard, vineyard, riparian, woodland, scrub, and urban, and the default
-#'   threshold value for `proportion` is 0.2. Alternate values can be provided
-#'   as desired.
+#'   orchard, vineyard, riparian, woodland, scrub, and urban land cover classes,
+#'   and the default threshold value for `proportion` is 0.2. Alternate values
+#'   can be provided as desired.
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param unsuitable optional vector of numerical values representing the land
 #'   cover classifications that should be considered incompatible with crane
-#'   roosts; default values for the original land cover encoding include
-#'   orchard, vineyard, riparian, woodland, scrub, urban
+#'   roosts; default values for the original land cover encoding include orchard
+#'   & vineyard classes (11-19), urban (60), riparian classes (70-79), and
+#'   woodland & scrub classes (100-120)
 #' @param proportion numerical value for the proportion cover by an unsuitable
 #'   land cover class at which the roost should be considered unsuitable; see
 #'   Details
-#' @param roostpath Filepath to a raster representing the location of
-#'   traditional crane roosts.
-#' @param pathout Character string; Filepath to directory where output rasters
-#'   should be written; passed to [terra::writeRaster()]
-#' @param landscape_name Character string; Name of the landscape being
-#'   evaluated, corresponding to the directory in `pathout` where results will
-#'   be written.
+#' @param roosts SpatVector created by [terra::vect()] or character string
+#'   giving the filepath to polygons representing the location of traditional
+#'   crane roosts; expects attribute called "Roost_ID"
+#' @param pathout,landscape_name Character strings defining the filepath
+#'   (`pathout/landscape_name`) where updated roost location rasters should be
+#'   written
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #'
-#' @return Nothing; all files written to `pathout`
+#' @return Nothing; all files written to `pathout/landscape_name`
 #' @seealso [update_covertype()], [update_pwater()]
 #' @export
 #'
@@ -44,15 +43,25 @@
 #' # See vignette
 
 update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
-                         proportion = 0.2, roostpath, pathout,
-                         landscape_name, overwrite = FALSE) {
+                         proportion = 0.2, roosts, pathout, landscape_name,
+                         overwrite = FALSE) {
+
+  if (is(roosts, 'character')) {
+    roosts = terra::vect(roosts)
+  } else if (!is(roosts, 'SpatVector')) {
+    stop('function expects "roosts" to be either a character string or a SpatVector')
+  }
+
+  if (terra::crs(landscape) != terra::crs(roosts)) {
+    roosts = terra::project(roosts, crs = terra::crs(landscape))
+  }
 
   # check how much traditional roosts overlap with incompatible land covers:
   # orchard, vineyard, riparian, woodland, scrub, urban
   roost_overlay = landscape %>%
     terra::subst(from = unsuitable, to = 1) %>%
     terra::subst(from = c(2:999), to = 0) %>% #everything else
-    terra::extract(terra::vect(roostpath))
+    terra::extract(roosts)
 
   # identify polygons to exclude with >20% incompatible landcover
   incompatible = roost_overlay %>% setNames(c('ID', 'landscape')) %>%
@@ -67,9 +76,9 @@ update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
 
   create_directory(file.path(pathout, landscape_name))
 
-  sf::read_sf(roostpath) %>%
-    dplyr::filter(!.data$Roost_ID %in% incompatible$ID) %>%
-    terra::vect() %>% terra::rasterize(.data, landscape) %>%
+  # rasterize and save updated roost location data
+  roosts[-which(roosts$Roost_ID %in% incompatible$ID)] %>%
+    terra::rasterize(.data, landscape) %>%
     terra::writeRaster(file.path(pathout, landscape_name, 'roosts.tif'),
                        overwrite = overwrite)
 }

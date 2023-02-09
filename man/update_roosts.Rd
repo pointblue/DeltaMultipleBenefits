@@ -8,7 +8,7 @@ update_roosts(
   landscape,
   unsuitable = c(11:19, 60, 70:79, 100:120),
   proportion = 0.2,
-  roostpath,
+  roosts,
   pathout,
   landscape_name,
   overwrite = FALSE
@@ -19,32 +19,30 @@ update_roosts(
 
 \item{unsuitable}{optional vector of numerical values representing the land
 cover classifications that should be considered incompatible with crane
-roosts; default values for the original land cover encoding include
-orchard, vineyard, riparian, woodland, scrub, urban}
+roosts; default values for the original land cover encoding include orchard
+& vineyard classes (11-19), urban (60), riparian classes (70-79), and
+woodland & scrub classes (100-120)}
 
 \item{proportion}{numerical value for the proportion cover by an unsuitable
 land cover class at which the roost should be considered unsuitable; see
 Details}
 
-\item{roostpath}{Filepath to a raster representing the location of
-traditional crane roosts.}
+\item{roosts}{SpatVector created by \code{\link[terra:vect]{terra::vect()}} or character string
+giving the filepath to polygons representing the location of traditional
+crane roosts; expects attribute called "Roost_ID"}
 
-\item{pathout}{Character string; Filepath to directory where output rasters
-should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
-
-\item{landscape_name}{Character string; Name of the landscape being
-evaluated, corresponding to the directory in \code{pathout} where results will
-be written.}
+\item{pathout, landscape_name}{Character strings defining the filepath
+(\code{pathout/landscape_name}) where updated roost location rasters should be
+written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
 }
 \value{
-Nothing; all files written to \code{pathout}
+Nothing; all files written to \code{pathout/landscape_name}
 }
 \description{
-Helper function for estimating impact of landscape changes on known crane
-roosts, to generate updated estimates of the distance to roost for use with
-waterbird distribution models.
+Helper function for estimating impact of landscape changes on the locations
+of known crane roosts.
 }
 \details{
 For landscapes that represent a projected change from baseline
@@ -58,9 +56,9 @@ distance to roost and generate updated versions of \code{droost_km.tif} for each
 scenario.
 
 The default values for \code{unsuitable} include the original encodings for
-orchard, vineyard, riparian, woodland, scrub, and urban, and the default
-threshold value for \code{proportion} is 0.2. Alternate values can be provided
-as desired.
+orchard, vineyard, riparian, woodland, scrub, and urban land cover classes,
+and the default threshold value for \code{proportion} is 0.2. Alternate values
+can be provided as desired.
 }
 \examples{
 # See vignette
