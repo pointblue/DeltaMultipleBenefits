@@ -5,27 +5,59 @@
 \title{Calculate the difference between predictions of species presence for a
 baseline and scenario landscape}
 \usage{
-calc_change_SDM(baseline, scenario, differentiate = TRUE)
+calc_change_SDM(
+  pathin,
+  SDM,
+  baseline_name,
+  scenario_name,
+  pathout,
+  overwrite = FALSE,
+  differentiate = TRUE
+)
 }
 \arguments{
-\item{baseline, scenario}{SpatRasters created by \code{\link[terra:rast]{terra::rast()}}; difference
-will represent the change from the baseline to the scenario}
+\item{pathin, SDM}{Character strings defining the filepath (\code{pathin/SDM})
+containing the predicted probability of presence resulting from each
+distribution model, such as those created from running \code{\link[=fit_SDM]{fit_SDM()}} and
+\code{\link[=transform_SDM]{transform_SDM()}}; SDM must be one of \code{"riparian"}, \code{"waterbird_fall"}, or
+\code{"waterbird_win"}.}
+
+\item{baseline_name}{Character string defining the filepath
+(\code{pathin/SDM/baseline}) containing the predictions for a baseline landscape}
+
+\item{scenario_name}{Character string defining the filepath
+(\code{pathin/SDM/scenario}) containing the predictions for a scenario landscape}
+
+\item{pathout}{Character string defining the filepath
+(\code{pathout/SDM/scenario}) where the results will be written}
+
+\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
+
+\item{differentiate}{Logical; if \code{TRUE}, locations where the predicted value
+is zero in both landscapes will be converted to NA}
+}
+\value{
+Nothing; all output written to \code{pathout/SDM/scenario}
 }
 \description{
 Calculate the difference between predictions of species presence for a
 baseline and scenario landscape
 }
 \details{
-This function is designed to handle the predictions for multiple
-species provided as layers in \code{baseline} and \code{scenario} SpatRasters,
-matched by layernames. The difference is calculated as the predicted value
-for the scenario minus the predicted value for the baseline, such that
-positive values in the result represent an increased probability of
-presence, and negative values represent a reduced probability of presence.
+This function is designed to handle predictions for multiple species
+provided as rasters in the \code{baseline} and \code{scenario} directories, matched
+by name. The difference is calculated as the predicted value for the
+scenario minus the predicted value for the baseline, such that positive
+values in the result represent an increased probability of presence, and
+negative values represent a reduced probability of presence.
 
 If \code{differentiate = TRUE}, the function is also designed to distinguish
 between two types of zero values in the result: locations where the
 predicted value is the same in both landscapes (which will retain a value
 of zero difference), and locations where the predicted value is zero in
 both landscapes (which will be converted to NA).
+}
+\examples{
+# See vignette
+
 }

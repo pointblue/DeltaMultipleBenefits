@@ -29,7 +29,7 @@
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #' @param differentiate Logical; if `TRUE`, locations where the predicted value
 #'   is zero in both landscapes will be converted to NA
-#' @return
+#' @return Nothing; all output written to `pathout/SDM/scenario`
 #' @export
 #'
 #' @examples
