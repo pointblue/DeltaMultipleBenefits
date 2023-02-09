@@ -43,7 +43,7 @@ transform_SDM = function(pathin, SDM, landscape_name, modlist, stat, pathout,
                                 dismo::threshold(e, stat)
                               })
 
-  create_directory(file.path(pathout, landscape_name))
+  create_directory(file.path(pathout, SDM, landscape_name))
 
   # reclassify using model-specific thresholds and write to file
   purrr::map(names(modlist),
