@@ -89,7 +89,7 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
     } else if (!is(mask, 'SpatRaster')) {
       stop('function expects "mask" to be either a character string or a SpatRaster')
     }
-    landscape = terra::mask(landscape, terra::rast(mask))
+    landscape = terra::mask(landscape, mask)
   }
 
   covertype = terra::classify(
