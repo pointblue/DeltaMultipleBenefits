@@ -6,8 +6,9 @@
 \usage{
 update_covertype(
   landscape,
+  key,
   SDM,
-  maskpath = NULL,
+  mask = NULL,
   pathout,
   landscape_name,
   overwrite = FALSE
@@ -16,14 +17,18 @@ update_covertype(
 \arguments{
 \item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
 
+\item{key}{tibble, dataframe, or character string defining a filepath passed
+to \code{\link[readr:read_delim]{readr::read_csv()}}, used to interpret the raster values in \code{landscape}
+to land cover class names; see Details}
+
 \item{SDM}{The name of intended species distribution model:
 \code{"waterbird_fall"}, or \code{"waterbird_win"}}
 
-\item{maskpath}{Optional filepath to a raster that should be used to mask the
+\item{mask}{Optional filepath to a raster that should be used to mask the
 output, e.g. a study area boundary}
 
-\item{pathout}{Character string; Filepath to directory where output rasters
-should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
+\item{pathout, landscape_name}{Character strings defining the filepath
+(\code{pathout/SDM/landscape_name}) where output rasters should be written}
 
 \item{landscape_name}{Character string; Name of the landscape being
 evaluated, corresponding to the directory in \code{pathout} where results will
@@ -42,7 +47,7 @@ distribution models.
 Classifies the \code{landscape} rasters according to the land cover
 classes that were originally surveyed, which are the only classes for which
 predictions should be generated from the waterbird distribution models.
-Generates file: \code{covertype.tif} at location \verb{pathout/scenario_name/}.
+Generates file \code{covertype.tif} at location \verb{pathout/SDM/scenario_name/}.
 }
 \examples{
 # See vignette
