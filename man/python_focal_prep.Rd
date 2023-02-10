@@ -19,16 +19,11 @@ python_focal_prep(
 \item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
 
 \item{SDM}{The name of intended species distribution model, for which
-\code{landscape} will be reclassified, and corresponding name of the
-subdirectory within \code{pathout/landscape_name} where results will be written:
-\code{"riparian"}, \code{"waterbird_fall"}, or \code{"waterbird_win"}}
+\code{landscape} will be reclassified: \code{"riparian"}, \code{"waterbird_fall"}, or
+\code{"waterbird_win"}}
 
-\item{pathout}{Character string; Optional filepath to directory where output
-rasters should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
-
-\item{landscape_name}{Character string; Name of the landscape scenario being
-evaluated, corresponding to the subdirectory in \code{pathout} where results
-will be written.}
+\item{pathout, landscape_name}{Character strings defining the filepath
+(\code{pathout/SDM/landscape_name}) where output rasters should be written}
 
 \item{suffix}{Character string; custom suffix appended to layer names
 (optional unless \code{mask} is not \code{NULL})}
@@ -54,11 +49,7 @@ absence (0) of each land cover class, then regroups and renames them into the
 land cover classes used in by the intended species distribution model
 (\code{SDM}), with an optional custom \code{suffix} appended to the layer name. Cell
 values representing land cover presence (1) can also optionally be replaced
-with a different \code{pixel_value} (e.g., the area of each pixel). If \code{pathout}
-is provided (recommended), rasters are written to \code{pathout}, in a
-subdirectory corresponding to the name of the \code{SDM} provided, with the land
-cover class names used by the intended species distribution model. File names
-can optionally have a custom \code{suffix} appended.
+with a different \code{pixel_value} (e.g., the area of each pixel).
 
 By providing a \code{mask}, this function can also optionally use the land cover
 presence layers as a mask to extract the values of another layer (e.g.,

@@ -8,11 +8,7 @@
 #' land cover classes used in by the intended species distribution model
 #' (`SDM`), with an optional custom `suffix` appended to the layer name. Cell
 #' values representing land cover presence (1) can also optionally be replaced
-#' with a different `pixel_value` (e.g., the area of each pixel). If `pathout`
-#' is provided (recommended), rasters are written to `pathout`, in a
-#' subdirectory corresponding to the name of the `SDM` provided, with the land
-#' cover class names used by the intended species distribution model. File names
-#' can optionally have a custom `suffix` appended.
+#' with a different `pixel_value` (e.g., the area of each pixel).
 #'
 #' By providing a `mask`, this function can also optionally use the land cover
 #' presence layers as a mask to extract the values of another layer (e.g.,
@@ -21,14 +17,10 @@
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param SDM The name of intended species distribution model, for which
-#'   `landscape` will be reclassified, and corresponding name of the
-#'   subdirectory within `pathout/landscape_name` where results will be written:
-#'   `"riparian"`, `"waterbird_fall"`, or `"waterbird_win"`
-#' @param pathout Character string; Optional filepath to directory where output
-#'   rasters should be written; passed to [terra::writeRaster()]
-#' @param landscape_name Character string; Name of the landscape scenario being
-#'   evaluated, corresponding to the subdirectory in `pathout` where results
-#'   will be written.
+#'   `landscape` will be reclassified: `"riparian"`, `"waterbird_fall"`, or
+#'   `"waterbird_win"`
+#' @param pathout,landscape_name Character strings defining the filepath
+#'   (`pathout/SDM/landscape_name`) where output rasters should be written
 #' @param suffix Character string; custom suffix appended to layer names
 #'   (optional unless `mask` is not `NULL`)
 #' @param mask Optional SpatRaster; see Details
@@ -65,14 +57,14 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
   }
 
   # split layer by land cover classes to represent presence/absence
-  layernames = terra::freq(landscape) %>% dplyr::pull(.data$label)
+  layernames = terra::freq(landscape) %>% dplyr::pull(.data$value)
   presence = terra::segregate(landscape, other = 0) %>%
     stats::setNames(layernames)
 
   # reclassify according to riparian and waterbird model inputs
   presence_reclass = reclassify_landcover(presence, SDM = SDM)
 
-  create_directory(file.path(pathout, landscape_name, SDM))
+  create_directory(file.path(pathout, SDM, landscape_name))
 
   # optional: if mask is provided (e.g. pfld data), generate layers
   # reflecting the value of the mask layer wherever each land cover is present
@@ -86,7 +78,7 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
                                 updatevalue = NA)
     names(newstack_mask) = paste0(names(presence_reclass), suffix[2])
     terra::writeRaster(newstack_mask,
-                       filename = file.path(pathout, landscape_name, SDM,
+                       filename = file.path(pathout, SDM, landscape_name,
                                             paste0(names(newstack_mask),
                                                    '.tif')),
                        overwrite = overwrite)
@@ -105,7 +97,7 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
   }
 
   terra::writeRaster(presence_reclass,
-                     filename = file.path(pathout, landscape_name, SDM,
+                     filename = file.path(pathout, SDM, landscape_name,
                                           paste0(names(presence_reclass),
                                                  '.tif')),
                      overwrite = overwrite)
