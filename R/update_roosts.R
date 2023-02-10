@@ -53,11 +53,12 @@ update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
   }
 
   if (terra::crs(landscape) != terra::crs(roosts)) {
-    roosts = terra::project(roosts, crs = terra::crs(landscape))
+    roosts = terra::project(roosts, landscape)
   }
 
   # check how much traditional roosts overlap with incompatible land covers:
   # orchard, vineyard, riparian, woodland, scrub, urban
+  levels(landscape) <- NULL
   roost_overlay = landscape %>%
     terra::subst(from = unsuitable, to = 1) %>%
     terra::subst(from = c(2:999), to = 0) %>% #everything else
@@ -74,11 +75,11 @@ update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
     dplyr::filter(.data$landscape == 1 & .data$prop > proportion) %>%
     dplyr::arrange(dplyr::desc(.data$prop))
 
-  create_directory(file.path(pathout, landscape_name))
+  roosts_update = roosts[-which(roosts$Roost_ID %in% incompatible$ID)]
+  roosts_raster = terra::rasterize(roosts_update, landscape)
 
-  # rasterize and save updated roost location data
-  roosts[-which(roosts$Roost_ID %in% incompatible$ID)] %>%
-    terra::rasterize(.data, landscape) %>%
-    terra::writeRaster(file.path(pathout, landscape_name, 'roosts.tif'),
-                       overwrite = overwrite)
+  create_directory(file.path(pathout, landscape_name))
+  terra::writeRaster(roosts_raster,
+                     file.path(pathout, landscape_name, 'roosts.tif'),
+                     overwrite = overwrite)
 }
