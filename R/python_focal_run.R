@@ -19,14 +19,11 @@
 #'   Analyst extensions. While these statistics can be entirely calculated in R,
 #'   arcpy is much faster. See vignette for more details.
 #'
-#' @param pathin,landscape_name Character strings defining the filepath
-#'   (`pathin/landscape_name`) containing input rasters to be processed, such as
+#' @param pathin,SDM,landscape_name Character strings defining the filepath
+#'   (`pathin/SDM/landscape_name`) containing input rasters to be processed, such as
 #'   those created from running [python_focal_prep()]
-#' @param SDM Character string; the name of intended species distribution model
-#'   and subdirectory within `pathin/landscape_name`: `"riparian"`,
-#'   `"waterbird_fall"`, or `"waterbird_win"`
 #' @param regex Optional regular expression to process only a subset of the
-#'   rasters in `pathin/landscape_name/SDM`
+#'   rasters in `pathin/SDM/landscape_name`
 #' @param scale String representing the buffer size (in m) within which focal
 #'   stats are calculated
 #' @param fun Function to summarize focal statistics: `'SUM'` or `'MEAN'`
@@ -51,12 +48,12 @@ python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
   reticulate::source_python(system.file("python", "focal_stats.py",
                                         package = "DeltaMultipleBenefits"))
   # create necessary directories
-  create_directory(file.path(pathout, landscape_name, SDM, scale))
+  create_directory(file.path(pathout, SDM, landscape_name, scale))
 
   # run focal_stats.py
   focal_stats(
-    pathin = file.path(pathin, landscape_name, SDM),
-    pathout = file.path(pathout, landscape_name, SDM, scale),
+    pathin = file.path(pathin, SDM, landscape_name),
+    pathout = file.path(pathout, SDM, landscape_name, scale),
     buffer = scale, fun = fun, regex = regex)
 
 }
