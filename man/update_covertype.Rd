@@ -30,10 +30,6 @@ output, e.g. a study area boundary}
 \item{pathout, landscape_name}{Character strings defining the filepath
 (\code{pathout/SDM/landscape_name}) where output rasters should be written}
 
-\item{landscape_name}{Character string; Name of the landscape being
-evaluated, corresponding to the directory in \code{pathout} where results will
-be written.}
-
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
 }
 \value{

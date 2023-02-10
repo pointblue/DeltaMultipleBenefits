@@ -18,9 +18,6 @@
 #'   output, e.g. a study area boundary
 #' @param pathout,landscape_name Character strings defining the filepath
 #'   (`pathout/SDM/landscape_name`) where output rasters should be written
-#' @param landscape_name Character string; Name of the landscape being
-#'   evaluated, corresponding to the directory in `pathout` where results will
-#'   be written.
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #'
 #' @return Nothing; all files written to `pathout`
