@@ -8,32 +8,34 @@
 #'   cell with a value (e.g., for calculating distance to a crane roost or a
 #'   stream).
 #'
-#'   Resulting distances may be scaled using the `scale` argument. Currently
-#'   supported options include: `km` to divide the results by 1000 and return
-#'   distances in kilometers or `sqrt` to take the square root of the results.
+#'   Raw python results will be written to
+#'   `pathin/landscape_name/droost_raw.tif`, and then optionally scaled and/or
+#'   masked, before writing the final output to `pathout/SDM/landscape_name/`.
+#'   Currently supported scale options include: `km` to divide the results by
+#'   1000 and return distances in kilometers or `sqrt` to take the square root
+#'   of the results.
 #'
 #'   Important: This function requires the availability of arcpy and Spatial
 #'   Analyst extensions. While these statistics can be entirely calculated in R,
-#'   arcpy is much faster. Note: the initial output of `dist_stats.py` will not
-#'   overwrite existing rasters; old versions must be deleted before re-running.
+#'   arcpy is much faster. Note: the initial raw output from `dist_stats.py` to
+#'   `pathin/landscape_name/droost_raw.tif` will not overwrite existing rasters;
+#'   old versions must be deleted before re-running.
 #'
-#' @param pathin Filepath for the directory containing input rasters to be
-#'   processed, such as those created from running [python_focal_prep()]
-#' @param landscape_name Subdirectory containing the rasters for a target
-#'   landscape scenario for generating focal_stats
-#' @param copyto Optional character string containing alternate `landscape_name`
-#'   to which the results of [python_dist()] should be copied.
-#' @param pathout filepath for the directory where output rasters should be
-#'   written
-#' @param filename name of resulting layer, including file extension; default is
-#'   'droost_km.tif', the name of the predictor required by the waterbird models
+#' @param pathin,landscape_name Character strings defining the filepath
+#'   (`pathin/landscape_name`) where input rasters are located, such as those
+#'   created from running [python_focal_prep()] or [update_roosts()]
+#' @param pathout,SDM Additional character strings defining the filepath
+#'   (`pathout/SDM/landscape_name`) where output raster should be written
+#' @param filename name of the output raster, including file extension; default
+#'   is 'droost_km.tif', the name of the predictor required by the waterbird
+#'   models
 #' @param scale Optional character string for scaling the results; See Details
-#' @param maskpath Optional filepath to a raster that should be used to mask the
-#'   output, e.g. a study area boundary
-#' @param overwrite Logical; passed to [terra::writeRaster()]. Applies to
-#'   `copyto` only.
+#' @param mask Optional `SpatRaster` or character string giving the filepath to
+#'   a raster that should be used to mask the output, e.g. a study area boundary
+#' @param overwrite Logical; passed to [terra::writeRaster()]; does not apply to
+#'   the intermediate step of writing `droost_raw.tif`
 #'
-#' @return Nothing; all files written to `pathout`
+#' @return Nothing; all files written to `pathout/SDM/landscape_name`
 #' @importFrom reticulate import
 #' @importFrom reticulate source_python
 #' @export
@@ -41,24 +43,33 @@
 #' @examples
 #' # See vignette
 
-python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
+python_dist = function(pathin, landscape_name, pathout, SDM,
                        filename = 'droost_km.tif', scale = NULL,
-                       maskpath = NULL, overwrite = FALSE) {
+                       mask = NULL, overwrite = FALSE) {
+
+  if (!is.null(mask)) {
+    if (is(mask, 'character')) {
+      mask = rast(mask)
+    } else if (!is(mask, 'SpatRaster')) {
+      stop('function expects "mask" to be either a character string or a SpatRaster')
+    }
+  }
 
   arcpy <- reticulate::import('arcpy')
   arcpy$CheckOutExtension("Spatial")
   reticulate::source_python(system.file("python", "dist_stats.py",
                                         package = "DeltaMultipleBenefits"))
 
-  create_directory(file.path(pathout[1], landscape_name))
+
   # run dist_stats.py to calculate distance to roosts and put in same pathout[1]
   fname = list.files(file.path(pathin, landscape_name), '.tif$')
   dist_stats(filename = fname,
              fullpathin = file.path(pathin, landscape_name) %>% normalizePath(),
-             fullpathout =  file.path(pathout[1], landscape_name, filename) %>%
+             fullpathout =  file.path(pathin, landscape_name, 'droost_raw.tif') %>%
                normalizePath())
 
-  r = file.path(pathout[1], landscape_name, filename) %>% terra::rast()
+  # further processing:
+  r = file.path(pathin, landscape_name, 'droost_raw.tif') %>% terra::rast()
 
   if (scale == 'km') {
     r = r / 1000
@@ -66,19 +77,13 @@ python_dist = function(pathin, landscape_name, copyto = NULL, pathout,
     r = sqrt(r)
   }
 
-  if (!is.null(maskpath)) {
-    # overwrite dist.py output in pathout[1] with masked version
-    r = terra::mask(r, terra::rast(maskpath))
-    terra::writeRaster(r, file.path(pathout[1], landscape_name, filename),
-                       wopt = list(names = gsub('.tif', '', filename)),
-                       overwrite = TRUE)
+  if (!is.null(mask)) {
+    r = terra::mask(r, mask)
   }
 
-  if (!is.null(copyto)) {
-    # copy from scenario_name/pathout[1] to copyto/pathout[2]
-    create_directory(file.path(pathout[2], copyto))
-    terra::writeRaster(r, file.path(pathout[2], copyto, filename),
-                       wopt = list(names = gsub('.tif', '', filename)),
-                       overwrite = overwrite)
-  }
+  # write output with final scaled/masked version
+  create_directory(file.path(pathout, SDM, landscape_name))
+  terra::writeRaster(r, file.path(pathout, SDM, landscape_name, filename),
+                     wopt = list(names = gsub('.tif', '', filename)),
+                     overwrite = TRUE)
 }

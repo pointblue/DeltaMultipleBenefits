@@ -7,40 +7,36 @@
 python_dist(
   pathin,
   landscape_name,
-  copyto = NULL,
   pathout,
+  SDM,
   filename = "droost_km.tif",
   scale = NULL,
-  maskpath = NULL,
+  mask = NULL,
   overwrite = FALSE
 )
 }
 \arguments{
-\item{pathin}{Filepath for the directory containing input rasters to be
-processed, such as those created from running \code{\link[=python_focal_prep]{python_focal_prep()}}}
+\item{pathin, landscape_name}{Character strings defining the filepath
+(\code{pathin/landscape_name}) where input rasters are located, such as those
+created from running \code{\link[=python_focal_prep]{python_focal_prep()}} or \code{\link[=update_roosts]{update_roosts()}}}
 
-\item{landscape_name}{Subdirectory containing the rasters for a target
-landscape scenario for generating focal_stats}
+\item{pathout, SDM}{Additional character strings defining the filepath
+(\code{pathout/SDM/landscape_name}) where output raster should be written}
 
-\item{copyto}{Optional character string containing alternate \code{landscape_name}
-to which the results of \code{\link[=python_dist]{python_dist()}} should be copied.}
-
-\item{pathout}{filepath for the directory where output rasters should be
-written}
-
-\item{filename}{name of resulting layer, including file extension; default is
-'droost_km.tif', the name of the predictor required by the waterbird models}
+\item{filename}{name of the output raster, including file extension; default
+is 'droost_km.tif', the name of the predictor required by the waterbird
+models}
 
 \item{scale}{Optional character string for scaling the results; See Details}
 
-\item{maskpath}{Optional filepath to a raster that should be used to mask the
-output, e.g. a study area boundary}
+\item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
+a raster that should be used to mask the output, e.g. a study area boundary}
 
-\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}. Applies to
-\code{copyto} only.}
+\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; does not apply to
+the intermediate step of writing \code{droost_raw.tif}}
 }
 \value{
-Nothing; all files written to \code{pathout}
+Nothing; all files written to \code{pathout/SDM/landscape_name}
 }
 \description{
 Function to call python script for calculating Euclidean distances on
@@ -52,14 +48,18 @@ distance for all cells in the input raster without a value to the nearest
 cell with a value (e.g., for calculating distance to a crane roost or a
 stream).
 
-Resulting distances may be scaled using the \code{scale} argument. Currently
-supported options include: \code{km} to divide the results by 1000 and return
-distances in kilometers or \code{sqrt} to take the square root of the results.
+Raw python results will be written to
+\code{pathin/landscape_name/droost_raw.tif}, and then optionally scaled and/or
+masked, before writing the final output to \verb{pathout/SDM/landscape_name/}.
+Currently supported scale options include: \code{km} to divide the results by
+1000 and return distances in kilometers or \code{sqrt} to take the square root
+of the results.
 
 Important: This function requires the availability of arcpy and Spatial
 Analyst extensions. While these statistics can be entirely calculated in R,
-arcpy is much faster. Note: the initial output of \code{dist_stats.py} will not
-overwrite existing rasters; old versions must be deleted before re-running.
+arcpy is much faster. Note: the initial raw output from \code{dist_stats.py} to
+\code{pathin/landscape_name/droost_raw.tif} will not overwrite existing rasters;
+old versions must be deleted before re-running.
 }
 \examples{
 # See vignette
