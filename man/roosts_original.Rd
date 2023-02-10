@@ -5,7 +5,7 @@
 \alias{roosts_original}
 \title{Traditional nighttime crane roost locations}
 \format{
-\subsection{\code{roosts_original} A SpatVector containing with 94 geometries 1}{
+\subsection{\code{roosts_original} A simple features collection with 94 geometries 1}{
 
 attribute field:
 \describe{
