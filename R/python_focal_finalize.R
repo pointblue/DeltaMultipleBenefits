@@ -1,16 +1,16 @@
 #' Final processing of focal stats for SDMs
 #'
-#' Renames and rescales output from [python_focal_run()] as needed to match expected
-#' inputs for species distribution models (SDMs). Includes options to mask by
-#' another raster and fill missing values with zero.
+#' Renames and rescales output from [python_focal_run()] as needed to match
+#' expected inputs for species distribution models (SDMs). Includes options to
+#' mask by another raster and fill missing values with zero.
 #'
 #' @details Function expects source files to be in a directory structure created
 #'   by [python_focal_run()], which is also used to inform the final processing
-#'   steps: `pathin/landscape_name/SDM/scale`. All .tif files in this source
-#'   directory will be read in, and optionally masked by the raster at
-#'   `mask`. If `cover = TRUE`, pixels in `mask` with a value of 1 will
-#'   also be replaced with a value of 0, and passed to [terra::cover()] to fill
-#'   in missing values in source data with zero.
+#'   steps: `pathin/SDM/landscape_name/scale`. All .tif files in this source
+#'   directory will be read in, and optionally masked by the raster at `mask`.
+#'   If `cover = TRUE`, pixels in `mask` with a value of 1 will also be replaced
+#'   with a value of 0, and passed to [terra::cover()] to fill in missing values
+#'   in source data with zero.
 #'
 #'   If `SDM = "riparian"`, pixel counts are converted to a proportion of the
 #'   total number of cells expected within the buffer distance represented by
@@ -21,25 +21,19 @@
 #'   appended to the predictor name in the format "_2k", "_5k", or "_10k", as
 #'   expected by the waterbird SDMs.
 #'
-#'   The final rasters are then written to the directory `pathout/landscape_name`,
-#'   which will be created if it doesn't yet exist.
+#'   The final rasters are then written to the directory
+#'   `pathout/SDM/landscape_name`, which will be created if it doesn't yet exist.
 #'
-#' @param pathin,landscape_name Character strings defining the filepath
-#'   (`pathin/landscape_name`) containing input rasters to be processed, such as
+#' @param pathin,SDM,landscape_name,scale Character strings defining the filepath
+#'   (`pathin/SDM/landscape_name,scale`) containing input rasters to be processed, such as
 #'   those created from running [python_focal_run()]
-#' @param SDM Character string; the name of intended species distribution model
-#'   and subdirectory within `pathin/landscape_name`: `"riparian"`,
-#'   `"waterbird_fall"`, or `"waterbird_win"`.
-#' @param scale Character string; Spatial scale over which focal stats are
-#'   summarized, and subdirectory within `pathin/landscape_name/SDM`: `50`,
-#'   `2000`, `5000`, or `10000`.
-#' @param pathout Character string; Filepath to directory where output rasters
-#'   should be written; passed to [terra::writeRaster()]
+#' @param pathout Character string defining the filepath
+#'   (`pathout/SDM/landscape_name`) where output rasters should be written
 #' @param overwrite Logical; passed to [terra::writeRaster()]
 #' @param mask Optional `SpatRaster` or character string giving the filepath to
 #'   a raster that should be used to mask the output, e.g. a study area boundary
-#' @param cover Logical; default is `FALSE`. If `TRUE`, `mask` must not be
-#'   NULL; See Details.
+#' @param cover Logical; default is `FALSE`. If `TRUE`, `mask` must not be NULL;
+#'   See Details.
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
 #'   each land cover class.
@@ -58,7 +52,7 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
     stop('cover=TRUE but mask not provided')
   }
 
-  dat = list.files(file.path(pathin, landscape_name, SDM, scale),
+  dat = list.files(file.path(pathin, SDM, landscape_name, scale),
                    pattern = '.tif$', full.names = TRUE) %>% terra::rast()
 
   if (!is.null(mask)) {
@@ -90,9 +84,9 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
     names(dat) = paste0(names(dat), '_', as.numeric(scale)/1000, 'k')
   }
 
-  create_directory(file.path(pathout, landscape_name))
+  create_directory(file.path(pathout, SDM, landscape_name))
   terra::writeRaster(dat,
-                     paste0(file.path(pathout, landscape_name), '/',
+                     paste0(file.path(pathout, SDM, landscape_name), '/',
                             names(dat), '.tif'),
                      overwrite = overwrite)
 }

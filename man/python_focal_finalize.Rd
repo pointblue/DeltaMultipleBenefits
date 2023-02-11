@@ -16,46 +16,38 @@ python_focal_finalize(
 )
 }
 \arguments{
-\item{pathin, landscape_name}{Character strings defining the filepath
-(\code{pathin/landscape_name}) containing input rasters to be processed, such as
+\item{pathin, SDM, landscape_name, scale}{Character strings defining the filepath
+(\verb{pathin/SDM/landscape_name,scale}) containing input rasters to be processed, such as
 those created from running \code{\link[=python_focal_run]{python_focal_run()}}}
 
-\item{SDM}{Character string; the name of intended species distribution model
-and subdirectory within \code{pathin/landscape_name}: \code{"riparian"},
-\code{"waterbird_fall"}, or \code{"waterbird_win"}.}
-
-\item{scale}{Character string; Spatial scale over which focal stats are
-summarized, and subdirectory within \code{pathin/landscape_name/SDM}: \code{50},
-\code{2000}, \code{5000}, or \code{10000}.}
-
-\item{pathout}{Character string; Filepath to directory where output rasters
-should be written; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
+\item{pathout}{Character string defining the filepath
+(\code{pathout/SDM/landscape_name}) where output rasters should be written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 
 \item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
 a raster that should be used to mask the output, e.g. a study area boundary}
 
-\item{cover}{Logical; default is \code{FALSE}. If \code{TRUE}, \code{mask} must not be
-NULL; See Details.}
+\item{cover}{Logical; default is \code{FALSE}. If \code{TRUE}, \code{mask} must not be NULL;
+See Details.}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
 each land cover class.
 }
 \description{
-Renames and rescales output from \code{\link[=python_focal_run]{python_focal_run()}} as needed to match expected
-inputs for species distribution models (SDMs). Includes options to mask by
-another raster and fill missing values with zero.
+Renames and rescales output from \code{\link[=python_focal_run]{python_focal_run()}} as needed to match
+expected inputs for species distribution models (SDMs). Includes options to
+mask by another raster and fill missing values with zero.
 }
 \details{
 Function expects source files to be in a directory structure created
 by \code{\link[=python_focal_run]{python_focal_run()}}, which is also used to inform the final processing
-steps: \code{pathin/landscape_name/SDM/scale}. All .tif files in this source
-directory will be read in, and optionally masked by the raster at
-\code{mask}. If \code{cover = TRUE}, pixels in \code{mask} with a value of 1 will
-also be replaced with a value of 0, and passed to \code{\link[terra:cover]{terra::cover()}} to fill
-in missing values in source data with zero.
+steps: \code{pathin/SDM/landscape_name/scale}. All .tif files in this source
+directory will be read in, and optionally masked by the raster at \code{mask}.
+If \code{cover = TRUE}, pixels in \code{mask} with a value of 1 will also be replaced
+with a value of 0, and passed to \code{\link[terra:cover]{terra::cover()}} to fill in missing values
+in source data with zero.
 
 If \code{SDM = "riparian"}, pixel counts are converted to a proportion of the
 total number of cells expected within the buffer distance represented by
@@ -66,8 +58,8 @@ If \code{SDM = "waterbird_fall"} or \code{SDM = "waterbird_win"}, the \code{scal
 appended to the predictor name in the format "_2k", "_5k", or "_10k", as
 expected by the waterbird SDMs.
 
-The final rasters are then written to the directory \code{pathout/landscape_name},
-which will be created if it doesn't yet exist.
+The final rasters are then written to the directory
+\code{pathout/SDM/landscape_name}, which will be created if it doesn't yet exist.
 }
 \examples{
 # See vignette
