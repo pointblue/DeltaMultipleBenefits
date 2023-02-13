@@ -21,15 +21,15 @@
 #'   [transform_SDM()]; SDM must be one of `"riparian"`, `"waterbird_fall"`, or
 #'   `"waterbird_win"`.
 #' @param baseline_name Character string defining the filepath
-#'   (`pathin/SDM/baseline`) containing the predictions for a baseline landscape
+#'   (`pathin/SDM/baseline_name`) containing the predictions for a baseline landscape
 #' @param scenario_name Character string defining the filepath
-#'   (`pathin/SDM/scenario`) containing the predictions for a scenario landscape
+#'   (`pathin/SDM/scenario_name`) containing the predictions for a scenario landscape
 #' @param pathout Character string defining the filepath
-#'   (`pathout/SDM/scenario`) where the results will be written
+#'   (`pathout/SDM/scenario_name`) where the results will be written
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #' @param differentiate Logical; if `TRUE`, locations where the predicted value
 #'   is zero in both landscapes will be converted to NA
-#' @return Nothing; all output written to `pathout/SDM/scenario`
+#' @return Nothing; all output written to `pathout/SDM/scenario_name`
 #' @export
 #'
 #' @examples

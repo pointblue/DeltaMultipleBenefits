@@ -23,13 +23,13 @@ distribution model, such as those created from running \code{\link[=fit_SDM]{fit
 \code{"waterbird_win"}.}
 
 \item{baseline_name}{Character string defining the filepath
-(\code{pathin/SDM/baseline}) containing the predictions for a baseline landscape}
+(\code{pathin/SDM/baseline_name}) containing the predictions for a baseline landscape}
 
 \item{scenario_name}{Character string defining the filepath
-(\code{pathin/SDM/scenario}) containing the predictions for a scenario landscape}
+(\code{pathin/SDM/scenario_name}) containing the predictions for a scenario landscape}
 
 \item{pathout}{Character string defining the filepath
-(\code{pathout/SDM/scenario}) where the results will be written}
+(\code{pathout/SDM/scenario_name}) where the results will be written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
 
@@ -37,7 +37,7 @@ distribution model, such as those created from running \code{\link[=fit_SDM]{fit
 is zero in both landscapes will be converted to NA}
 }
 \value{
-Nothing; all output written to \code{pathout/SDM/scenario}
+Nothing; all output written to \code{pathout/SDM/scenario_name}
 }
 \description{
 Calculate the difference between predictions of species presence for a
