@@ -28,9 +28,9 @@
 #'   `landscape`, assigned a value of zero, and overlaid on the model
 #'   predictions.
 #'
-#' @param pathin,landscape_name Character strings defining the filepath
-#'   (`pathin/landscape_name`) containing new predictor rasters to include in
-#'   the model, such as those created from running [python_focal_finalize()]
+#' @param pathin,SDM,landscape_name Character strings defining the filepath
+#'   (`pathin/SDM/landscape_name`) containing new predictor rasters to include
+#'   in the model, such as those created from running [python_focal_finalize()]
 #' @param modlist List of model objects of class 'gbm' representing the
 #'   distribution models to which new predictors should be fit.
 #' @param constants optional dataframe containing predictors with a constant
@@ -44,8 +44,8 @@
 #'   represented by the predictors contained in `pathin/landscape_name`, used to
 #'   identify the locations of `unsuitable` land covers. Must be provided if
 #'   `unsuitable` is not `NULL`.
-#' @param pathout Filepath for the directory where results rasters should be
-#'   written
+#' @param pathout Character string defining the filepath
+#'   (`pathout/SDM/landscape_name`) where output rasters should be written
 #' @param overwrite Logical; passed to [terra::writeRaster()]
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
@@ -62,7 +62,7 @@
 #' # See vignette
 #'
 
-fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
+fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
                    factors = NULL, landscape = NULL, unsuitable = NULL,
                    pathout, overwrite = FALSE) {
 
@@ -73,11 +73,11 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
     warning('Landscape provided but unsuitable cover types not specified')
   }
 
-  create_directory(file.path(pathout, landscape_name))
+  create_directory(file.path(pathout, SDM, landscape_name))
 
   # scenario-independent predictors (in pathin) and scenario-specific predictors
-  predictors = c(list.files(pathin, pattern = '.tif$', full.names = TRUE),
-                 list.files(file.path(pathin, landscape_name), pattern = '.tif$',
+  predictors = c(list.files(file.path(pathin, SDM), pattern = '.tif$', full.names = TRUE),
+                 list.files(file.path(pathin, SDM, landscape_name), pattern = '.tif$',
                             full.names = TRUE)) %>%
     terra::rast()
 
@@ -87,16 +87,17 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
     purrr::map(names(modlist),
                ~terra::predict(
                  model = modlist[[.x]],
-                 object = terra::subset(predictors,
-                                        modlist[[.x]]$contributions %>%
-                                          dplyr::filter(!var %in% names(constants)) %>%
-                                          dplyr::pull(var)),
+                 object = terra::subset(
+                   x = predictors,
+                   subset = modlist[[.x]]$contributions %>%
+                     dplyr::filter(!var %in% names(constants)) %>%
+                     dplyr::pull(var)),
                  n.trees = modlist[[.x]]$n.trees,
                  na.rm = TRUE,
                  type = 'response',
                  const = constants,
                  factors = factors,
-                 filename = paste0(file.path(pathout, landscape_name), '/',
+                 filename = paste0(file.path(pathout, SDM, landscape_name), '/',
                                    .x, '.tif'),
                  overwrite = overwrite,
                  wopt = list(names = .x)
@@ -104,31 +105,30 @@ fit_SDM = function(pathin, landscape_name, modlist, constants = NULL,
   } else {
     # predict results, but fill in unsuitable land covers with zero before
     # writing raster
-    mask = landscape %>% terra::subst(from = unsuitable, to = 0) %>%
-      terra::subst(c(1:999), NA)
+    mask = terra::classify(landscape,
+                           rcl = data.frame(from = unsuitable,
+                                            to = 0) %>% as.matrix(),
+                           others = NA)
 
     purrr::map(names(modlist),
                ~terra::predict(
                  model = modlist[[.x]],
                  object = terra::subset(
-                   predictors,
-                   modlist[[.x]]$contributions %>%
+                   x = predictors,
+                   subset = modlist[[.x]]$contributions %>%
                      dplyr::filter(!var %in% names(constants)) %>%
                      dplyr::pull(var)),
                  n.trees = modlist[[.x]]$n.trees,
                  na.rm = TRUE,
                  type = 'response',
                  const = constants,
-                 factors = factors
-               ) %>%
+                 factors = factors) %>%
                  terra::cover(
                    x = mask,
                    y = .,
-                   filename = paste0(file.path(pathout, landscape_name), '/',
+                   filename = paste0(file.path(pathout, SDM, landscape_name), '/',
                                      .x, '.tif'),
                    overwrite = overwrite,
-                   wopt = list(names = .x))
-    )
+                   wopt = list(names = .x)))
   }
-
 }

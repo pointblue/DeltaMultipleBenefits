@@ -6,6 +6,7 @@
 \usage{
 fit_SDM(
   pathin,
+  SDM,
   landscape_name,
   modlist,
   constants = NULL,
@@ -17,9 +18,9 @@ fit_SDM(
 )
 }
 \arguments{
-\item{pathin, landscape_name}{Character strings defining the filepath
-(\code{pathin/landscape_name}) containing new predictor rasters to include in
-the model, such as those created from running \code{\link[=python_focal_finalize]{python_focal_finalize()}}}
+\item{pathin, SDM, landscape_name}{Character strings defining the filepath
+(\code{pathin/SDM/landscape_name}) containing new predictor rasters to include
+in the model, such as those created from running \code{\link[=python_focal_finalize]{python_focal_finalize()}}}
 
 \item{modlist}{List of model objects of class 'gbm' representing the
 distribution models to which new predictors should be fit.}
@@ -39,8 +40,8 @@ identify the locations of \code{unsuitable} land covers. Must be provided if
 cover classifications that should be considered unsuitable \emph{a priori}. If
 not \code{NULL}, \code{landcape} must also be provided.}
 
-\item{pathout}{Filepath for the directory where results rasters should be
-written}
+\item{pathout}{Character string defining the filepath
+(\code{pathout/SDM/landscape_name}) where output rasters should be written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
