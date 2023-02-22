@@ -20,7 +20,8 @@ knitr::opts_chunk$set(
 
 The functions contained in the DeltaMultipleBenefits package facilitate estimation of the net impacts of scenarios of landscape change in the Sacramento-San Joaquin River Delta. It provides tools for applying existing data and species distribution models to user-supplied landscapes to estimate a range of benefits to the Delta community. Currently, the benefit categories addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. Ultimately, this R package is intended to facilitate a more comprehensive multidimensional understanding of the direction and magnitude of the potential impacts of landscape change (proposed or anticipated), communication about the projected synergies and trade-offs among multiple goals, and the identification of solutions to address these trade-offs.
 
-This tutorial outlines the major steps of analyzing a new scenario of landscape change or reproducing the results in Dybala et al. (2023), including:
+This tutorial outlines the major steps of analyzing a new scenario of landscape change or reproducing the results in Dybala et al. (2023), including:  
+
 1. Preparing a new scenario  
 2. Summarizing the total extent and change in each land cover class  
 3. Estimating the net change in non-spatial metrics  
@@ -38,7 +39,7 @@ library(ggplot2)
 
 # Step 1. Preparing a new scenario
 
-Preparing a new landscape scenario for analysis requires aligning the land cover classifications in the new scenario with the classifications used in the metrics and models included in this framework. In addition, if the new scenario is represented as polygons, it will also need to be converted to a raster. Finally, the extent, projection, and resolution of your new landscape should match that of any baseline landscape to which you will be comparing it. 
+Preparing a new landscape scenario for analysis requires aligning the land cover classifications in the new scenario with the classifications used in the metrics and models included in this framework. In addition, if the new scenario is represented as polygons, it will need to be converted to a raster. Finally, the extent, projection, and resolution of your new landscape should match that of any baseline landscape to which you will be comparing it. 
 
 The `DeltaMultipleBenefits` framework is based on a land cover classification scheme that is designed to work with the existing metrics and species distribution models. It includes both natural and agricultural land cover classes, and is organized hierarchically into major land cover classes and subclasses. Certain subclasses are only relevant to certain metrics and species distribution models, while other metrics will apply to all subclasses within a major land cover class. Therefore, we generally recommend assigning all land covers in your landscape scenario to the most specific subclass in the existing scheme:
 
@@ -89,7 +90,7 @@ new_shp <- olinda1 %>%
 ggplot(new_shp) + geom_sf(aes(fill = CODE_NAME))
 ```
 
-Next, convert the polygons to a raster format with the desired projection, extent, and resolution. First, simple features objects must first be converted to SpatVector objects using `terra::vect()`. Then we'll create a raster template with a small number of columns and rows (and thus coarse resolution), but to ensure alignment with other rasters in your analysis, it usually works best to use an existing raster as a template. Next, transfer the land cover code values to the template to create a new landscape raster that we'll treat as our "baseline" landscape. Finally, to help with plotting, we'll assign factor levels and color codings.
+Next, convert the polygons to a raster format with the desired projection, extent, and resolution. Simple features objects must first be converted to SpatVector objects using `terra::vect()`. Then we'll create a raster template with a small number of columns and rows (and thus coarse resolution) just for demonstration purposes, but to ensure alignment with other rasters in your analysis, it usually works best to use an existing raster as a template. Next, transfer the land cover code values to the template to create a new landscape raster that we'll treat as our "baseline" landscape. Finally, to help with plotting, we'll assign factor levels and color codings.
 
 
 ```{r classify_poly3}
@@ -124,7 +125,8 @@ plot(baseline)
 If the landscape to be analyzed is in a raster format already, the existing land cover values encoded should be similarly translated to the supported values in the existing land cover classification scheme. As an example, we'll use `baseline` raster we created above, and create a new version from it to serve as our new `scenario` of landscape change. 
 
 ```{r classify_raster}
-# now develop a simplistic scenario where all wheat pixels are converted to Fremont cottonwood riparian forest
+# simple example scenario: all wheat pixels are converted to Fremont cottonwood 
+# riparian forest
 scenario <- terra::subst(baseline,
                          from = 'GRAIN&HAY_WHEAT', 
                          to = 'RIPARIAN_FOREST_POFR')
@@ -145,9 +147,12 @@ plot(landscapes) #Note the orange wheat cells have changed to red riparian cells
 ```
 
 
+
 # Step 2. Summarizing land cover change
 
-__sum_landcover:__ First summarize the total area of each unique land cover class in one or more rasters. This function takes one or more landscape rasters and for each layer, counts the number of pixels of each unique land cover class and multiplies by the provided `pixel_area` value and returns a tibble with the scenario name (taken from the names of each raster layer), the `CODE_NAME` of each land cover class, and the total area. Here we'll first use `terra::cellSize` to estimate the area of each pixel in ha. The option `rollup = TRUE` adds extra rows to the output with the sum total area for all riparian and managed wetland subclasses. This function also supports options to mask out portions of the raster, and/or to summarize the total area by zone. 
+Built-in functions make it simple to estimate the change in the total area of each land cover class between the baseline and one or more scenario landscape rasters. First, sum the total area of each land cover class in each landscape raster, then summarize the change between them.
+
+__sum_landcover:__ This function takes a SpatRaster with one or more layers and, for each layer, counts the number of pixels of each unique land cover class and multiplies by the provided `pixel_area` value to estimate the total area of each land cover class. It returns a tibble with the scenario name (taken from the names of each raster layer), the `CODE_NAME` of each land cover class, and the total area. Here we'll first use `terra::cellSize` to estimate the area of each pixel in ha. The option `rollup = TRUE` adds extra rows to the output with the sum total area for all riparian and managed wetland subclasses. This function also supports options to mask out portions of the raster and/or to summarize the total area by zone. 
 
 ```{r landcover1}
 area = terra::cellSize(baseline, unit = 'ha')[50,50] %>% tibble::deframe()
@@ -160,7 +165,7 @@ landcover_totals = DeltaMultipleBenefits::sum_landcover(
 
 ```
 
-__sum_change:__ Then estimate the net change in the area of each land cover class between the baseline and scenario rasters. Note that this function expects the output from `sum_landcover`, which includes the field `scenario` and at least one scenario named "baseline". All other values in the `scenario` field will be assumed to represent an alternative scenario for analysis, and thus the net change for multiple scenarios can be estimated simultaneously. The result is a tibble with the scenario name, the `CODE_NAME` of each land cover class, fields representing the total area of the land cover class for the scenario in question and the corresponding area for the baseline, and then the `net_change` between them, where a positive value indicates an increase from the baseline.
+__sum_change:__ This function calculates the net change in the area of each land cover class between the baseline landscape and one or more scenario landscapes. Note that this function expects the output from `sum_landcover`, which includes the field `scenario` representing the names of each landscape. At least one scenario must be named "baseline", and all other scenarios will be assumed to represent an alternative scenario landscape for comparison to the baseline. Thus the net change for multiple scenarios can be estimated simultaneously. The result is a tibble with the scenario name, the `CODE_NAME` of each land cover class, fields representing the total area of the land cover class for the scenario in question and the corresponding area for the baseline, and then the `net_change` between them, where a positive value indicates an increase from the baseline.
 
 ```{r landcover2}
 landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
@@ -169,7 +174,12 @@ landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
 
 # Step 3. Estimating the net change in non-spatial metrics
 
-We developed metrics representing several categories of benefits that are non-spatial, including: agricultural livelihoods, water quality, climate change resilience. These are non-spatial metrics in the sense that each land cover class has a defined value per unit area, regardless of where in the Delta the that land cover is located. Thus, they represent the mean value for that land cover class throughout the Delta, along with the uncertainty in that estimate (as the standard error of the mean). These non-spatial metrics are relatively straight-forward and simple in contrast to the distribution models used for estimating biodiversity support benefits (see below), which require incorporating information about the surrounding landscape as well as the specific land cover class in question to estimate whether it provides suitable habitat. However, estimating the net change in these non-spatial metrics also requires accounting for the uncertainty in the underlying estimates. The current non-spatial metrics are available to download via Zenodo, doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874), but are also included in this package. 
+We developed metrics representing several categories of benefits that are non-spatial, including: *agricultural livelihoods*, *water quality*, and *climate change resilience*. These are all non-spatial metrics in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple and similar to the steps above for estimating the net change in land cover area. However, the uncertainty in the value of each metric for each land cover class, such as resulting from spatial or temporal variation, can also be accounted for in estimating the uncertainty in the net change. The current non-spatial metrics are available to download via Zenodo, doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874), but are also included in this package: 
+
+```{r metrics1}
+data(metrics, package = 'DeltaMultipleBenefits')
+head(metrics)
+```
 
 __sum_metrics:__ First estimate the total landscape score for each metric and landscape raster, by combining total area of each land cover class estimated above with the per-unit-area metrics for each land cover class. For most metrics, this involves multiplying the per-unit-area metrics by the total area of each land cover class and summing over the entire landscape. For Annual Wages (as part of the Agricultural Livelihoods category of benefits), it instead calculates the new weighted average wage across all agricultural hectares (i.e., those supporting agricultural jobs with an associated wage value). For metrics in the Climate Change Resilience category, it instead calculates the new overall average resilience score on a scale of 1 (low resilience) to 10 (high resilience). The function returns a tibble with the scenario name, fields from `metrics` defining metric categories and units, a `SCORE_TOTAL` and a `SCORE_TOTAL_SE`, representing the combined uncertainty. The `units` field is also updated to reflect that the scores are no longer per-hectare, but instead summed over all hectares in the landscape.
 
@@ -177,10 +187,7 @@ The total area of each land cover class as calculated above includes both the ar
 
 *Note: We will get a warning message here, because our example landscapes do not include all land cover classes present in our metrics data.*
 
-```{r metrics1}
-data(metrics, package = 'DeltaMultipleBenefits')
-head(metrics)
-
+```{r metrics2}
 scores = DeltaMultipleBenefits::sum_metrics(
   metricdat = metrics %>%
     dplyr::filter(
@@ -191,7 +198,7 @@ scores = DeltaMultipleBenefits::sum_metrics(
 
 __sum_change:__ Then, we can again use `sum_change` to estimate the difference in each metric between the baseline and scenario landscapes. However, this time because there is uncertainty in the total landscape scores, the uncertainty in the difference will also be estimated. Here we use a coverage factor `k = 2` to approximate a 95% confidence interval for the `net_change`.
 
-```{r metrics2}
+```{r metrics3}
 scores_change = DeltaMultipleBenefits::sum_change(scores, k = 2)
 head(scores_change)
 ```
