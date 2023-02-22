@@ -297,7 +297,7 @@ purrr::map2(.x = c(rep(names(landscapes), each = 2)),
 
 __fit_SDM:__ Use the finalized predictors created in the previous step for each landscape to fit the distribution models for each of the 9 riparian landbird species. The `modlist` should refer to an R object containing a list of the riparian landbird distribution models, downloaded via Zenodo ([10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)), and loaded into the R environment.
 
-The original models included `area.ha`, a predictor accounting for variation in survey effort, which should be held constant for new predictions; we selected 3.14159 and `region`, referring to the total area in hectares within 50m of a survey location, after 4 surveys. In addition, the original models included `region`, a predictor indicating whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1). Thus, all predictions for the Delta should have a constant value of 1. These constant values can be passed in as a dataframe, rather than needing to create raster layers for them, as we did for the other predictors. In addition, in the original analysis we considered open water to be an unsuitable land cover class for riparian landbirds *a priori*, and so we specified `unsuitable = 90` (the land cover class value for open water); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used as a mask to replace the predicted values from the model. Thus, the original call to this function in our analyses for the Delta looked like this:
+The original models included `area.ha`, a predictor accounting for variation in survey effort, which should be held constant for new predictions; we selected 3.14159 and `region`, referring to the total area in hectares within 50m of a survey location, after 4 surveys. In addition, the original models included `region`, a predictor indicating whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1). Thus, all predictions for the Delta should have a constant value of 1. These constant values can be passed in as a dataframe, rather than needing to create raster layers for them, as we did for the other predictors. In addition, in the original analysis we considered open water to be an unsuitable land cover class for riparian landbirds *a priori*, and so we specified `unsuitable = 90` (the land cover class value for open water); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Thus, the original call to this function in our analyses for the Delta looked like this:
 ```{r riparian4, eval = FALSE}
 purrr::map(names(landscapes),
            ~DeltaMultipleBenefits::fit_SDM(
@@ -557,16 +557,19 @@ purrr::pmap(combos,
 
 __fit_SDM:__ Use the finalized predictors created in the previous step for each landscape to fit the distribution models for each of the 5 fall and 6 winter waterbird groups. Again, the `modlist` should refer to an R object containing a list of the fall or winter waterbird distribution models, downloaded via Zenodo ([10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)) and loaded into the R environment.
 
-The original models included `area.ha`, a predictor accounting for variation in survey effort, which should be held constant for new predictions; we selected 3.14159 and `region`, referring to the total area in hectares within 50m of a survey location, after 4 surveys. In addition, the original models included `region`, a predictor indicating whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1). Thus, all predictions for the Delta should have a constant value of 1. These constant values can be passed in as a dataframe, rather than needing to create raster layers for them, as we did for the other predictors. In addition, in the original analysis we considered open water to be an unsuitable land cover class for riparian landbirds *a priori*, and so we specified `unsuitable = 90` (the land cover class value for open water); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used as a mask to replace the predicted values from the model. Thus, the original call to this function in our analyses for the Delta looked like this:
+Similar to the riparian models, the waterbird models included `offset`, a predictor accounting for variation in survey effort, with different values appiled to the predictions for waterbird groups in fall vs. winter, as well as a separate value for cranes and geese during the fall (which had a more restricted fall season). In addition, the `covertype` of the area within which the survey was conducted was treated as a factor variable, which must be specified, and the available factor levels varied between the fall and winter seasons. In the original analysis, we also considered perennial crops, urban, and barren land covers to be an unsuitable waterbirds *a priori*, and so we specified `unsuitable = c(10:19, 60, 130)` (the corresponding land cover class values); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Thus, due to the distinct values for `offset`, we call `fit_SDM` three times: 
 
 ```{r waterbird4, eval = FALSE}
 
 # waterbird_fall -- note different offset values for cranes & geese vs. others
 # crane, geese:
-purrr::map(names(scenarios)[which(!grepl('win', names(scenarios)) &
-                                    grepl('_alt', names(scenarios)))],
+
+
+
+# fall: cranes, geese
+purrr::map(names(landscapes),
            ~DeltaMultipleBenefits::fit_SDM(
-             pathin = 'GIS/SDM_predictors',
+             pathin = 'SDM_predictors',
              SDM = 'waterbird_fall',
              landscape_name = .x,
              modlist = waterbird_mods_fall[c('crane', 'geese')],
@@ -575,16 +578,14 @@ purrr::map(names(scenarios)[which(!grepl('win', names(scenarios)) &
                                                  'Irrigated pasture',
                                                  'Rice',
                                                  'Wetland'))),
-             unsuitable = c(10:19, 60, 130), #perennial crops, urban, barren
-             landscape = scenarios[[.x]] %>%
-               mask(rast('GIS/boundaries/delta.tif')),
-             pathout = 'GIS/SDM_results',
-             overwrite = TRUE))
+             unsuitable = c(10:19, 60, 130), 
+             landscape = landscapes[[.x]],
+             pathout = 'SDM_results'))
 
-# dblr, shore, cicon:
-purrr::map(names(scenarios)[which(!grepl('win', names(scenarios)) & grepl('_alt', names(scenarios)))],
+# fall: dblr, shore, cicon:
+purrr::map(names(landscapes),
            ~DeltaMultipleBenefits::fit_SDM(
-             pathin = 'GIS/SDM_predictors',
+             pathin = 'SDM_predictors',
              SDM = 'waterbird_fall',
              landscape_name = .x,
              modlist = waterbird_mods_fall[c('dblr', 'cicon', 'shore')],
@@ -593,17 +594,14 @@ purrr::map(names(scenarios)[which(!grepl('win', names(scenarios)) & grepl('_alt'
                                                  'Irrigated pasture',
                                                  'Rice',
                                                  'Wetland'))),
-             unsuitable = c(10:19, 60, 130), #perennial crops, urban, barren
-             landscape = scenarios[[.x]] %>%
-               mask(rast('GIS/boundaries/delta.tif')),
-             pathout = 'GIS/SDM_results',
-             overwrite = TRUE))
-# beepr::beep(1)
+             unsuitable = c(10:19, 60, 130), 
+             landscape = landscapes[[.x]],
+             pathout = 'SDM_results'))
 
-# waterbird_win: one offset for all, so can do together
-purrr::map(names(scenarios)[which(grepl('win', names(scenarios)) & grepl('_alt', names(scenarios)))],
+# winter
+purrr::map(names(landscapes),
            ~DeltaMultipleBenefits::fit_SDM(
-             pathin = 'GIS/SDM_predictors',
+             pathin = 'SDM_predictors',
              SDM = 'waterbird_win',
              landscape_name = .x,
              modlist = waterbird_mods_win,
@@ -615,9 +613,8 @@ purrr::map(names(scenarios)[which(grepl('win', names(scenarios)) & grepl('_alt',
                                                  'Wetland',
                                                  'Winter wheat'))),
              unsuitable = c(10:19, 60, 130), #perennial crops, urban, barren
-             landscape = scenarios[[.x]] %>%
-               mask(rast('GIS/boundaries/delta.tif')),
-             pathout = 'GIS/SDM_results',
+             landscape = scenarios[[.x]],
+             pathout = 'SDM_results',
              overwrite = TRUE))
 
 ```
