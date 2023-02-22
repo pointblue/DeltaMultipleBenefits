@@ -233,7 +233,7 @@ Currently, the only spatial models supported are the distribution models for rip
 
 *Note: In this section of the vignette, each code chunk is set to `eval = FALSE` because many of these steps are time-consuming and generate many intermediate raster files on disk. However, each has been tested and does work!*
 
-## Riparian landbirds
+## Riparian landbird models
 
 ### Prepare model predictors
 Beginning with the models for riparian landbird species, first use built-in functions to generate focal statistics for each pixel in the baseline and scenario landscape rasters that represent features of the landscape within a certain distance of each survey location. The steps are to: (1) prepare each landscape raster for generating focal stats, (2) use Python to run the focal stats, and (3) finalize the predictors for use with the models. For ease of use with a large number of rasters, each of these functions are intended to write to or read from a directory defined in the functions arguments, rather than work with rasters in memory.
@@ -366,29 +366,7 @@ purrr::map(names(landscapes),
              pathout = 'SDM_results_threshold'))
 ```
 
-### Estimate the net change in habitat
-
-At this stage, the steps for estimating the net change in the total amount of habitat provided by each scenario is similar to estimating the net change in the area of each land cover class and in each of the "simple metrics" above. 
-
-__sum_habitat:__ Estimate the total area of each landscape each species is predicted to occupy. This function is similar to `sum_landcover`, but with a few key differences. By default, all prediction rasters in the `pathin` argument and any subdirectories will be included, so it can handle the results from multiple scenarios and multiple sets of distribution models simultaneously. However, `SDM` or both `SDM` and `landscape_name` can optionally be specified to limit the predictions evaluated. In addition, by including the option `rollup = TRUE`, the total area occupied by at least one species in the set will also be calculated. 
-
-By default, the result is the total count of pixels with a predicted species presence, but the count can be optionally multiplied by the area of each pixel by providing a `pixel_area` value in the desired units. Here we also added a `mutate` argument to the results to clearly specify the units used. Either way, the results are structured to align with the results of `sum_metrics()` used above for summarizing the total landscapes scores for the simple metrics, so that the habitat totals can be appended to those results, and the net change can be estimated simultaneously.
-
-```{r riparian7, eval = FALSE}
-habitat_totals = DeltaMultipleBenefits::sum_habitat(
-  pathin = 'SDM_results_threshold',
-  rollup = TRUE,
-  pixel_area = 0.09) %>%
-  dplyr::mutate(UNIT = 'ha')
-```
-
-__sum_change:__ Again, use this function to estimate the net change in the total area of the landscape each species is predicted to occupy, as an indication of the net change in the total area of suitable habitat for each species. Optionally `habitat_totals` can first be appended to `scores` above (the result of `sum_metrics()`) to calculate the net change across all benefits categories simultaneously.
-
-```{r riparian8, eval = FALSE}
-scores_change_habitat = DeltaMultipleBenefits::sum_change(habitat_totals)
-```
-
-## Waterbirds
+## Waterbird models
 
 ### Prepare model predictors
 The process for fitting the waterbird distribution models to each landscape is similar to the process for riparian landbirds, but requires a few extra steps to generate the necessary predictors. First, use built-in functions to generate `covertype` (a categorical predictor for the land cover class in each cell), `pwater` (the probability of open water in each cell), and `droost` (distance to traditional nighttime crane roosts), all of which may be affected by each landscape scenario. Then, generate focal statistics as above, but including focal statistics based on `pwater`, before fitting the distribution models. 
@@ -560,12 +538,6 @@ __fit_SDM:__ Use the finalized predictors created in the previous step for each 
 Similar to the riparian models, the waterbird models included `offset`, a predictor accounting for variation in survey effort, with different values appiled to the predictions for waterbird groups in fall vs. winter, as well as a separate value for cranes and geese during the fall (which had a more restricted fall season). In addition, the `covertype` of the area within which the survey was conducted was treated as a factor variable, which must be specified, and the available factor levels varied between the fall and winter seasons. In the original analysis, we also considered perennial crops, urban, and barren land covers to be an unsuitable waterbirds *a priori*, and so we specified `unsuitable = c(10:19, 60, 130)` (the corresponding land cover class values); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Thus, due to the distinct values for `offset`, we call `fit_SDM` three times: 
 
 ```{r waterbird4, eval = FALSE}
-
-# waterbird_fall -- note different offset values for cranes & geese vs. others
-# crane, geese:
-
-
-
 # fall: cranes, geese
 purrr::map(names(landscapes),
            ~DeltaMultipleBenefits::fit_SDM(
@@ -618,13 +590,50 @@ purrr::map(names(landscapes),
              overwrite = TRUE))
 
 ```
--fit_SDM (by set)
--transform_SDM (threshold)
 
-### Estimate the net change in habitat
-- summarize total habitat by landscape (sum_habitat)
-- net change (sum_change)
+__transform_SDM:__ Again, as with riparian landbirds, convert the continuous probabilities of waterbird group presence predicted in the previous step to binary predictions of presence or absence.
 
+```{r waterbird5, eval = FALSE}
+purrr::map(names(landscapes),
+           ~DeltaMultipleBenefits::transform_SDM(
+             pathin = 'SDM_results',
+             SDM = 'waterbird_fall',
+             landscape_name = .x,
+             modlist = BRT_riparian[1],
+             stat = 'equal_sens_spec',
+             pathout = 'SDM_results_threshold'))
+
+purrr::map(names(landscapes),
+           ~DeltaMultipleBenefits::transform_SDM(
+             pathin = 'SDM_results',
+             SDM = 'waterbird_win',
+             landscape_name = .x,
+             modlist = BRT_riparian[1],
+             stat = 'equal_sens_spec',
+             pathout = 'SDM_results_threshold'))
+```
+
+## Estimate the net change in bird habitat
+
+At this stage, the steps for estimating the net change in the total amount of habitat provided by each scenario for riparian landbirds and waterbird groups is similar to estimating the net change in the area of each land cover class and in each of the "simple metrics" above. 
+
+__sum_habitat:__ Estimate the total area of each landscape each species is predicted to occupy. This function is similar to `sum_landcover`, but with a few key differences. By default, all prediction rasters in the `pathin` argument and any subdirectories will be included, so it can handle the results from multiple scenarios and multiple sets of distribution models simultaneously. However, `SDM` or both `SDM` and `landscape_name` can optionally be specified to limit the predictions evaluated. In addition, by including the option `rollup = TRUE`, the total area occupied by at least one species in the set will also be calculated. 
+
+By default, the result is the total count of pixels with a predicted species presence, but the count can be optionally multiplied by the area of each pixel by providing a `pixel_area` value in the desired units. Here we also added a `mutate` argument to the results to clearly specify the units used. Either way, the results are structured to align with the results of `sum_metrics()` used above for summarizing the total landscapes scores for the simple metrics, so that the habitat totals can be appended to those results, and the net change can be estimated simultaneously.
+
+```{r riparian7, eval = FALSE}
+habitat_totals = DeltaMultipleBenefits::sum_habitat(
+  pathin = 'SDM_results_threshold',
+  rollup = TRUE,
+  pixel_area = 0.09) %>%
+  dplyr::mutate(UNIT = 'ha')
+```
+
+__sum_change:__ Again, use this function to estimate the net change in the total area of the landscape each species is predicted to occupy, as an indication of the net change in the total area of suitable habitat for each species. Optionally `habitat_totals` can first be appended to `scores` above (the result of `sum_metrics()`) to calculate the net change across all benefits categories simultaneously.
+
+```{r riparian8, eval = FALSE}
+scores_change_habitat = DeltaMultipleBenefits::sum_change(habitat_totals)
+```
 
 
 additional data required:
