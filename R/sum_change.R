@@ -5,38 +5,42 @@
 #'
 #'@details This function expects `dat` to contain the following fields:
 #'   * `scenario`: a character field used to identify the name of the landscape
-#'  being examined; at least one should be called `'baseline'`
-#'   * `SCORE_TOTAL` and (optionally) `SCORE_TOTAL_SE`: numeric fields
-#'  representing the total landscape-level values for each metric and associated
-#'  uncertainty, such as those produced by [sum_habitat()] or [sum_metrics()].
+#'  being examined; one of these must be called `'baseline'` and all others will
+#'  be treated as alternate scenarios for comparison with the baseline
+#'   * either `area` or `SCORE_TOTAL`: numeric fields representing the total
+#'  landscape-level values for each metric, such as those produced by
+#'  [sum_landcover()] or [sum_metrics()].
 #'
-#'  The function will align the scores for each scenario with corresponding
-#'  scores for the baseline landscape based on any other common fields (e.g.
-#'  `ZONE`, `METRIC_CATEGORY`), and then calculate the net difference as the
-#'  scenario score minus the baseline score. The uncertainty in the underlying
-#'  total landscape-level scores for each metric is accounted for by estimating
-#'  the uncertainty in the difference as: `sqrt(baseline_se^2 + scenario_se^2)`
+#'  The scores for each scenario are aligned with corresponding scores for the
+#'  baseline landscape based on any other common fields (e.g. `ZONE`,
+#'  `METRIC_CATEGORY`) and the net difference is calculated as the scenario
+#'  score minus the baseline score. The function returns the original baseline
+#'  and scenario total landscape scores for each metric and scenario (renamed as
+#'  `BASELINE` and `SCENARIO`), along with `net_change`.
 #'
-#'  The coverage factor `k` is used to estimate expanded uncertainty (`U`), or
-#'  the interval within which a large fraction of the distribution of values
-#'  could be reasonably expected. The appropriate value for `k` depends on the
-#'  level of confidence required, the number of observations on which the
-#'  uncertainty is based, and any knowledge of the underlying distributions of
-#'  the estimates. Where the distributions concerned are normal, and for most
-#'  purposes, a value of 2 is recommended  to give an interval containing
-#'  approximately 95% of the distribution of values.
-#'
-#'  The function returns the original baseline and scenario total landscape
-#'  scores for each metric and scenario (renamed as `BASELINE`, `BASELINE_SE`,
-#'  `SCENARIO`, AND `SCENARIO_SE`), along with `net_change` and `net_change_se`,
-#'  the expanded uncertainty estimate `U`, and corresponding `lcl` and `ucl`, as
-#'  well as a `z` score equal to `abs(net_change/net_change_se)`.
+#'  If `SCORE_TOTAL_SE` is also provided in `dat`, representing the uncertainty
+#'  in the `SCORE_TOTAL`, the uncertainty in the difference (`net_change_se`) is
+#'  also calculated as: `sqrt(baseline_se^2 + scenario_se^2)` where
+#'  `baseline_se` and `scenario_se` represent the `SCORE_TOTAL_SE` for the
+#'  baseline and scenario landscapes, respectively. In addition, the coverage
+#'  factor `k` is used to estimate expanded uncertainty (`U`), or the interval
+#'  within which a large fraction of the distribution of values could be
+#'  reasonably expected. The appropriate value for `k` depends on the level of
+#'  confidence required, the number of observations on which the uncertainty is
+#'  based, and any knowledge of the underlying distributions of the estimates.
+#'  Where the distributions concerned are normal, and for most purposes, a value
+#'  of 2 is recommended  to give an interval containing approximately 95% of the
+#'  distribution of values. In this case, the function also returns the original
+#'  uncertainty estimates for the baseline and scenario (renamed as
+#'  `BASELINE_SE` and `SCENARIO_SE`), `net_change_se`, the expanded uncertainty
+#'  estimate `U` and corresponding `lcl` and `ucl`, as well as a `z` score equal
+#'  to `abs(net_change/net_change_se)`.
 #'
 #'@param dat tibble; see Details
 #'@param k coverage factor; see Details
 #'
-#'@return tibble containing fields `net_change`, `net_change_se`, `U`, `lcl`,
-#'  `ucl`, and `z`
+#'@return tibble containing fields `BASELINE`, `SCENARIO`, `net_change`, and
+#'  optionally `net_change_se`, `U`, `lcl`, `ucl`, and `z`; see Details
 #'@seealso [sum_habitat()], [sum_metrics()]
 #'@importFrom magrittr %>%
 #'@importFrom rlang .data

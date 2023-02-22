@@ -12,8 +12,8 @@ sum_change(dat, k = 2)
 \item{k}{coverage factor; see Details}
 }
 \value{
-tibble containing fields \code{net_change}, \code{net_change_se}, \code{U}, \code{lcl},
-\code{ucl}, and \code{z}
+tibble containing fields \code{BASELINE}, \code{SCENARIO}, \code{net_change}, and
+optionally \code{net_change_se}, \code{U}, \code{lcl}, \code{ucl}, and \code{z}; see Details
 }
 \description{
 Calculate the difference in the landscape-level metric totals between a
@@ -23,33 +23,37 @@ baseline landscape and one or more scenario landscapes
 This function expects \code{dat} to contain the following fields:
 \itemize{
 \item \code{scenario}: a character field used to identify the name of the landscape
-being examined; at least one should be called \code{'baseline'}
-\item \code{SCORE_TOTAL} and (optionally) \code{SCORE_TOTAL_SE}: numeric fields
-representing the total landscape-level values for each metric and associated
-uncertainty, such as those produced by \code{\link[=sum_habitat]{sum_habitat()}} or \code{\link[=sum_metrics]{sum_metrics()}}.
+being examined; one of these must be called \code{'baseline'} and all others will
+be treated as alternate scenarios for comparison with the baseline
+\item either \code{area} or \code{SCORE_TOTAL}: numeric fields representing the total
+landscape-level values for each metric, such as those produced by
+\code{\link[=sum_landcover]{sum_landcover()}} or \code{\link[=sum_metrics]{sum_metrics()}}.
 }
 
-The function will align the scores for each scenario with corresponding
-scores for the baseline landscape based on any other common fields (e.g.
-\code{ZONE}, \code{METRIC_CATEGORY}), and then calculate the net difference as the
-scenario score minus the baseline score. The uncertainty in the underlying
-total landscape-level scores for each metric is accounted for by estimating
-the uncertainty in the difference as: \code{sqrt(baseline_se^2 + scenario_se^2)}
+The scores for each scenario are aligned with corresponding scores for the
+baseline landscape based on any other common fields (e.g. \code{ZONE},
+\code{METRIC_CATEGORY}) and the net difference is calculated as the scenario
+score minus the baseline score. The function returns the original baseline
+and scenario total landscape scores for each metric and scenario (renamed as
+\code{BASELINE} and \code{SCENARIO}), along with \code{net_change}.
 
-The coverage factor \code{k} is used to estimate expanded uncertainty (\code{U}), or
-the interval within which a large fraction of the distribution of values
-could be reasonably expected. The appropriate value for \code{k} depends on the
-level of confidence required, the number of observations on which the
-uncertainty is based, and any knowledge of the underlying distributions of
-the estimates. Where the distributions concerned are normal, and for most
-purposes, a value of 2 is recommended  to give an interval containing
-approximately 95\% of the distribution of values.
-
-The function returns the original baseline and scenario total landscape
-scores for each metric and scenario (renamed as \code{BASELINE}, \code{BASELINE_SE},
-\code{SCENARIO}, AND \code{SCENARIO_SE}), along with \code{net_change} and \code{net_change_se},
-the expanded uncertainty estimate \code{U}, and corresponding \code{lcl} and \code{ucl}, as
-well as a \code{z} score equal to \code{abs(net_change/net_change_se)}.
+If \code{SCORE_TOTAL_SE} is also provided in \code{dat}, representing the uncertainty
+in the \code{SCORE_TOTAL}, the uncertainty in the difference (\code{net_change_se}) is
+also calculated as: \code{sqrt(baseline_se^2 + scenario_se^2)} where
+\code{baseline_se} and \code{scenario_se} represent the \code{SCORE_TOTAL_SE} for the
+baseline and scenario landscapes, respectively. In addition, the coverage
+factor \code{k} is used to estimate expanded uncertainty (\code{U}), or the interval
+within which a large fraction of the distribution of values could be
+reasonably expected. The appropriate value for \code{k} depends on the level of
+confidence required, the number of observations on which the uncertainty is
+based, and any knowledge of the underlying distributions of the estimates.
+Where the distributions concerned are normal, and for most purposes, a value
+of 2 is recommended  to give an interval containing approximately 95\% of the
+distribution of values. In this case, the function also returns the original
+uncertainty estimates for the baseline and scenario (renamed as
+\code{BASELINE_SE} and \code{SCENARIO_SE}), \code{net_change_se}, the expanded uncertainty
+estimate \code{U} and corresponding \code{lcl} and \code{ucl}, as well as a \code{z} score equal
+to \code{abs(net_change/net_change_se)}.
 }
 \examples{
 # See vignette
