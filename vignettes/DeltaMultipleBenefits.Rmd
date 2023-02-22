@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 The functions contained in the DeltaMultipleBenefits package facilitate estimation of the net impacts of scenarios of landscape change in the Sacramento-San Joaquin River Delta. It provides tools for applying existing data and species distribution models to user-supplied landscapes to estimate a range of benefits to the Delta community. Currently, the benefit categories addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. Ultimately, this R package is intended to facilitate a more comprehensive multidimensional understanding of the direction and magnitude of the potential impacts of landscape change (proposed or anticipated), communication about the projected synergies and trade-offs among multiple goals, and the identification of solutions to address these trade-offs.
 
-This tutorial outlines the major steps of analyzing a new scenario of landscape change or reproducing the results in Dybala et al. (2023) [link TBD], including:  
+This tutorial outlines the major steps of analyzing a new scenario of landscape change or reproducing the results in Dybala et al. (2023) [link TBD](https://doi.org), including:  
 
 1. Preparing a new scenario  
 2. Summarizing the total extent and change in each land cover class  
@@ -40,7 +40,7 @@ library(ggplot2)
 ```
   
   
-# 1. Preparing a new scenario
+# Step 1. Preparing a new scenario
 
 Preparing a new landscape scenario for analysis requires aligning the land cover classifications in the new scenario with the classifications used in the metrics and models included in this framework. In addition, if the new scenario is represented as polygons, it will need to be converted to a raster. Finally, the extent, projection, and resolution of your new landscape should match that of any baseline landscape to which you will be comparing it. 
 
@@ -149,7 +149,7 @@ plot(landscapes) #Note the orange wheat cells have changed to red riparian cells
 ```
   
   
-# 2. Summarizing land cover change
+# Step 2. Summarizing land cover change
 
 Built-in functions make it simple to estimate the change in the total area of each land cover class between the baseline and one or more scenario landscape rasters. First, sum the total area of each land cover class in each landscape raster, then summarize the change between them.
 
@@ -174,9 +174,9 @@ landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
 ```
   
   
-# 3. Estimating the net change in simple metrics
+# Step 3. Estimating the net change in simple metrics
 
-We developed several "simple metrics" representing several categories of benefits including: *agricultural livelihoods*, *water quality*, and *climate change resilience*. For example, agricultural livelihood metrics include the number of agricultural jobs, their average annual wage, and gross production value. These are all "simple metrics" in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple compared to estimating the net change in metrics derived from a spatial model (see below), and the steps are similar to estimating the net change in land cover area above. However, the uncertainty in the value of each metric for each land cover class, such as resulting from spatial or temporal variation, can also be accounted for in estimating the uncertainty in the net change. The current non-spatial metrics are available to download via Zenodo, doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874), but are also included in this package: 
+We developed several "simple metrics" representing several categories of benefits including: *agricultural livelihoods*, *water quality*, and *climate change resilience*. For example, agricultural livelihood metrics include the number of agricultural jobs, their average annual wage, and gross production value. These are all "simple metrics" in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple compared to estimating the net change in metrics derived from a spatial model (see below), and the steps are similar to estimating the net change in land cover area above. However, the uncertainty in the value of each metric for each land cover class, such as resulting from spatial or temporal variation, can also be accounted for in estimating the uncertainty in the net change. The values assigned to each land cover class for each metric are available to download via Zenodo (doi:[10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874)), but are also included in this package: 
 
 ```{r metrics1}
 data(metrics, package = 'DeltaMultipleBenefits')
@@ -226,11 +226,11 @@ scores_change %>%
 ```
   
   
-# 4. Estimating the net change in metrics informed by spatial models
+# Step 4. Estimating the net change in metrics informed by spatial models
 
 In addition to the "simple metrics" described above, we developed spatial distribution models for riparian landbirds and waterbirds that predict the probability of species presence for each pixel on the landscape, depending on the land cover class at that pixel, the composition of land cover classes in the surrounding area, and other features of the landscape. We used the probability of presence predictions as an indicator of suitable habitat, and to represent the benefits category of *biodiversity support*. Evaluating the net change in biodiversity support between scenario and baseline landscapes is necessarily more complicated than evaluating the "simple metrics" above, but also allows for more nuance and spatial variation.
 
-Currently, the only spatial models supported are the distribution models for riparian landbird species and groups of waterbird species. Their development is described in a manuscript (link TBD), and the models are available to download via Zenodo ([doi:10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)). However, spatial models for other species, and for other benefits categories could be incorporated in future versions of this package as they are developed.
+Currently, the only spatial models supported are the distribution models for riparian landbird species and groups of waterbird species. Their development is described in a manuscript ([Dybala et al. In review - Link TBD](https://doi.org)) and the models are available to download via Zenodo (doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)). However, spatial models for other species, and for other benefits categories could be incorporated in future versions of this package as they are developed.
 
 *Note: In this section of the vignette, each code chunk is set to `eval = FALSE` because many of these steps are time-consuming and generate many intermediate raster files on disk. However, each has been tested and does work!*
   
@@ -263,9 +263,7 @@ reticulate::use_python('C:/Python27/ArcGISx6410.8/python.exe', required = TRUE)
 
 In this example, we apply the function `SUM` to the rasters generated in the previous step which have a value of `1` for every cell where the land cover class is present, so that the result will represent the total number of cells of each land cover class within the distance defined by the `scale` argument. The riparian landbird models require focal stats summarizing both landscapes within two different radii: 50m and 2000m. So here we can use `purrr:map2` to iterate over all 4 combinations of landscape and radius. The results are writen to `pathout/SDM/landscape_name/scale`. 
  
-*Note that `pathin` in this function should be the same as `pathout` in the previous step, and that `SDM` should be identical.*
-
-*Note also that there is no `overwrite` option for this function. If the files already exist in `pathout/SDM/landscape_name`, it will return an error. Previous versions should be deleted manually or `pathout` changed.*
+*Note that there is no `overwrite` option for this function. If the files already exist in `pathout/SDM/landscape_name`, it will return an error. Previous versions should be deleted manually or `pathout` changed.*
 ```{r riparian2, eval = FALSE}
 purrr::map2(.x = c(rep(names(landscapes), each = 2)),
             .y = c(rep(c('50', '2000'), 2)),
@@ -275,13 +273,10 @@ purrr::map2(.x = c(rep(names(landscapes), each = 2)),
              SDM = 'riparian',
              scale = .y,
              fun = 'SUM',
-             pathout = 'SDM_predictors/focal_stats'
-           ))
+             pathout = 'SDM_predictors/focal_stats'))
 ```
 
 __python_focal_finalize:__ The third step is to finalize the results of the focal stats in the previous step to generate predictors for use with the riparian distribution models. For `SDM = 'riparian'`, this will result in converting the results of the previous step, which provide the total number of cells of each land cover class, to a proportion of the total number of cells and appending the `scale` value to the predictor name as `_50` or `_2000`, as expected by the original model. As above, we can use `purrr:map2` to iterate over all 4 combinations of landscape and radius. The results are written to the directory `pathout/landscape_name`.
-
-*Note again that `pathin` in this function should be the same as `pathout` in the previous step, and that `SDM` should be identical.*
 
 ```{r riparian3, eval = FALSE}
 purrr::map2(.x = c(rep(names(landscapes), each = 2)),
@@ -297,9 +292,9 @@ purrr::map2(.x = c(rep(names(landscapes), each = 2)),
 
 ### 4.1.2 Generate model predictions
 
-__fit_SDM:__ Use the finalized predictors created in the previous step for each landscape to fit the distribution models for each of the 9 riparian landbird species. The `modlist` should refer to an R object containing a list of the riparian landbird distribution models.
+__fit_SDM:__ Use the finalized predictors created in the previous step for each landscape to fit the distribution models for each of the 9 riparian landbird species. The `modlist` should refer to an R object containing a list of the riparian distribution models.
 
-The original models included `area.ha`, a predictor accounting for variation in survey effort, which should be held constant for new predictions; we selected 3.14159 and `region`, referring to the total area in hectares within 50m of a survey location, after 4 surveys. In addition, the original models included `region`, a predictor indicating whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1). Thus, all predictions for the Delta should have a constant value of 1. These constant values can be passed in as a dataframe, rather than needing to create raster layers for them, as we did for the other predictors. In addition, in the original analysis we considered open water to be an unsuitable land cover class for riparian landbirds *a priori*, and so we specified `unsuitable = 90` (the land cover class value for open water); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Thus, the original call to this function in our analyses for the Delta looked like this:
+The original models included `area.ha`, a predictor accounting for variation in survey effort, which should be held constant for new predictions; we selected 3.14159 referring to the total area in hectares within 50m of a survey location, after 4 surveys. In addition, the original models included `region`, a predictor indicating whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1). Thus, all predictions for the Delta should have a constant value of 1. These constant values can be passed in as a dataframe, rather than needing to create raster layers for them, as we did for the other predictors. In addition, in the original analysis we considered open water to be an unsuitable land cover class for riparian landbirds *a priori*, and so we specified `unsuitable = 90` (the land cover class value for open water); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Thus, the original call to this function in our analyses for the Delta looked like this:
 ```{r riparian4, eval = FALSE}
 purrr::map(names(landscapes),
            ~DeltaMultipleBenefits::fit_SDM(
@@ -316,11 +311,9 @@ purrr::map(names(landscapes),
 
 However, this code will not work correctly on our example landscapes for two reasons: (1) the unsuitable land cover class value of 90 does not exist in our example scenario, and so will result in a mask landscape of all NA values, throwing an error, and (2) our example scenario does not include ALL of the predictors required in the original distribution model, including all land cover classes, climate variables, and distance to stream. 
 
-To predict riparian landbird distributions for our example landscapes, all required predictors must be provided, either as additional raster files in the `pathin` directory or as constant values. For demonstration purposes only (we do not recommend this approach in general), we will treat the missing landcover classes as truly absent from the landscape, with a value of 0 for every pixel and assume the climate and distance to stream does not vary across our example landscape. We will also refrain from specifying any of these land covers as unsuitable *a priori*. 
+To predict riparian landbird distributions for our example landscapes, all required predictors must be provided, either as additional raster files in the `pathin` directory or as constant values. For demonstration purposes only (*this approach is not appropriate for real analyses*), we will treat the missing land cover classes as truly absent from the landscape, with a value of 0 for every pixel and assume the climate and distance to stream does not vary across our example landscape. We will also refrain from specifying any of these land covers as unsuitable *a priori*. 
 
-*Note 1: Any predictor provided as a constant will take precedence over any predictor provided as a raster in the `pathin` directory.*
-
-*Note 2: In this example, we have included only one distribution model in `modlist` for speed, but the function is designed to accept and predict distributions for all 9 riparian landbird models at once.*
+*Note: Any predictor provided as a constant will take precedence over any predictor provided as a raster in the `pathin` directory.*
 
 ```{r riparian5, eval = FALSE}
 purrr::map(names(landscapes),
@@ -329,7 +322,7 @@ purrr::map(names(landscapes),
              SDM = 'riparian',
              landscape_name = .x,
              pathout = 'SDM_results',
-             modlist = BRT_riparian[1],
+             modlist = BRT_riparian,
              constants = data.frame(region = 1,
                                     area.ha = 3.141593,
                                     streamdist = 20,
@@ -401,7 +394,7 @@ purrr::map(names(landscapes),
              overwrite = TRUE))
 ```
 
-__update_pwater:__ The waterbird distribution models also included `pwater` indicating the proportion of the original survey area that was flooded. For prediction purposes, we used information about the observed probability of surface water being present in each cell, during each season over several years. This surface water data was derived from Point Blue's Water Tracker, which analyzes remote sensing data to detect surface water. However, in a scenario of future landscape change, such as conversion of a grassland to a managed wetland, we would expect the probability of surface water to also change. Therefore, if both a baseline and scenario landscape are provided, this function will analyze the provided `pwater` raster by the baseline land cover class to identify the average probability of surface water, and then for the scenario, assigns the expected probability of surface water to any cells that have changed land cover class. If only one landscape is provided, The original baseline `pwater` raster layers for the Delta are available to download from [link TBD]. Here, we randomly generate an example baseline `pwater` and then use the function to create an updated `pwater` layer for our example scenario.
+__update_pwater:__ The waterbird distribution models also included `pwater` indicating the proportion of the original survey area that was flooded. For prediction purposes, we used information about the observed probability of surface water being present in each cell, during each season over several years. This surface water data was derived from Point Blue's Water Tracker, which analyzes remote sensing data to detect surface water. However, in a scenario of future landscape change, such as conversion of a grassland to a managed wetland, we would expect the probability of surface water to also change. Therefore, if both a baseline and scenario landscape are provided, this function will analyze the provided `pwater` raster by the baseline land cover class to identify the average probability of surface water, and then for the scenario, assigns the expected probability of surface water to any cells that have changed land cover class. If only one landscape is provided, The original baseline `pwater` raster layers for the Delta are available to download from Zenodo doi: [link TBD](https://doi.org). Here, we randomly generate an example baseline `pwater` and then use the function to create an updated `pwater` layer for our example scenario.
 
 ```{r pwater, eval = FALSE}
 pwater_base_fall = rast(landscapes$baseline,
@@ -441,7 +434,7 @@ purrr::pmap(
   floor = FALSE)
 ```
 
-__update_roosts & python_dist:__ In addition to changes in the probability of open water on the landscape, land cover changes may also affect the suitability of traditional night-time crane roosts. Because the distance to roost was an important predictor on the distribution models for cranes, accounting for the loss of traditional roost locations would affect these distances. The original data source for traditional roost locations is included in this package, but could be combined with updated information as it becomes available. The `update_roosts` function allows defining which land cover class codes are incompatible with crane roosts, and the threshold proportion of the traditional crane roost polygon at which the entire roost would be considered unsuitable. In our original analyses, we considered crane roosts to be incompatible with perennial crops, urban land cover, riparian vegetation, woodland, or scrub, and we assumed once 20% of the roost was covere by unsuitable land covers, the roost location would be abandoned. The result of `update_roosts` is an intermediate file at representing the new assumed locations of traditional roosts, which is then used as an input to `python_dist` for use in updating the estimated distance to roost predictor for each pixel in the landscape.
+__update_roosts & python_dist:__ In addition to changes in the probability of open water on the landscape, land cover changes may also affect the suitability of traditional night-time crane roosts. Because the distance to roost was an important predictor on the distribution models for cranes, accounting for the loss of traditional roost locations would affect these distances. The original data source for traditional roost locations is included in this package, but could be combined with updated information as it becomes available. The `update_roosts` function allows defining which land cover class codes are incompatible with crane roosts, and the threshold proportion of the traditional crane roost polygon at which the entire roost would be considered unsuitable. In our original analyses, we considered crane roosts to be incompatible with perennial crops, urban land cover, riparian vegetation, woodland, or scrub, and we assumed once 20% of the roost was covered by unsuitable land covers, the roost location would be abandoned. The result of `update_roosts` is an intermediate file at representing the new assumed locations of traditional roosts, which is then used as an input to `python_dist` for use in updating the estimated distance to roost predictor for each pixel in the landscape.
 
 *Note: The land cover types we have designated as "unsuitable" for use as a crane roost are not expected to vary seasonally, and so we do not need to create separate versions corresponding to fall and winter waterbird SDMs.*
 
@@ -546,7 +539,7 @@ purrr::pmap(combos,
 
 ### 4.2.3 Generate model predictions
 
-__fit_SDM:__ Use the finalized predictors created in the previous step for each landscape to fit the distribution models for each of the 5 fall and 6 winter waterbird groups. Again, the `modlist` should refer to an R object containing a list of the fall or winter waterbird distribution models, downloaded via Zenodo ([10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)) and loaded into the R environment.
+__fit_SDM:__ Use the finalized predictors created in the previous step for each landscape to fit the distribution models for each of the 5 fall and 6 winter waterbird groups. Again, the `modlist` should refer to an R object containing a list of the fall or winter waterbird distribution models.
 
 Similar to the riparian models, the waterbird models included `offset`, a predictor accounting for variation in survey effort, with different values appiled to the predictions for waterbird groups in fall vs. winter, as well as a separate value for cranes and geese during the fall (which had a more restricted fall season). In addition, the `covertype` of the area within which the survey was conducted was treated as a factor variable, which must be specified, and the available factor levels varied between the fall and winter seasons. In the original analysis, we also considered perennial crops, urban, and barren land covers to be an unsuitable waterbirds *a priori*, and so we specified `unsuitable = c(10:19, 60, 130)` (the corresponding land cover class values); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Thus, due to the distinct values for `offset`, we call `fit_SDM` three times: 
 
@@ -642,22 +635,36 @@ habitat_totals = DeltaMultipleBenefits::sum_habitat(
   dplyr::mutate(UNIT = 'ha')
 ```
 
-__sum_change:__ Again, use this function to estimate the net change in the total area of the landscape each species is predicted to occupy, as an indication of the net change in the total area of suitable habitat for each species. Optionally `habitat_totals` can first be appended to `scores` above (the result of `sum_metrics()`) to calculate the net change across all benefits categories simultaneously.
+__sum_change:__ Again, use this function to estimate the net change in the total area of the landscape each species is predicted to occupy, as an indication of the net change in the total area of suitable habitat for each species. Optionally `habitat_totals` can first be appended to `scores` above (the result of `sum_metrics()`) to calculate the net change across all benefits categories simultaneously and include biodiversity support in the visualization of the results alongside the other categories of benefits.
 
 ```{r riparian8, eval = FALSE}
 scores_change_habitat = DeltaMultipleBenefits::sum_change(habitat_totals)
 ```
 
-# Data sources
-* The current non-spatial metrics are available to download via Zenodo, ([doi:10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874)), but are also included in this package
-* Original species distribution models - Their development is described in a manuscript (link TBD), and the models are available to download via Zenodo ([doi:10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)). 
-* Original baseline landcover raster (and scenarios) - CDFW BIOS
-* Other data required by riparian models: bio_1, bio_12, streamdist
-* Other data required by waterbird models: pwater, roost locations
-** The original baseline `pwater` raster layers for the Delta are available to download from [link TBD].
-** The original data source for traditional roost locations is included in this package, but could be combined with updated information as it becomes available.
-* Manuscript describing development of phase 1 scenarios (link TBD), which includes total landscape scores for baseline and scenarios [but also make these scores downloadable?]
-* spp key?
+# Summary of related data
+
+## Manuscripts
+
+Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T. In review. Priority Bird Conservation Areas in California’s Sacramento–San Joaquin Delta. [link TBD]
+
+Dybala KE, Reiter ME, Hickey CM. In review. Multiple-benefit Conservation in Practice: A Framework for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. [link TBD]
+
+## Data
+
+* Baseline and scenario rasters: 
+Dybala KE. 2023. Baseline and projected future land use and land cover in the Sacramento-San Joaquin Delta. CDFW BIOS. [link TBD]
+
+* Metrics (also included in the DeltaMultipleBenefits package): 
+Dybala KE, Sesser KA, Reiter ME, Hickey CM, Gardali T. 2023. Multiple-benefit Conservation in Practice: Metrics Data for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874).
+
+* Species distribution models: 
+Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM, Gardali T. 2023. Boosted regression tree models for riparian landbirds and waterbirds in the Sacramento-San Joaquin Delta. doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945).
+
+* TBD: 
+  * Total landscape scores for baseline and scenarios [in manuscript, but also make these scores downloadable?]
+  * Other data required by riparian models: bio_1, bio_12, streamdist
+  * Other data required by waterbird models: pwater, roost locations (also included in the DeltaMultipleBenefits package)
+  * spp key?
 
 
 
