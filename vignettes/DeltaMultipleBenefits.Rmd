@@ -1,6 +1,8 @@
 ---
 title: "DeltaMultipleBenefits"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{DeltaMultipleBenefits}
   %\VignetteEngine{knitr::rmarkdown}
