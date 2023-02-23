@@ -28,7 +28,9 @@ Suggests:
     knitr,
     rmarkdown,
     sf,
-    terra
+    terra,
+    ggplot2,
+    tibble
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
