@@ -86,7 +86,7 @@ the name of the scenario.
 
 The original \code{pwater} baseline data used in the development of these models
 was derived from Point Blue's \href{https://www.pointblue.org/autowater}{Water Tracker} and may be downloaded from
-\link{link TBD}.
+\href{https://doi.org}{link TBD}.
 }
 \examples{
 # See vignette
