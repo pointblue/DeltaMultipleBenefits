@@ -40,9 +40,9 @@ calc_change_SDM = function(pathin, SDM, baseline_name, scenario_name, pathout,
                            overwrite = FALSE, differentiate = TRUE) {
 
   baseline = list.files(file.path(pathin, SDM, baseline_name), '.tif',
-                        full.names = TRUE) %>% rast()
+                        full.names = TRUE) %>% terra::rast()
   scenario = list.files(file.path(pathin, SDM, scenario_name), '.tif',
-                        full.names = TRUE) %>% rast()
+                        full.names = TRUE) %>% terra::rast()
 
   delta = purrr::map(
     names(baseline),
@@ -62,8 +62,8 @@ calc_change_SDM = function(pathin, SDM, baseline_name, scenario_name, pathout,
     }
 
   create_directory(file.path(pathout, SDM, scenario_name))
-  writeRaster(res,
-              file.path(pathout, SDM, scenario_name,
-                        paste0(names(baseline), '.tif')),
-              overwrite = overwrite)
+  terra::writeRaster(res,
+                     file.path(pathout, SDM, scenario_name,
+                               paste0(names(baseline), '.tif')),
+                     overwrite = overwrite)
 }
