@@ -37,6 +37,7 @@ library(dplyr)
 library(tidyr)
 library(magrittr)
 library(ggplot2)
+library(tibble)
 ```
   
   
@@ -90,7 +91,8 @@ new_shp <- olinda1 %>%
   # transfer CODE_BASELINE values from key
   dplyr::left_join(key, by = 'CODE_NAME') 
 
-ggplot(new_shp) + geom_sf(aes(fill = CODE_NAME))
+ggplot2::ggplot(new_shp) + 
+  ggplot2::geom_sf(ggplot2::aes(fill = CODE_NAME))
 ```
 
 Next, convert the polygons to a raster format with the desired projection, extent, and resolution. Simple features objects must first be converted to SpatVector objects using `terra::vect()`. Then we'll create a raster template with a small number of columns and rows (and thus coarse resolution) just for demonstration purposes, but to ensure alignment with other rasters in your analysis, it usually works best to use an existing raster as a template. Next, transfer the land cover code values to the template to create a new landscape raster that we'll treat as our "baseline" landscape. Finally, to help with plotting, we'll assign factor levels and color codings.
@@ -127,11 +129,11 @@ plot(baseline)
 If the landscape to be analyzed is in a raster format already, the existing land cover values encoded should be similarly translated to the supported values in the existing land cover classification scheme. As an example, we'll use `baseline` raster we created above, and create a new version from it to serve as our new `scenario` of landscape change. 
 
 ```{r classify_raster}
-# simple example scenario: all wheat pixels are converted to Fremont cottonwood 
-# riparian forest
-scenario <- terra::subst(baseline,
-                         from = 'GRAIN&HAY_WHEAT', 
-                         to = 'RIPARIAN_FOREST_POFR')
+# simple example scenario: all wheat pixels (22) are converted to Fremont 
+# cottonwood riparian forest (71)
+scenario <- terra::classify(baseline,
+                            rcl = data.frame(from = 22, to = 71) %>% 
+                              as.matrix())
 
 levels(scenario) <-  key %>% 
   dplyr::select(id = CODE_BASELINE, label = CODE_NAME) %>% 
@@ -221,7 +223,7 @@ scores_change %>%
   ggplot2::geom_errorbar(ggplot2::aes(xmin = lcl, xmax = ucl), width = 0.25) +
   # add blank geoms to ensure zeroes line up across facets
   ggplot2::geom_blank(ggplot2::aes(x = -ucl)) + 
-  ggplot2::geom_blank(ggplot2::aes(x = - lcl)) +
+  ggplot2::geom_blank(ggplot2::aes(x = -lcl)) +
   ggplot2::theme_minimal()
 ```
   
@@ -660,11 +662,9 @@ Dybala KE, Sesser KA, Reiter ME, Hickey CM, Gardali T. 2023. Multiple-benefit Co
 * Species distribution models: 
 Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM, Gardali T. 2023. Boosted regression tree models for riparian landbirds and waterbirds in the Sacramento-San Joaquin Delta. doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945).
 
-* TBD: 
-  * Total landscape scores for baseline and scenarios [in manuscript, but also make these scores downloadable?]
-  * Other data required by riparian models: bio_1, bio_12, streamdist
-  * Other data required by waterbird models: pwater, roost locations (also included in the DeltaMultipleBenefits package)
-  * spp key?
+* Supplemental data required to fit distribution models: 
+Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM, Gardali T. 2023. Supplemental data used in developing boosted regression tree models for riparian landbirds and waterbirds in the Sacramento-San Joaquin Delta. doi: [TBD](https://doi.org).
+(--> should include bio_1, bio_12, streamdist, pwater_fall, pwater_winter, plus original roost locations (which are also included in the DeltaMultipleBenefits package))
 
 
 
