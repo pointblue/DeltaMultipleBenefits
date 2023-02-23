@@ -49,7 +49,7 @@ python_dist = function(pathin, landscape_name, pathout, SDM,
 
   if (!is.null(mask)) {
     if (is(mask, 'character')) {
-      mask = rast(mask)
+      mask = terra::rast(mask)
     } else if (!is(mask, 'SpatRaster')) {
       stop('function expects "mask" to be either a character string or a SpatRaster')
     }
