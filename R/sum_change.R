@@ -63,10 +63,10 @@ sum_change = function(dat, k = 2) {
   if ('value_SE' %in% names(dat)) {
     res = dplyr::mutate(res,
                         net_change_se = sqrt(.data$SCENARIO_SE^2 + .data$BASELINE_SE^2),
-                        U = net_change_se * k,
-                        lcl = net_change - U,
-                        ucl = net_change + U,
-                        z = abs(net_change / net_change_se))
+                        U = .data$net_change_se * k,
+                        lcl = .data$net_change - .data$U,
+                        ucl = .data$net_change + .data$U,
+                        z = abs(.data$net_change / .data$net_change_se))
   }
 
   return(res)
