@@ -44,7 +44,7 @@
 #'   The original `pwater` baseline data used in the development of these models
 #'   was derived from Point Blue's [Water
 #'   Tracker](https://www.pointblue.org/autowater) and may be downloaded from
-#'   [link TBD](https://doi.org).
+#'   [doi:10.5281/zenodo.7672193](https://doi.org/10.5281/zenodo.7672193).
 #'
 #' @param waterdat `SpatRaster` or character string giving the filepath to a
 #'   raster representing the probability of open water (pwater) in each cell,
