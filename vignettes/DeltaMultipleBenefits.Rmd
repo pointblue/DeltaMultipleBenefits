@@ -20,14 +20,20 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-The functions contained in the DeltaMultipleBenefits package facilitate estimation of the net impacts of scenarios of landscape change in the Sacramento-San Joaquin River Delta. It provides tools for applying existing data and species distribution models to user-supplied landscapes to estimate a range of benefits to the Delta community. Currently, the benefit categories addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. Ultimately, this R package is intended to facilitate a more comprehensive multidimensional understanding of the direction and magnitude of the potential impacts of landscape change (proposed or anticipated), communication about the projected synergies and trade-offs among multiple goals, and the identification of solutions to address these trade-offs.
+The DeltaMultipleBenefits package facilitates estimating the net impacts of scenarios of landscape change in the Sacramento-San Joaquin River Delta, created with funding from the Proposition 1 Delta Water Quality and Ecosystem Restoration Program administered by the California Department of Fish and Wildlife (Grant Agreement Number–Q1996022). 
 
-This tutorial outlines the major steps of analyzing a new scenario of landscape change or reproducing the results in Dybala et al. (2023) [link TBD](https://doi.org), including:  
+The package provides tools for applying existing data and species distribution models to user-supplied landscapes to estimate a range of benefits to the Delta community and how they compare to other landscapes. Currently, the benefit categories addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. 
 
-1. Preparing a new scenario  
-2. Summarizing the total extent and change in each land cover class  
-3. Estimating the net change in non-spatial metrics  
+Ultimately, this R package is intended to facilitate a more comprehensive multidimensional understanding of the direction and magnitude of the potential impacts of landscape change (proposed or anticipated), communication about the projected synergies and trade-offs among multiple goals, and the identification of solutions to address these trade-offs.
+
+This vignette serves as a tutorial outlining the major steps of analyzing alternative Delta landscapes and comparing them to each other, including:  
+
+1. Preparing new landscape scenarios for analysis 
+2. Summarizing the net change in the total area of each land cover class
+3. Estimating the net change in simple metrics  
 4. Estimating the net change in metrics informed by spatial models  
+
+Here, we use a toy land cover data set as an example of how to work through these steps, but to reproduce the analyses conducted in Dybala et al. (In review)[doi:Link TBD](https://doi.org), the original baseline land cover data, scenarios, distribution models, and other required supporting data can be accessed online (see "Supporting Data" below) or are included with this package. 
 
 ```{r setup}
 library(DeltaMultipleBenefits)
@@ -41,11 +47,9 @@ library(tibble)
 ```
   
   
-# Step 1. Preparing a new scenario
+# Step 1. Preparing a new landscape scenario for analysis
 
-Preparing a new landscape scenario for analysis requires aligning the land cover classifications in the new scenario with the classifications used in the metrics and models included in this framework. In addition, if the new scenario is represented as polygons, it will need to be converted to a raster. Finally, the extent, projection, and resolution of your new landscape should match that of any baseline landscape to which you will be comparing it. 
-
-The `DeltaMultipleBenefits` framework is based on a land cover classification scheme that is designed to work with the existing metrics and species distribution models. It includes both natural and agricultural land cover classes, and is organized hierarchically into major land cover classes and subclasses. Certain subclasses are only relevant to certain metrics and species distribution models, while other metrics will apply to all subclasses within a major land cover class. Therefore, we generally recommend assigning all land covers in your landscape scenario to the most specific subclass in the existing scheme:
+To prepare a new landscape scenario for analysis with the *DeltaMultipleBenefits* framework, its land cover classifications must first be aligned with those used in the framework, which are designed to work with the existing metrics and species distribution models. This land cover classification scheme includes both natural and agricultural land cover classes, and is organized hierarchically into major land cover classes and subclasses. Certain subclasses are only relevant to certain metrics and species distribution models, while other metrics will apply to the entire major land cover class. Therefore, we generally recommend assigning all land covers in your landscape scenario to the most specific subclass in the existing scheme:
 
 ```{r classify}
 data(key, package = 'DeltaMultipleBenefits')
@@ -151,7 +155,7 @@ plot(landscapes) #Note the orange wheat cells have changed to red riparian cells
 ```
   
   
-# Step 2. Summarizing land cover change
+# Step 2. Summarizing the net change in the total area of each land cover class
 
 Built-in functions make it simple to estimate the change in the total area of each land cover class between the baseline and one or more scenario landscape rasters. First, sum the total area of each land cover class in each landscape raster, then summarize the change between them.
 
@@ -234,9 +238,6 @@ In addition to the "simple metrics" described above, we developed spatial distri
 
 Currently, the only spatial models supported are the distribution models for riparian landbird species and groups of waterbird species. Their development is described in a manuscript ([Dybala et al. In review - Link TBD](https://doi.org)) and the models are available to download via Zenodo (doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)). However, spatial models for other species, and for other benefits categories could be incorporated in future versions of this package as they are developed.
 
-*Note: In this section of the vignette, each code chunk is set to `eval = FALSE` because many of these steps are time-consuming and generate many intermediate raster files on disk. However, each has been tested and does work!*
-  
-  
 ## 4.1 Riparian landbird models
 
 ### 4.1.1 Prepare landscape predictors
@@ -643,31 +644,22 @@ __sum_change:__ Again, use this function to estimate the net change in the total
 scores_change_habitat = DeltaMultipleBenefits::sum_change(habitat_totals)
 ```
 
-# Summary of related data
-
-## Manuscripts
-
-Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T. In review. Priority Bird Conservation Areas in California’s Sacramento–San Joaquin Delta. [link TBD]
-
-Dybala KE, Reiter ME, Hickey CM. In review. Multiple-benefit Conservation in Practice: A Framework for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. [link TBD]
-
-## Data
+# Supporting Data
 
 * Baseline and scenario rasters: 
 Dybala KE. 2023. Baseline and projected future land use and land cover in the Sacramento-San Joaquin Delta. CDFW BIOS. [link TBD]
 
-* Metrics (also included in the DeltaMultipleBenefits package): 
-Dybala KE, Sesser KA, Reiter ME, Hickey CM, Gardali T. 2023. Multiple-benefit Conservation in Practice: Metrics Data for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874).
+* Metrics (also included in the *DeltaMultipleBenefits* package): 
+Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics Data for Quantifying Multidimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874).
+
+* Supplemental spatial data: 
+Dybala KE. 2023. Multiple-benefit Conservation in Practice: Supplemental Spatial Data for Quantifying Multidimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. doi: [10.5281/zenodo.7672193](https://doi.org/10.5281/zenodo.7672193).
 
 * Species distribution models: 
 Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM, Gardali T. 2023. Boosted regression tree models for riparian landbirds and waterbirds in the Sacramento-San Joaquin Delta. doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945).
 
-* Supplemental data required to fit distribution models: 
-Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM, Gardali T. 2023. Supplemental data used in developing boosted regression tree models for riparian landbirds and waterbirds in the Sacramento-San Joaquin Delta. doi: [TBD](https://doi.org).
-(--> should include bio_1, bio_12, streamdist, pwater_fall, pwater_winter, plus original roost locations (which are also included in the DeltaMultipleBenefits package))
+# Relevant Literature
 
+Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T. In review. Priority Bird Conservation Areas in California’s Sacramento–San Joaquin Delta. [link TBD]
 
-
-
-
-
+Dybala KE, Reiter ME, Hickey CM. In review. Multiple-benefit Conservation in Practice: A Framework for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. [link TBD]
