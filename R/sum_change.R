@@ -20,8 +20,8 @@
 #'
 #'  If `SCORE_TOTAL_SE` is also provided in `dat`, representing the uncertainty
 #'  in the `SCORE_TOTAL`, the uncertainty in the difference (`net_change_se`) is
-#'  also calculated as: `sqrt(baseline_se^2 + scenario_se^2)` where
-#'  `baseline_se` and `scenario_se` represent the `SCORE_TOTAL_SE` for the
+#'  also calculated as: `sqrt(BASELINE_SE^2 + SCENARIO_SE^2)` where
+#'  `BASELINE_SE` and `SCENARIO_SE` represent the `SCORE_TOTAL_SE` for the
 #'  baseline and scenario landscapes, respectively. In addition, the coverage
 #'  factor `k` is used to estimate expanded uncertainty (`U`), or the interval
 #'  within which a large fraction of the distribution of values could be
@@ -39,8 +39,9 @@
 #'@param dat tibble; see Details
 #'@param k coverage factor; see Details
 #'
-#'@return tibble containing fields `BASELINE`, `SCENARIO`, `net_change`, and
-#'  optionally `net_change_se`, `U`, `lcl`, `ucl`, and `z`; see Details
+#'@return tibble containing fields `SCENARIO_VALUE`, `BASELINE_VALUE`,
+#'  `net_change`, and optionally `SCENARIO_SE`, `BASELINE_SE`, `net_change_se`,
+#'  `U`, `lcl`, `ucl`, and `z`; see Details
 #'@seealso [sum_habitat()], [sum_metrics()]
 #'@importFrom magrittr %>%
 #'@importFrom rlang .data
@@ -54,11 +55,13 @@ sum_change = function(dat, k = 2) {
 
   res = dplyr::left_join(
     dat %>% dplyr::filter(.data$scenario != 'baseline') %>%
-      dplyr::rename_with(~gsub('value', 'SCENARIO', .x)),
+      dplyr::rename_with(~gsub('value', 'SCENARIO_VALUE', .x)) %>%
+      dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)),
     dat %>% dplyr::filter(.data$scenario == 'baseline') %>%
-      dplyr::rename_with(~gsub('value', 'BASELINE', .x)) %>%
+      dplyr::rename_with(~gsub('value', 'BASELINE_VALUE', .x)) %>%
+      dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)) %>%
       dplyr::select(-.data$scenario)) %>%
-    dplyr::mutate(net_change = .data$SCENARIO - .data$BASELINE)
+    dplyr::mutate(net_change = .data$SCENARIO_VALUE - .data$BASELINE_VALUE)
 
   if ('value_SE' %in% names(dat)) {
     res = dplyr::mutate(res,

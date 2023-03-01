@@ -12,8 +12,9 @@ sum_change(dat, k = 2)
 \item{k}{coverage factor; see Details}
 }
 \value{
-tibble containing fields \code{BASELINE}, \code{SCENARIO}, \code{net_change}, and
-optionally \code{net_change_se}, \code{U}, \code{lcl}, \code{ucl}, and \code{z}; see Details
+tibble containing fields \code{SCENARIO_VALUE}, \code{BASELINE_VALUE},
+\code{net_change}, and optionally \code{SCENARIO_SE}, \code{BASELINE_SE}, \code{net_change_se},
+\code{U}, \code{lcl}, \code{ucl}, and \code{z}; see Details
 }
 \description{
 Calculate the difference in the landscape-level metric totals between a
@@ -39,8 +40,8 @@ and scenario total landscape scores for each metric and scenario (renamed as
 
 If \code{SCORE_TOTAL_SE} is also provided in \code{dat}, representing the uncertainty
 in the \code{SCORE_TOTAL}, the uncertainty in the difference (\code{net_change_se}) is
-also calculated as: \code{sqrt(baseline_se^2 + scenario_se^2)} where
-\code{baseline_se} and \code{scenario_se} represent the \code{SCORE_TOTAL_SE} for the
+also calculated as: \code{sqrt(BASELINE_SE^2 + SCENARIO_SE^2)} where
+\code{BASELINE_SE} and \code{SCENARIO_SE} represent the \code{SCORE_TOTAL_SE} for the
 baseline and scenario landscapes, respectively. In addition, the coverage
 factor \code{k} is used to estimate expanded uncertainty (\code{U}), or the interval
 within which a large fraction of the distribution of values could be
