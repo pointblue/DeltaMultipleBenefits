@@ -18,8 +18,7 @@ Description: Supports land use planning, management, conservation, and
     anticipated future scenario. The results provide insights into the net
     change in each metric expected from a change in the landscape and the
     synergies and trade-offs among multiple metrics.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: GPL (>= 3)
 URL: https://github.com/pointblue/DeltaMultipleBenefits
 BugReports: https://github.com/pointblue/DeltaMultipleBenefits/issues
 Depends: 
