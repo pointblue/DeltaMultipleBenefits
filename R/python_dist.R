@@ -65,11 +65,11 @@ python_dist = function(pathin, landscape_name, pathout, SDM,
   fname = list.files(file.path(pathin, landscape_name), '.tif$')
   dist_stats(filename = fname,
              fullpathin = file.path(pathin, landscape_name) %>% normalizePath(),
-             fullpathout =  file.path(pathin, landscape_name, 'droost_raw.tif') %>%
+             fullpathout =  file.path(pathin, landscape_name, filename) %>%
                normalizePath())
 
   # further processing:
-  r = file.path(pathin, landscape_name, 'droost_raw.tif') %>% terra::rast()
+  r = file.path(pathin, landscape_name, filename) %>% terra::rast()
 
   if (scale == 'km') {
     r = r / 1000
