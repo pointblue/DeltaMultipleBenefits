@@ -19,7 +19,8 @@ Description: Supports land use planning, management, conservation, and
     change in each metric expected from a change in the landscape and the
     synergies and trade-offs among multiple metrics.
 License: GPL (>= 3)
-URL: https://github.com/pointblue/DeltaMultipleBenefits
+URL: https://github.com/pointblue/DeltaMultipleBenefits,
+    https://pointblue.github.io/DeltaMultipleBenefits/
 BugReports: https://github.com/pointblue/DeltaMultipleBenefits/issues
 Depends: 
     R (>= 2.10)
