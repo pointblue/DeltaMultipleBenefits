@@ -1,4 +1,6 @@
 url: https://pointblue.github.io/DeltaMultipleBenefits/
 template:
   bootstrap: 5
+resource_files:
+  - images/PB_logo_RGB_Full_Color_cs.jpg
 
