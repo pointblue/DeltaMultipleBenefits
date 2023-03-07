@@ -17,6 +17,8 @@ knitr::include_graphics('images/PB_logo_RGB_Full_Color_cs.jpg')
 # DeltaMultipleBenefits
 
 <!-- badges: start -->
+`r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')`
+`r badger::badge_license()`
 <!-- badges: end -->
 
 The `DeltaMultipleBenefits` package facilitates estimating the net impacts of scenarios of landscape change in the Sacramento-San Joaquin River Delta, and was developed with funding from the Proposition 1 Delta Water Quality and Ecosystem Restoration Program administered by the California Department of Fish and Wildlife (Grant Agreement Number–Q1996022). 
