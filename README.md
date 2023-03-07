@@ -1,23 +1,37 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<img src="images/PB_logo_RGB_Full_Color_cs.jpg" width="25%" style="display: block; margin: auto auto auto 0;" />
+
 # DeltaMultipleBenefits
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of DeltaMultipleBenefits is to supports land use planning,
-management, conservation, and community engagement in the Sacramento-San
-Joaquin River Delta. This package provides tools for applying existing
-models and data to user-supplied landscapes to estimate the multiple
-benefits resulting from each landscape, such as metrics representing
-agricultural livelihoods, water quality, climate change resilience, and
-biodiversity support associated with individual land covers. It was
-designed to compare the metrics resulting from a baseline landscape
-representing current conditions to those from a projected landscape
-under a proposed or anticipated future scenario. The results provide
-insights into the net change in each metric expected from a change in
-the landscape and the synergies and trade-offs among multiple metrics.
+The `DeltaMultipleBenefits` package facilitates estimating the net
+impacts of scenarios of landscape change in the Sacramento-San Joaquin
+River Delta, and was developed with funding from the Proposition 1 Delta
+Water Quality and Ecosystem Restoration Program administered by the
+California Department of Fish and Wildlife (Grant Agreement
+Number–Q1996022).
+
+The package provides tools for applying existing data and species
+distribution models to user-supplied landscapes to estimate a range of
+benefits to the Delta community and how they compare to other
+landscapes. Currently, the benefit categories addressed include:
+Agricultural Livelihoods, Water Quality, Climate Change Resilience, and
+Biodiversity Support. Each category is represented by multiple
+individual metrics that can be summarized over the entire landscape. By
+comparing metrics estimated from proposed scenarios of landscape change
+to metrics estimated for a baseline landscape representing current
+conditions, the expected net change in each metric can be estimated.
+
+Ultimately, this R package is intended to facilitate a more
+comprehensive multidimensional understanding of the direction and
+magnitude of the potential impacts of landscape change (proposed or
+anticipated), communication about the projected synergies and trade-offs
+among multiple goals, and the identification of solutions to address
+these trade-offs.
 
 ## Installation
 
@@ -37,33 +51,55 @@ You can install the development version from
 devtools::install_github("pointblue/DeltaMultipleBenefits")
 ```
 
-## Example
+## Suggested citation
 
-This is a basic example which shows you how to solve a common problem:
+Dybala KE. 2023. DeltaMultipleBenefits: Projecting the Multiple Benefits
+of Land Cover Change in the Sacramento-San Joaquin River Delta. R
+package version 0.0.0.9000. <doi:TBD>
 
-``` r
-library(DeltaMultipleBenefits)
-## basic example code to be filled in here
-```
+## How to use
 
-<!--What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+This package includes a vignette that serves as a tutorial outlining the
+major steps of analyzing alternative Delta landscapes and comparing them
+to each other, including:
 
+1.  Preparing new landscape scenarios for analysis
+2.  Summarizing the net change in the total area of each land cover
+    class
+3.  Estimating the net change in simple metrics  
+4.  Estimating the net change in metrics informed by spatial models
 
-```r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
+## Supporting data
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/master/examples>.
+- **Baseline and scenario rasters:**  
+  Dybala KE. 2023. Baseline and projected future land use and land cover
+  in the Sacramento-San Joaquin Delta. CDFW BIOS. \[link TBD\]
 
-You can also embed plots, for example:
+- **Metrics** (also included in the `DeltaMultipleBenefits` package):  
+  Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics
+  Data for Quantifying Multidimensional Impacts of Landscape Change in
+  California’s Sacramento–San Joaquin Delta. doi:
+  [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874).
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+- **Supplemental spatial data:**  
+  Dybala KE. 2023. Multiple-benefit Conservation in Practice:
+  Supplemental Spatial Data for Quantifying Multidimensional Impacts of
+  Landscape Change in California’s Sacramento–San Joaquin Delta. doi:
+  [10.5281/zenodo.7672193](https://doi.org/10.5281/zenodo.7672193).
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.-->
+- **Species distribution models:**  
+  Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM,
+  Gardali T. 2023. Distribution models for riparian landbirds and
+  waterbirds in the Sacramento-San Joaquin Delta. doi:
+  [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945).
+
+## Relevant Literature
+
+Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T
+(*In review*) Priority Bird Conservation Areas in California’s
+Sacramento–San Joaquin Delta. \[link TBD\]
+
+Dybala KE, Reiter ME, Hickey CM (*In review*) Multiple-benefit
+Conservation in Practice: A Framework for Quantifying Multi-dimensional
+Impacts of Landscape Change in California’s Sacramento–San Joaquin
+Delta. \[link TBD\]
