@@ -102,7 +102,7 @@ ggplot2::ggplot(new_shp) +
 Next, convert the polygons to a raster format with the desired projection, extent, and resolution. Simple features objects must first be converted to SpatVector objects using `terra::vect()`. Then we'll create a raster template with a small number of columns and rows (and thus coarse resolution) just for demonstration purposes, but to ensure alignment with other rasters in your analysis, it usually works best to use an existing raster as a template. Next, transfer the land cover code values to the template to create a new landscape raster that we'll treat as our "baseline" landscape. Finally, to help with plotting, we'll assign factor levels and color codings.
 
 
-```{r classify_poly3}
+```{r classify_poly3, eval = FALSE}
 # simplify number of fields, change to SpatVector, and change projection
 new_vect = new_shp %>% 
   dplyr::select(CODE_NAME, CODE_BASELINE)
@@ -131,7 +131,7 @@ plot(baseline)
 
 If the landscape to be analyzed is in a raster format already, the existing land cover values encoded should be similarly translated to the supported values in the existing land cover classification scheme. As an example, we'll use `baseline` raster we created above, and create a new version from it to serve as our new `scenario` of landscape change. 
 
-```{r classify_raster}
+```{r classify_raster, eval = FALSE}
 # simple example scenario: all wheat pixels (22) are converted to Fremont 
 # cottonwood riparian forest (71)
 scenario <- terra::classify(baseline,
@@ -160,7 +160,7 @@ Built-in functions make it simple to estimate the change in the total area of ea
 
 __sum_landcover:__ This function takes a SpatRaster with one or more layers and, for each layer, counts the number of pixels of each unique land cover class and multiplies by the provided `pixel_area` value to estimate the total area of each land cover class. It returns a tibble with the scenario name (taken from the names of each raster layer), the `CODE_NAME` of each land cover class, and the total area. Here we'll first use `terra::cellSize` to estimate the area of each pixel in ha. The option `rollup = TRUE` adds extra rows to the output with the sum total area for all riparian and managed wetland subclasses. This function also supports options to mask out portions of the raster and/or to summarize the total area by zone. 
 
-```{r landcover1}
+```{r landcover1, eval = FALSE}
 area = terra::cellSize(baseline, unit = 'ha')[50,50] %>% tibble::deframe()
 
 landcover_totals = DeltaMultipleBenefits::sum_landcover(
@@ -173,7 +173,7 @@ landcover_totals = DeltaMultipleBenefits::sum_landcover(
 
 __sum_change:__ This function calculates the net change in the area of each land cover class between the baseline landscape and one or more scenario landscapes. Note that this function expects the output from `sum_landcover`, which includes the field `scenario` representing the names of each landscape. At least one scenario must be named "baseline", and all other scenarios will be assumed to represent an alternative scenario landscape for comparison to the baseline. Thus the net change for multiple scenarios can be estimated simultaneously. The result is a tibble with the scenario name, the `CODE_NAME` of each land cover class, fields representing the total area of the land cover class for the scenario in question and the corresponding area for the baseline, and then the `net_change` between them, where a positive value indicates an increase from the baseline.
 
-```{r landcover2}
+```{r landcover2, eval = FALSE}
 landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
 
 ```
@@ -183,7 +183,7 @@ landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
 
 We developed several "simple metrics" representing several categories of benefits including: *agricultural livelihoods*, *water quality*, and *climate change resilience*. For example, agricultural livelihood metrics include the number of agricultural jobs, their average annual wage, and gross production value. These are all "simple metrics" in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple compared to estimating the net change in metrics derived from a spatial model (see below), and the steps are similar to estimating the net change in land cover area above. However, the uncertainty in the value of each metric for each land cover class, such as resulting from spatial or temporal variation, can also be accounted for in estimating the uncertainty in the net change. The values assigned to each land cover class for each metric are available to download via Zenodo (doi:[10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874)), but are also included in this package: 
 
-```{r metrics1}
+```{r metrics1, eval = FALSE}
 data(metrics, package = 'DeltaMultipleBenefits')
 head(metrics)
 ```
@@ -194,7 +194,7 @@ The total area of each land cover class as calculated above includes both the ar
 
 *Note: We will get a warning message here, because our example landscapes do not include all land cover classes present in our metrics data.*
 
-```{r metrics2}
+```{r metrics2, eval = FALSE}
 scores = DeltaMultipleBenefits::sum_metrics(
   metricdat = metrics %>%
     dplyr::filter(
@@ -205,13 +205,13 @@ scores = DeltaMultipleBenefits::sum_metrics(
 
 __sum_change:__ Then, we can again use `sum_change` to estimate the difference in each metric between the baseline and scenario landscapes. However, this time because there is uncertainty in the total landscape scores, the uncertainty in the difference will also be estimated. Here we use a coverage factor `k = 2` to approximate a 95% confidence interval for the `net_change`.
 
-```{r metrics3}
+```{r metrics3, eval = FALSE}
 scores_change = DeltaMultipleBenefits::sum_change(scores, k = 2)
 head(scores_change)
 ```
 
 Visualize the resulting estimates of net change:
-```{r metrics_plot}
+```{r metrics_plot, eval = FALSE}
 scores_change %>% 
   # invert water quality scores so a reduction in pesticide use is shown as a
   # net benefit
