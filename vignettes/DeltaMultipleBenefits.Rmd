@@ -117,7 +117,6 @@ baseline = terra::rasterize(x = new_vect,
 levels(baseline) <-  key %>% 
   dplyr::select(id = CODE_BASELINE, label = CODE_NAME) %>% 
   tidyr::drop_na() %>% as.data.frame()
-terra::freq(baseline)
 
 # assign color coding
 terra::coltab(baseline) <- key %>% 
