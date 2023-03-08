@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<img src="images/PB_logo_RGB_Full_Color_cs.jpg" width="25%" style="display: block; margin: auto auto auto 0;" />
+<img src="images/PB_logo_RGB_Full_Color_cs.jpg" align="left" alt="" width="120" /><br><br>
 
 # DeltaMultipleBenefits
 
