@@ -6,18 +6,7 @@ Year: 2023
 Authors@R: 
     person("Kristen", "Dybala", , "kdybala@pointblue.org", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2787-4600"))
-Description: Supports land use planning, management, conservation, and
-    community engagement in the Sacramento-San Joaquin River Delta by
-    providing tools for applying existing models and data to user-supplied
-    landscapes and estimate the multiple benefits resulting from each
-    landscape, such as metrics representing agricultural livelihoods,
-    water quality, climate change resilience, and biodiversity support
-    associated with individual land covers.  It was designed to compare
-    the metrics resulting from a baseline landscape representing current
-    conditions to those from a projected landscape under a proposed or
-    anticipated future scenario. The results provide insights into the net
-    change in each metric expected from a change in the landscape and the
-    synergies and trade-offs among multiple metrics.
+Description: This package supports land use planning, management, conservation, and community engagement in the Sacramento-San Joaquin River Delta by providing tools for applying existing models and data to user-supplied landscapes to estimate a range of benefits to the Delta community and how they compare to a baseline landscape and alternative future landscape scenarios. Currently, the benefit categories addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics, representing either values applied to each land cover class and summarized over the entire landscape or the total amount of suitable habitat projected from species distribution models. By comparing landscape totals for each metric estimated from a baseline landscape and alternative scenarios of future landscape change, the expected direction and magnitude of the net change in each metric is estimated. 
 License: GPL (>= 3)
 URL: https://github.com/pointblue/DeltaMultipleBenefits,
     https://pointblue.github.io/DeltaMultipleBenefits/

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<img src="images/PB_logo_RGB_Full_Color_cs.jpg" align="left" alt="" width="120" /><br><br>
+<img src="images/PB_logo_RGB_Full_Color_cs.jpg" align="left" alt="" width="180" /><br><br>
 
 # DeltaMultipleBenefits
 
@@ -10,32 +10,31 @@
 [![](https://img.shields.io/badge/devel%20version-0.0.0.9000-blue.svg)](https://github.com/pointblue/DeltaMultipleBenefits)
 [![License: GPL (\>=
 3)](https://img.shields.io/badge/license-GPL%20(%3E=%203)-blue.svg)](https://cran.r-project.org/web/licenses/GPL%20(%3E=%203))
+[![Project Status: Active - The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <!-- badges: end -->
 
-The `DeltaMultipleBenefits` package facilitates estimating the net
-impacts of scenarios of landscape change in the Sacramento-San Joaquin
-River Delta, and was developed with funding from the Proposition 1 Delta
-Water Quality and Ecosystem Restoration Program administered by the
-California Department of Fish and Wildlife (Grant Agreement
-Number–Q1996022).
+The `DeltaMultipleBenefits` package supports estimating the net impacts
+of scenarios of landscape change in the Sacramento-San Joaquin River
+Delta to identify projected benefits and trade-offs across multiple
+metrics.
 
-The package provides tools for applying existing data and species
-distribution models to user-supplied landscapes to estimate a range of
-benefits to the Delta community and how they compare to other
-landscapes. Currently, the benefit categories addressed include:
+This package supports land use planning, management, conservation, and
+community engagement in the Sacramento-San Joaquin River Delta by
+providing tools for applying existing models and data to user-supplied
+landscapes to estimate a range of benefits to the Delta community and
+compare a baseline landscape to proposed or anticipated future landscape
+scenarios. Currently, the benefit categories addressed include:
 Agricultural Livelihoods, Water Quality, Climate Change Resilience, and
 Biodiversity Support. Each category is represented by multiple
-individual metrics that can be summarized over the entire landscape. By
-comparing metrics estimated from proposed scenarios of landscape change
-to metrics estimated for a baseline landscape representing current
-conditions, the expected net change in each metric can be estimated.
-
-Ultimately, this R package is intended to facilitate a more
-comprehensive multidimensional understanding of the direction and
-magnitude of the potential impacts of landscape change (proposed or
-anticipated), communication about the projected synergies and trade-offs
-among multiple goals, and the identification of solutions to address
-these trade-offs.
+individual metrics, representing either values applied to each land
+cover class and summarized over the entire landscape or the total amount
+of suitable habitat projected from species distribution models. By
+comparing landscape totals for each metric estimated from a baseline
+landscape and alternative scenarios of future landscape change, the
+expected direction and magnitude of the net change in each metric is
+estimated.
 
 ## Installation
 
@@ -54,12 +53,6 @@ You can install the development version from
 # install.packages("devtools")
 devtools::install_github("pointblue/DeltaMultipleBenefits")
 ```
-
-## Suggested citation
-
-Dybala KE. 2023. DeltaMultipleBenefits: Projecting the Multiple Benefits
-of Land Cover Change in the Sacramento-San Joaquin River Delta. R
-package version 0.0.0.9000. <doi:TBD>
 
 ## How to use
 
@@ -119,3 +112,12 @@ Report: Trade-offs and Co-benefits of Landscape Change Scenarios on Bird
 Communities and Ecosystem Services in the Sacramento-San Joaquin River
 Delta. Point Blue Conservation Science, Petaluma, CA. Available from:
 \[link TBD\]
+
+## Funding Statement
+
+These data were developed as part of the project “Trade-offs and
+Co-benefits of Landscape Change on Bird Communities and Ecosystem
+Services in the Sacramento–San Joaquin River Delta”, funded by
+Proposition 1 Delta Water Quality and Ecosystem Restoration Program,
+Grant Agreement Number – Q1996022, administered by the California
+Department of Fish and Wildlife.
