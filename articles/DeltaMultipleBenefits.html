@@ -120,7 +120,7 @@ Data” below) or are included with this package.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; terra 1.7.3</span></span>
+<span><span class="co">#&gt; terra 1.7.18</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
@@ -272,18 +272,6 @@ plotting, we’ll assign factor levels and color codings.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/factors.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">baseline</span><span class="op">)</span> <span class="op">&lt;-</span>  <span class="va">key</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>id <span class="op">=</span> <span class="va">CODE_BASELINE</span>, label <span class="op">=</span> <span class="va">CODE_NAME</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html" class="external-link">drop_na</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/freq.html" class="external-link">freq</a></span><span class="op">(</span><span class="va">baseline</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    layer                      value count</span></span>
-<span><span class="co">#&gt; 1      1          ORCHARD_DECIDUOUS   671</span></span>
-<span><span class="co">#&gt; 2      1 ORCHARD_CITRUS&amp;SUBTROPICAL   371</span></span>
-<span><span class="co">#&gt; 3      1                   VINEYARD   531</span></span>
-<span><span class="co">#&gt; 4      1            GRAIN&amp;HAY_WHEAT   762</span></span>
-<span><span class="co">#&gt; 5      1                 FIELD_CORN   245</span></span>
-<span><span class="co">#&gt; 6      1            PASTURE_ALFALFA   654</span></span>
-<span><span class="co">#&gt; 7      1       RIPARIAN_FOREST_POFR   208</span></span>
-<span><span class="co">#&gt; 8      1       RIPARIAN_FOREST_QULO   127</span></span>
-<span><span class="co">#&gt; 9      1  WETLAND_MANAGED_PERENNIAL   415</span></span>
-<span><span class="co">#&gt; 10     1   WETLAND_MANAGED_SEASONAL   284</span></span>
 <span></span>
 <span><span class="co"># assign color coding</span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/colors.html" class="external-link">coltab</a></span><span class="op">(</span><span class="va">baseline</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">key</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -291,7 +279,6 @@ plotting, we’ll assign factor levels and color codings.</p>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span>CODE_BASELINE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">255</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">COLOR</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">baseline</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DeltaMultipleBenefits_files/figure-html/classify_poly3-1.png" width="672"></p>
 </div>
 <div class="section level3">
 <h3 id="working-with-existing-rasters">1.2 Working with existing rasters<a class="anchor" aria-label="anchor" href="#working-with-existing-rasters"></a>
@@ -322,7 +309,6 @@ of landscape change.</p>
 <span><span class="va">landscapes</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">baseline</span>, <span class="va">scenario</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">landscapes</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'baseline'</span>, <span class="st">'scenario'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">landscapes</span><span class="op">)</span> <span class="co">#Note the orange wheat cells have changed to red riparian cells</span></span></code></pre></div>
-<p><img src="DeltaMultipleBenefits_files/figure-html/classify_raster-1.png" width="672"></p>
 </div>
 </div>
 <div class="section level2">
@@ -369,8 +355,7 @@ the corresponding area for the baseline, and then the
 <code>net_change</code> between them, where a positive value indicates
 an increase from the baseline.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">landcover_change</span> <span class="op">=</span> <span class="fu">DeltaMultipleBenefits</span><span class="fu">::</span><span class="fu"><a href="../reference/sum_change.html">sum_change</a></span><span class="op">(</span><span class="va">landcover_totals</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Joining with `by = join_by(CODE_NAME)`</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">landcover_change</span> <span class="op">=</span> <span class="fu">DeltaMultipleBenefits</span><span class="fu">::</span><span class="fu"><a href="../reference/sum_change.html">sum_change</a></span><span class="op">(</span><span class="va">landcover_totals</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-3--estimating-the-net-change-in-simple-metrics">Step 3. Estimating the net change in simple metrics<a class="anchor" aria-label="anchor" href="#step-3--estimating-the-net-change-in-simple-metrics"></a>
@@ -394,17 +379,7 @@ cover class for each metric are available to download via Zenodo (<a href="doi:%
 included in this package:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">metrics</span>, package <span class="op">=</span> <span class="st">'DeltaMultipleBenefits'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">metrics</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   METRIC_CATEGORY          METRIC            UNIT  CODE_…¹ LABEL SCORE…² SCORE…³</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Agricultural Livelihoods Agricultural Jobs FTE/… ORCHAR… Orch… 0.051<span style="text-decoration: underline;">0</span>  7.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Agricultural Livelihoods Agricultural Jobs FTE/… ORCHAR… Orch… 0.051<span style="text-decoration: underline;">0</span>  7.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Agricultural Livelihoods Agricultural Jobs FTE/… VINEYA… Vine… 0.022<span style="text-decoration: underline;">7</span>  2.26<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Agricultural Livelihoods Agricultural Jobs FTE/… GRAIN&amp;… Wheat 0.001<span style="text-decoration: underline;">97</span> 3.57<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> Agricultural Livelihoods Agricultural Jobs FTE/… GRAIN&amp;… Othe… 0.003<span style="text-decoration: underline;">95</span> 5.51<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> Agricultural Livelihoods Agricultural Jobs FTE/… FIELD_… Corn  0.002<span style="text-decoration: underline;">44</span> 2.28<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​CODE_NAME, ²​SCORE_MEAN, ³​SCORE_SE</span></span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">metrics</span><span class="op">)</span></span></code></pre></div>
 <p><strong>sum_metrics:</strong> First estimate the total landscape
 score for each metric and landscape raster, by combining total area of
 each land cover class estimated above with the per-unit-area metrics for
@@ -440,10 +415,7 @@ data.</em></p>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
 <span>      <span class="op">!</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER'</span>, <span class="va">CODE_NAME</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  areadat <span class="op">=</span> <span class="va">landcover_totals</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER'</span>, <span class="va">CODE_NAME</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; Joining with `by = join_by(CODE_NAME)`</span></span>
-<span><span class="co">#&gt; Note: One or more land cover classes in "metricdat" do not have an area</span></span>
-<span><span class="co">#&gt; estimate in "areadat"</span></span></code></pre></div>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER'</span>, <span class="va">CODE_NAME</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
 <p><strong>sum_change:</strong> Then, we can again use
 <code>sum_change</code> to estimate the difference in each metric
 between the baseline and scenario landscapes. However, this time because
@@ -453,20 +425,7 @@ the difference will also be estimated. Here we use a coverage factor
 <code>net_change</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scores_change</span> <span class="op">=</span> <span class="fu">DeltaMultipleBenefits</span><span class="fu">::</span><span class="fu"><a href="../reference/sum_change.html">sum_change</a></span><span class="op">(</span><span class="va">scores</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Joining with `by = join_by(METRIC_CATEGORY, METRIC, UNIT)`</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scores_change</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 14</span></span></span>
-<span><span class="co">#&gt;   scenario METRI…¹ METRIC UNIT  SCENA…² SCENA…³ BASEL…⁴ BASEL…⁵ net_ch…⁶ net_c…⁷</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> scenario Agricu… Agric… FTE/…  6.82<span style="color: #949494;">e</span>1 6.06<span style="color: #949494;">e</span>+0  6.97<span style="color: #949494;">e</span>1 6.07<span style="color: #949494;">e</span>+0 -<span style="color: #BB0000;">1.46</span><span style="color: #949494;">e</span>+0 8.58<span style="color: #949494;">e</span>+0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> scenario Agricu… Gross… USD/…  1.90<span style="color: #949494;">e</span>7 7.84<span style="color: #949494;">e</span>+5  1.98<span style="color: #949494;">e</span>7 7.86<span style="color: #949494;">e</span>+5 -<span style="color: #BB0000;">8.80</span><span style="color: #949494;">e</span>+5 1.11<span style="color: #949494;">e</span>+6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> scenario Climat… Droug… qual…  3.73<span style="color: #949494;">e</span>0 7.25<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>  4.27<span style="color: #949494;">e</span>0 7.69<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> -<span style="color: #BB0000;">5.39</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 1.06<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> scenario Climat… Flood  qual…  7.10<span style="color: #949494;">e</span>0 6.60<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>  6.21<span style="color: #949494;">e</span>0 7.39<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>  8.87<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 9.91<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> scenario Climat… Heat   qual…  6.14<span style="color: #949494;">e</span>0 9.92<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>  6.17<span style="color: #949494;">e</span>0 9.55<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> -<span style="color: #BB0000;">2.68</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 1.38<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> scenario Water … Criti… kg/yr  3.48<span style="color: #949494;">e</span>3 3.30<span style="color: #949494;">e</span>+2  3.49<span style="color: #949494;">e</span>3 3.30<span style="color: #949494;">e</span>+2 -<span style="color: #BB0000;">1.12</span><span style="color: #949494;">e</span>+1 4.66<span style="color: #949494;">e</span>+2</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 4 more variables: U &lt;dbl&gt;, lcl &lt;dbl&gt;, ucl &lt;dbl&gt;, z &lt;dbl&gt;, and</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   abbreviated variable names ¹​METRIC_CATEGORY, ²​SCENARIO_VALUE, ³​SCENARIO_SE,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ⁴​BASELINE_VALUE, ⁵​BASELINE_SE, ⁶​net_change, ⁷​net_change_se</span></span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scores_change</span><span class="op">)</span></span></code></pre></div>
 <p>Visualize the resulting estimates of net change:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scores_change</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -485,7 +444,6 @@ the difference will also be estimated. Here we use a coverage factor
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_blank.html" class="external-link">geom_blank</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="op">-</span><span class="va">ucl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_blank.html" class="external-link">geom_blank</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="op">-</span><span class="va">lcl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DeltaMultipleBenefits_files/figure-html/metrics_plot-1.png" width="672"></p>
 </div>
 <div class="section level2">
 <h2 id="step-4--estimating-the-net-change-in-metrics-informed-by-spatial-models">Step 4. Estimating the net change in metrics informed by spatial
