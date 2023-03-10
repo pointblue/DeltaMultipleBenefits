@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 # DeltaMultipleBenefits
 
 <!-- badges: start -->
+[![DOI](https://zenodo.org/badge/380353580.svg)](https://zenodo.org/badge/latestdoi/380353580)
 `r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')` 
 `r badger::badge_license()`
 `r badger::badge_repostatus('active')`
