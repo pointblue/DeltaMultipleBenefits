@@ -70,19 +70,14 @@ to each other, including:
 
 - **Baseline and scenario rasters:**  
   Dybala KE. 2023. Baseline and projected future land use and land cover
-  in the Sacramento-San Joaquin Delta. CDFW BIOS. \[link TBD\]
+  in the Sacramento-San Joaquin Delta. Available from:
+  <https://wildlife.ca.gov/Data/BIOS>
 
 - **Metrics** (also included in the `DeltaMultipleBenefits` package):  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics
   Data for Quantifying Multidimensional Impacts of Landscape Change in
   California’s Sacramento–San Joaquin Delta. doi:
   [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874).
-
-- **Phase 1 results:**  
-  Dybala KE. 2023. Multiple-benefit Conservation in Practice: Results
-  from Quantifying Multidimensional Impacts of Landscape Change in
-  California’s Sacramento–San Joaquin Delta. doi:
-  [10.5281/zenodo.7686513](https://doi.org/10.5281/zenodo.7686513).
 
 - **Species distribution models:**  
   Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM,
