@@ -71,7 +71,7 @@ to each other, including:
 - **Baseline and scenario rasters:**  
   Dybala KE. 2023. Baseline and projected future land use and land cover
   in the Sacramento-San Joaquin Delta. Available from:
-  <https://wildlife.ca.gov/Data/BIOS>
+  <https://apps.wildlife.ca.gov/bios6/?bookmark=356>
 
 - **Metrics** (also included in the `DeltaMultipleBenefits` package):  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics
@@ -93,20 +93,22 @@ to each other, including:
 
 ## Relevant Literature
 
-Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T
-(*In review*) Priority Bird Conservation Areas in California’s
-Sacramento–San Joaquin Delta. \[link TBD\]
+- Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali
+  T (*In press*) Priority Bird Conservation Areas in California’s
+  Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed
+  Science \[link TBD\]
 
-Dybala KE, Reiter ME, Hickey CM (*In review*) Multiple-benefit
-Conservation in Practice: A Framework for Quantifying Multi-dimensional
-Impacts of Landscape Change in California’s Sacramento–San Joaquin
-Delta. \[link TBD\]
+- Dybala KE, Reiter ME, Hickey CM (*In review*) Multiple-benefit
+  Conservation in Practice: A Framework for Quantifying
+  Multi-dimensional Impacts of Landscape Change in California’s
+  Sacramento–San Joaquin Delta. \[link TBD\]
 
-Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T. 2023. Final Project
-Report: Trade-offs and Co-benefits of Landscape Change Scenarios on Bird
-Communities and Ecosystem Services in the Sacramento-San Joaquin River
-Delta. Point Blue Conservation Science, Petaluma, CA. Available from:
-\[link TBD\]
+- Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T. 2023. *Final
+  Project Report: Trade-offs and Co-benefits of Landscape Change
+  Scenarios on Bird Communities and Ecosystem Services in the
+  Sacramento-San Joaquin River Delta.* Point Blue Conservation Science,
+  Petaluma, CA. Available from:
+  <http://www.prbo.org/refs/files/12791_DybalaKE2023.pdf>
 
 ## Funding Statement
 
