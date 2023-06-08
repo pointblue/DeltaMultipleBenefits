@@ -15,12 +15,40 @@ state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <!-- badges: end -->
 
-The `DeltaMultipleBenefits` package supports estimating the net impacts
-of scenarios of landscape change in the Sacramento-San Joaquin River
-Delta to identify projected benefits and trade-offs across multiple
-metrics.
+Achieving the long-term vision of a resilient Sacramento-San Joaquin
+River Delta ecosystem requires meeting multiple goals simultaneously,
+including self-sustaining wildlife populations and thriving communities
+of people, in an evolving landscape. However, to effectively plan and
+implement policies and land management decisions intended to achieve
+multiple goals, it is essential to be able to identify the potential
+trade-offs of changes to the landscape across multiple goals. Meeting
+this challenge would support effective policy and resource management
+decisions and address several science priorities identified in Science
+Action Agendas for the Delta.
 
-This package supports land use planning, management, conservation, and
+In Phase 1 of this project, we built on our partnerships in the Delta
+and broader Central Valley, and on our expertise in multiple-benefit
+conservation and avian ecology in agricultural landscapes, to help meet
+this challenge by addressing two main goals: (1) identify Priority Bird
+Conservation Areas in the Delta to support effective restoration and
+management decisions, and (2) develop a science-based framework for
+forecasting the net benefits or trade-offs of proposed or anticipated
+landscape changes on multiple goals. The ultimate goals of this project
+were to support communication among Delta community members about the
+projected synergies and trade-offs among multiple metrics, facilitate
+the identification of, and community support for, solutions to address
+these trade-offs, and thereby support effective decision-making and
+policy to reach the Delta Plan’s multiple goals. Phase 1 results are now
+available in our [Final Project
+Report](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf),
+with peer-reviewed manuscripts underway and multiple supporting data
+products now available (see below).
+
+This `DeltaMultipleBenefits` R package serves as our open-source,
+science-based framework that supports estimating the net impacts of
+scenarios of landscape change in the Sacramento-San Joaquin River Delta
+to identify projected benefits and trade-offs across multiple metrics.
+The package supports land use planning, management, conservation, and
 community engagement in the Sacramento-San Joaquin River Delta by
 providing tools for applying existing models and data to user-supplied
 landscapes to estimate a range of benefits to the Delta community and
@@ -70,45 +98,53 @@ to each other, including:
 
 - **Baseline and scenario rasters:**  
   Dybala KE. 2023. Baseline and projected future land use and land cover
-  in the Sacramento-San Joaquin Delta. Available from:
-  <https://apps.wildlife.ca.gov/bios6/?bookmark=356>
+  in the Sacramento-San Joaquin Delta<br> [<img
+  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
+  style="width:1em;height:1em" />](https://apps.wildlife.ca.gov/bios6/?bookmark=356)
 
 - **Metrics** (also included in the `DeltaMultipleBenefits` package):  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics
   Data for Quantifying Multidimensional Impacts of Landscape Change in
-  California’s Sacramento–San Joaquin Delta. doi:
-  [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874).
+  California’s Sacramento–San Joaquin Delta. DOI:
+  10.5281/zenodo.7504874<br> [<img
+  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
+  style="width:1em;height:1em" />](https://doi.org/10.5281/zenodo.7504874)
 
 - **Species distribution models:**  
   Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM,
   Gardali T. 2023. Distribution models for riparian landbirds and
-  waterbirds in the Sacramento-San Joaquin Delta. doi:
-  [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945).
+  waterbirds in the Sacramento-San Joaquin Delta. DOI:
+  10.5281/zenodo.7531945<br> [<img
+  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
+  style="width:1em;height:1em" />](https://doi.org/10.5281/zenodo.7531945)
 
 - **Supplemental spatial data:**  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice:
   Supplemental Spatial Data for Quantifying Multidimensional Impacts of
-  Landscape Change in California’s Sacramento–San Joaquin Delta. doi:
-  [10.5281/zenodo.7672193](https://doi.org/10.5281/zenodo.7672193).
+  Landscape Change in California’s Sacramento–San Joaquin Delta. DOI:
+  10.5281/zenodo.7672193<br> [<img
+  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
+  style="width:1em;height:1em" />](https://doi.org/10.5281/zenodo.7672193)
 
 ## Relevant Literature
-
-- Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali
-  T (*In press*) Priority Bird Conservation Areas in California’s
-  Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed
-  Science \[link TBD\]
-
-- Dybala KE, Reiter ME, Hickey CM (*In review*) Multiple-benefit
-  Conservation in Practice: A Framework for Quantifying
-  Multi-dimensional Impacts of Landscape Change in California’s
-  Sacramento–San Joaquin Delta. \[link TBD\]
 
 - Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T. 2023. *Final
   Project Report: Trade-offs and Co-benefits of Landscape Change
   Scenarios on Bird Communities and Ecosystem Services in the
   Sacramento-San Joaquin River Delta.* Point Blue Conservation Science,
-  Petaluma, CA. Available from:
-  <http://www.prbo.org/refs/files/12791_DybalaKE2023.pdf>
+  Petaluma, CA<br> [<img
+  src="man/figures/README-fa-icon-2cfbdb1b70a302d01cb8d578c7987e5a.svg"
+  style="width:1em;height:1em" />](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf)
+
+- Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali
+  T (*In press*) Priority Bird Conservation Areas in California’s
+  Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed
+  Science
+
+- Dybala KE, Reiter ME, Hickey CM (*In review*) Multiple-benefit
+  Conservation in Practice: A Framework for Quantifying
+  Multi-dimensional Impacts of Landscape Change in California’s
+  Sacramento–San Joaquin Delta
 
 ## Funding Statement
 
