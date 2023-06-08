@@ -98,33 +98,29 @@ to each other, including:
 
 - **Baseline and scenario rasters:**  
   Dybala KE. 2023. Baseline and projected future land use and land cover
-  in the Sacramento-San Joaquin Delta<br> [<img
-  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
-  style="width:1em;height:1em" />](https://apps.wildlife.ca.gov/bios6/?bookmark=356)
+  in the Sacramento-San Joaquin Delta<br>
+  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://apps.wildlife.ca.gov/bios6/?bookmark=356)
 
 - **Metrics** (also included in the `DeltaMultipleBenefits` package):  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics
   Data for Quantifying Multidimensional Impacts of Landscape Change in
   California’s Sacramento–San Joaquin Delta. DOI:
-  10.5281/zenodo.7504874<br> [<img
-  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
-  style="width:1em;height:1em" />](https://doi.org/10.5281/zenodo.7504874)
+  10.5281/zenodo.7504874<br>
+  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://doi.org/10.5281/zenodo.7504874)
 
 - **Species distribution models:**  
   Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM,
   Gardali T. 2023. Distribution models for riparian landbirds and
   waterbirds in the Sacramento-San Joaquin Delta. DOI:
-  10.5281/zenodo.7531945<br> [<img
-  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
-  style="width:1em;height:1em" />](https://doi.org/10.5281/zenodo.7531945)
+  10.5281/zenodo.7531945<br>
+  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://doi.org/10.5281/zenodo.7531945)
 
 - **Supplemental spatial data:**  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice:
   Supplemental Spatial Data for Quantifying Multidimensional Impacts of
   Landscape Change in California’s Sacramento–San Joaquin Delta. DOI:
-  10.5281/zenodo.7672193<br> [<img
-  src="man/figures/README-fa-icon-be665260c8ce5da3383c1e617e15aa34.svg"
-  style="width:1em;height:1em" />](https://doi.org/10.5281/zenodo.7672193)
+  10.5281/zenodo.7672193<br>
+  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://doi.org/10.5281/zenodo.7672193)
 
 ## Relevant Literature
 
@@ -132,9 +128,8 @@ to each other, including:
   Project Report: Trade-offs and Co-benefits of Landscape Change
   Scenarios on Bird Communities and Ecosystem Services in the
   Sacramento-San Joaquin River Delta.* Point Blue Conservation Science,
-  Petaluma, CA<br> [<img
-  src="man/figures/README-fa-icon-2cfbdb1b70a302d01cb8d578c7987e5a.svg"
-  style="width:1em;height:1em" />](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf)
+  Petaluma, CA<br>
+  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20">](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf)
 
 - Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali
   T (*In press*) Priority Bird Conservation Areas in California’s
