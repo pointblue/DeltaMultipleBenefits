@@ -39,10 +39,11 @@ projected synergies and trade-offs among multiple metrics, facilitate
 the identification of, and community support for, solutions to address
 these trade-offs, and thereby support effective decision-making and
 policy to reach the Delta Plan’s multiple goals. Phase 1 results are now
-available in our [Final Project
-Report](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf),
-with peer-reviewed manuscripts underway and multiple supporting data
-products now available (see below).
+available in our <a
+href="https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf"
+target="_blank">Final Project Report</a>, with peer-reviewed manuscripts
+underway and multiple supporting data products now available (see
+below).
 
 This `DeltaMultipleBenefits` R package serves as our open-source,
 science-based framework that supports estimating the net impacts of
@@ -99,28 +100,32 @@ to each other, including:
 - **Baseline and scenario rasters:**  
   Dybala KE. 2023. Baseline and projected future land use and land cover
   in the Sacramento-San Joaquin Delta<br>
-  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://apps.wildlife.ca.gov/bios6/?bookmark=356)
+  <a href="https://apps.wildlife.ca.gov/bios6/?bookmark=356"
+  target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20"></a>
 
 - **Metrics** (also included in the `DeltaMultipleBenefits` package):  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics
   Data for Quantifying Multidimensional Impacts of Landscape Change in
   California’s Sacramento–San Joaquin Delta. DOI:
   10.5281/zenodo.7504874<br>
-  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://doi.org/10.5281/zenodo.7504874)
+  <a href="https://doi.org/10.5281/zenodo.7504874"
+  target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20"></a>
 
 - **Species distribution models:**  
   Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM,
   Gardali T. 2023. Distribution models for riparian landbirds and
   waterbirds in the Sacramento-San Joaquin Delta. DOI:
   10.5281/zenodo.7531945<br>
-  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://doi.org/10.5281/zenodo.7531945)
+  <a href="https://doi.org/10.5281/zenodo.7531945"
+  target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20"></a>
 
 - **Supplemental spatial data:**  
   Dybala KE. 2023. Multiple-benefit Conservation in Practice:
   Supplemental Spatial Data for Quantifying Multidimensional Impacts of
   Landscape Change in California’s Sacramento–San Joaquin Delta. DOI:
   10.5281/zenodo.7672193<br>
-  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20">](https://doi.org/10.5281/zenodo.7672193)
+  <a href="https://doi.org/10.5281/zenodo.7672193"
+  target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="20" height="20"></a>
 
 ## Relevant Literature
 
@@ -128,8 +133,9 @@ to each other, including:
   Project Report: Trade-offs and Co-benefits of Landscape Change
   Scenarios on Bird Communities and Ecosystem Services in the
   Sacramento-San Joaquin River Delta.* Point Blue Conservation Science,
-  Petaluma, CA<br>
-  [<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20">](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf)
+  Petaluma, CA<br> <a
+  href="https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf"
+  target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"></a>
 
 - Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali
   T (*In press*) Priority Bird Conservation Areas in California’s
