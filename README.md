@@ -68,12 +68,10 @@ estimated.
 ## Installation
 
 <!--You can install the released version of DeltaMultipleBenefits from [CRAN](https://CRAN.R-project.org) with:
-
-``` r
+&#10;``` r
 install.packages("DeltaMultipleBenefits")
 ```
-
-And the development version from [GitHub](https://github.com/) with:-->
+&#10;And the development version from [GitHub](https://github.com/) with:-->
 
 You can install the development version from
 [GitHub](https://github.com/) with:
@@ -130,9 +128,12 @@ href="https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Repor
 target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"></a>
 
 Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T
-(*In press*) Priority Bird Conservation Areas in California’s
-Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed
-Science
+(2023) Priority Bird Conservation Areas in California’s Sacramento–San
+Joaquin Delta. San Francisco Estuary and Watershed Science 21(3). DOI:
+[10.15447/sfews.2023v21iss3art4](https://doi.org/10.15447/sfews.2023v21iss3art4)<br>
+<a
+href="https://www.kristendybala.com/files/Dybala2023_PriorityBirdConservationAreas.pdf"
+target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"></a>
 
 Dybala KE, Reiter ME, Hickey CM (*In review*) Multiple-benefit
 Conservation in Practice: A Framework for Quantifying Multi-dimensional
