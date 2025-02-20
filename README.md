@@ -98,7 +98,8 @@ to each other, including:
 <a href="https://apps.wildlife.ca.gov/bios6/?bookmark=356"
 target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"></a>
 Baseline and projected future land use and land cover in the
-Sacramento-San Joaquin Delta
+Sacramento-San Joaquin Delta *(including predicted presence of focal
+taxa under baseline conditions)*
 
 <a href="https://doi.org/10.5281/zenodo.7504874"
 target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"></a>
@@ -135,9 +136,10 @@ Joaquin Delta. San Francisco Estuary and Watershed Science 21(3). DOI:
 href="https://www.kristendybala.com/files/Dybala2023_PriorityBirdConservationAreas.pdf"
 target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"></a>
 
-Dybala KE, Reiter ME, Hickey CM (*In review*) Multiple-benefit
+Dybala KE, Reiter ME, Hickey CM (*In press*) Multiple-benefit
 Conservation in Practice: A Framework for Quantifying Multi-dimensional
-Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta
+Impacts of Landscape Change in California’s Sacramento–San Joaquin
+Delta. San Francisco Estuary and Watershed Science.
 
 ## Funding Statement
 
