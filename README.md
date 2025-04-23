@@ -1,6 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- <img src="man/figures/PB_logo_RGB_Full_Color_cs.jpg" align="left" alt="" width="180" /><br><br> -->
+
+<img src="PB_logo_bl_CMYK_Full_Color_cs.png" width="20%" />
 
 # DeltaMultipleBenefits
 
@@ -59,8 +60,11 @@ alternative land cover.
 
 The benefit categories currently addressed include: Agricultural
 Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity
-Support. Each category is represented by multiple metrics, currently one
-of two types:
+Support. Each category is represented by multiple metrics:
+
+<img src="multiple_benefits_graphic.png" width="100%" />
+
+All metrics are currently one of two types:
 
 - **simple metrics:** quantitative values or qualitative scores assigned
   to each land cover class and summarized over the entire landscape

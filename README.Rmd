@@ -13,7 +13,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-<!-- <img src="man/figures/PB_logo_RGB_Full_Color_cs.jpg" align="left" alt="" width="180" /><br><br> -->
+```{r logo, echo=FALSE, out.width = '20%'}
+knitr::include_graphics("PB_logo_bl_CMYK_Full_Color_cs.png")
+```
 
 # DeltaMultipleBenefits
 
@@ -55,7 +57,13 @@ This package provides tools for evaluating land cover rasters supplied by the us
 
 ### Benefit Categories and Metrics
 
-The benefit categories currently addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple metrics, currently one of two types:
+The benefit categories currently addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple metrics:
+
+```{r multiple_benefits, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("multiple_benefits_graphic.png")
+```
+
+All metrics are currently one of two types:
 
 -   **simple metrics:** quantitative values or qualitative scores assigned to each land cover class and summarized over the entire landscape
 
