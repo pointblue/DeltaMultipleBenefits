@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   DeltaMultipleBenefits: DeltaMultipleBenefits.html
-last_built: 2025-02-20T17:29Z
+last_built: 2025-04-23T17:30Z
 urls:
   reference: https://pointblue.github.io/DeltaMultipleBenefits/reference
   article: https://pointblue.github.io/DeltaMultipleBenefits/articles
