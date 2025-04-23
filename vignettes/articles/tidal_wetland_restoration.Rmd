@@ -17,15 +17,16 @@ We are leading research to estimate the potential benefits of tidal wetland rest
 
 # The Approach
 
-- Account for existing tidal wetlands and planned restoration projects
+-   Account for existing tidal wetlands and planned restoration projects
 
-- Distribute additional acres of hypothetical projects as needed to meet restoration objectives
+-   Distribute additional acres of hypothetical projects as needed to meet restoration objectives
 
-- Start with footprint of potential tidal wetland: intertidal and minimally subsided potential marsh
+-   Start with footprint of potential tidal wetland: intertidal and minimally subsided potential marsh
 
-- Identify areas within this footprint that are more likely to be restored
+-   Identify areas within this footprint that are more likely to be restored
 
 **Map of existing and potential tidal wetland, shown with restoration projects planned, in progress, or completed:**
+
 ```{r tidal_wetland_map, echo=FALSE, out.width = '100%'}
 knitr::include_graphics("tidal_wetland_map.png")
 ```
@@ -35,6 +36,7 @@ knitr::include_graphics("tidal_wetland_map.png")
 As of 2025, approximately half of the acres needed to meet the restoration target are either planned, in progress, or completed. Based on estimates of current intertidal and minimally subsided land, land with elevations potentially suitable for tidal wetland restoration are unevenly distributed among the regions of the Delta and Suisun Marsh.
 
 **Summary of potential suitable tidal wetland acres by region:**
+
 ```{r potential_marsh, echo=FALSE, out.width = '80%'}
 knitr::include_graphics("potential_marsh.jpg")
 ```
@@ -43,11 +45,11 @@ knitr::include_graphics("potential_marsh.jpg")
 
 We are currently seeking input on approaches to developing tidal wetland restoration scenarios that meets Delta Plan target. We seek to represent the extent and possible spatial distribution of tidal wetlands once the restoration target is reached, to evaluate the potential benefits and trade-offs of meeting the target.
 
-**Key Questions:**
-
--   Which planned or proposed restoration projects are not yet shown on our map? (see map above)
--   Where are additional projects most (or least) likely? For example, what are the key constraints or priorities in terms of region, landowner, current landuse/land cover, or other factors?
--   What alternate strategies for meeting the Delta Plan target are under consideration? Are there alternate scenarios we should compare?
+> **Key Questions:**
+>
+> -   Which planned or proposed restoration projects are not yet shown on our map? (see map above)
+> -   Where are additional projects most (or least) likely? For example, what are the key constraints or priorities in terms of region, landowner, current landuse/land cover, or other factors?
+> -   What alternate strategies for meeting the Delta Plan target are under consideration? Are there alternate scenarios we should compare?
 
 If you would like to contribute, please contact kdybala [at] pointblue.org!
 
