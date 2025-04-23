@@ -8,13 +8,13 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
+  fig.path = "man/figures/README-", # this is only for figures created by code in this Rmd
   out.width = "100%"
 )
 ```
 
 ```{r logo, echo=FALSE, out.width = '20%'}
-knitr::include_graphics("PB_logo_bl_CMYK_Full_Color_cs.png")
+knitr::include_graphics("man/figures/PB_logo_bl_CMYK_Full_Color_cs.png")
 ```
 
 # DeltaMultipleBenefits
@@ -60,7 +60,7 @@ This package provides tools for evaluating land cover rasters supplied by the us
 The benefit categories currently addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple metrics:
 
 ```{r multiple_benefits, echo=FALSE, out.width = '100%'}
-knitr::include_graphics("multiple_benefits_graphic.png")
+knitr::include_graphics("man/figures/multiple_benefits_graphic.png")
 ```
 
 All metrics are currently one of two types:

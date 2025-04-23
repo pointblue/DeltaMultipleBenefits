@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<img src="PB_logo_bl_CMYK_Full_Color_cs.png" width="20%" />
+<img src="man/figures/PB_logo_bl_CMYK_Full_Color_cs.png" width="20%" />
 
 # DeltaMultipleBenefits
 
@@ -62,7 +62,7 @@ The benefit categories currently addressed include: Agricultural
 Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity
 Support. Each category is represented by multiple metrics:
 
-<img src="multiple_benefits_graphic.png" width="100%" />
+<img src="man/figures/multiple_benefits_graphic.png" width="100%" />
 
 All metrics are currently one of two types:
 
