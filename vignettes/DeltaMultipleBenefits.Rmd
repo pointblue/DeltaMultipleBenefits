@@ -660,8 +660,11 @@ Dybala KE. 2023. Multiple-benefit Conservation in Practice: Supplemental Spatial
 
 # Relevant Literature
 
-Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T. In review. Priority Bird Conservation Areas in California’s Sacramento–San Joaquin Delta. [link TBD]
+Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T (2023) Priority Bird Conservation Areas in California’s Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed Science 21(3). DOI: [10.15447/sfews.2023v21iss3art4](https://doi.org/10.15447/sfews.2023v21iss3art4)<br>
+[<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20">](https://www.kristendybala.com/files/Dybala2023_PriorityBirdConservationAreas.pdf){target="_blank"}
 
-Dybala KE, Reiter ME, Hickey CM. In review. Multiple-benefit Conservation in Practice: A Framework for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. [link TBD]
+Dybala KE, Reiter ME, Hickey CM (*In press*) Multiple-benefit Conservation in Practice: A Framework for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed Science.
 
-Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T. 2023. Final Project Report: Trade-offs and Co-benefits of Landscape Change Scenarios on Bird Communities and Ecosystem Services in the Sacramento-San Joaquin River Delta. Point Blue Conservation Science, Petaluma, CA. Available from: [link TBD]
+Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T (2023) *Final Project Report: Trade-offs and Co-benefits of Landscape Change Scenarios on Bird Communities and Ecosystem Services in the Sacramento-San Joaquin River Delta.* Point Blue Conservation Science, Petaluma, CA<br>
+[<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20">](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf){target="_blank"}
+
