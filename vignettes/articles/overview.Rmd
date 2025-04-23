@@ -9,10 +9,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(DeltaMultipleBenefits)
-```
-
 ## Rationale
 
 Achieving the long-term vision of a resilient Sacramento-San Joaquin River Delta ecosystem requires meeting multiple goals simultaneously, including self-sustaining wildlife populations and thriving communities of people in an evolving landscape. However, to effectively plan and implement policies and land management decisions intended to achieve multiple goals, it is essential to be able to identify the potential trade-offs of changes to the landscape across multiple goals. Meeting this challenge would support effective policy and resource management decisions and address several science priorities identified in Science Action Agendas for the Delta.
@@ -21,7 +17,7 @@ To help meet this challenge, we built on our partnerships in the Delta and broad
 
 ## Phase 1: 2019-2023
 
-In Phase 1 of this project, *Trade-offs and Co-benefits of Landscape Change on Bird Communities and Ecosystem Services in the Sacramento–San Joaquin River Delta*, we established the foundations of our framework as the *DeltaMultipleBenefits* R package, now freely available for use and further development. We identified a suite of benefits categories and mulitple quantifiable metrics to represent each category, which included compiling existing public data and analyzing thousands of existing bird survey data to build species distribution models for a suite of riparian landbird and waterbird species. We also worked with partners to identify two key drivers of landscape change of interest to investigate: habitat restoration and perennial crop expansion. We developed three alternative landscapes based on anticipated changes to the landscape from each driver in isolation and both drivers in combination, and we estimated the net impacts of each alternative landscape on each metric in comparison to a baseline landscape. This phase was funded by Proposition 1 Delta Water Quality and Ecosystem Restoration Program, Grant Agreement Number – Q1996022, administered by the California Department of Fish and Wildlife.
+In Phase 1 of this project, *Trade-offs and Co-benefits of Landscape Change on Bird Communities and Ecosystem Services in the Sacramento–San Joaquin River Delta*, we established the foundations of our framework as the *DeltaMultipleBenefits* R package, now freely available for use and further development. We identified a suite of benefits categories and multiple quantifiable metrics to represent each category, which included compiling existing public data and analyzing thousands of existing bird survey data to build species distribution models for a suite of riparian landbird and waterbird species. We also worked with partners to identify two key drivers of landscape change of interest to investigate: habitat restoration and perennial crop expansion. We developed three alternative landscapes based on anticipated changes to the landscape from each driver in isolation and both drivers in combination, and we estimated the net impacts of each alternative landscape on each metric in comparison to a baseline landscape. This phase was funded by Proposition 1 Delta Water Quality and Ecosystem Restoration Program, Grant Agreement Number – Q1996022, administered by the California Department of Fish and Wildlife.
 
 ## Phase 2: 2022-2026
 
