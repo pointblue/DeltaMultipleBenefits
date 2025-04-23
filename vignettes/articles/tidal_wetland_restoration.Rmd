@@ -1,7 +1,3 @@
----
-title: "Tidal wetland restoration"
----
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -51,7 +47,4 @@ We are currently seeking input on approaches to developing tidal wetland restora
 
 If you would like to contribute, please contact kdybala [at] pointblue.org!
 
-
-
-
-*This project is supported by the California Department of Fish and Wildlife from the Water Quality, Supply, and Infrastructure Improvement Act of 2014 (Proposition 1, CWC § 79707), grant agreement number Q2296017.*
+*This phase of the project is supported by the California Department of Fish and Wildlife from the Water Quality, Supply, and Infrastructure Improvement Act of 2014 (Proposition 1, CWC § 79707), grant agreement number Q2296017.*
