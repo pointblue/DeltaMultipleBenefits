@@ -37,6 +37,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/overview.html">Project Overview</a></li>
+    <li><a class="dropdown-item" href="articles/supporting_information.html">supporting_information</a></li>
     <li><a class="dropdown-item" href="articles/tidal_wetland_restoration.html">Tidal Wetland Restoration</a></li>
   </ul>
 </li>
@@ -64,7 +65,6 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>The <code>DeltaMultipleBenefits</code> R package serves as an open-source, science-based framework for estimating the net impacts of scenarios of landscape change on multiple metrics of interest. It is intended to support land use planning, management, conservation, and community engagement in the Sacramento-San Joaquin River Delta by identifying potential benefits and trade-offs of proposed or anticipated changes in land cover.</p>
-<p><strong>Your help is needed! We are currently seeking input on approaches to developing tidal wetland restoration scenarios. Please see <a href="articles/tidal_wetland_restoration.html">our recent article</a> for more information.</strong></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -93,21 +93,12 @@ install.packages("DeltaMultipleBenefits")
 <li><p><strong>simple metrics:</strong> quantitative values or qualitative scores assigned to each land cover class and summarized over the entire landscape</p></li>
 <li><p><strong>spatial models:</strong> models that require information about the spatial distribution of land covers to estimate a total value, such as the total suitable habitat estimated from a species distribution model</p></li>
 </ul>
-<p>All simple metrics and species distribution models that have already been developed for this framework are available for download:</p>
-<blockquote>
-<p><a href="https://doi.org/10.5281/zenodo.7504874" target="_blank" class="external-link"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"></a> Metrics Data for Quantifying Multidimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. DOI: 10.5281/zenodo.7504874 <em>(also included in the <code>DeltaMultipleBenefits</code> package)</em></p>
-<p><a href="https://doi.org/10.5281/zenodo.7531945" target="_blank" class="external-link"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"></a> Distribution models for riparian landbirds and waterbirds in the Sacramento-San Joaquin Delta. DOI: 10.5281/zenodo.7531945</p>
-</blockquote>
 <p><em>This framework is still in development and designed to readily incorporate additional species, models, data, and metrics. Please contact us to collaborate on incorporating additional metrics or data.</em></p>
 </div>
 <div class="section level3">
 <h3 id="scenarios--alternative-landscapes">Scenarios &amp; Alternative Landscapes<a class="anchor" aria-label="anchor" href="#scenarios--alternative-landscapes"></a>
 </h3>
 <p>By comparing landscape totals for each metric estimated from a baseline landscape and alternative landscapes representing proposed or anticipated changes, the expected direction and magnitude of the net change in each metric is estimated. In the initial development of this framework, we built simple alternative landscapes representing changes driven by one or two individual drivers of landscape change, allowing evaluation of their individual impacts. However, more complex and realistic scenarios of future landscape change can also be evaluated.</p>
-<p>All landscapes that have already been developed for this framework are available for download, including a baseline landscape, a restoration landscape representing Delta Plan restoration targets for non-tidal wetlands and riparian habitat, a perennial crop expansion landscape, and a combination of restoration and perennial crop expansion.</p>
-<blockquote>
-<p><a href="https://apps.wildlife.ca.gov/bios6/?bookmark=356" target="_blank" class="external-link"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"></a> Baseline and projected future land use and land cover in the Sacramento-San Joaquin Delta <em>(including predicted presence of focal taxa under baseline conditions)</em></p>
-</blockquote>
 </div>
 <div class="section level3">
 <h3 id="evaluating-new-scenarios">Evaluating New Scenarios<a class="anchor" aria-label="anchor" href="#evaluating-new-scenarios"></a>
@@ -122,14 +113,14 @@ install.packages("DeltaMultipleBenefits")
 </div>
 </div>
 <div class="section level2">
-<h2 id="supporting-information">Supporting Information<a class="anchor" aria-label="anchor" href="#supporting-information"></a>
+<h2 id="for-more-information">For more information<a class="anchor" aria-label="anchor" href="#for-more-information"></a>
 </h2>
-<blockquote>
-<p>Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T. 2023. <em>Final Project Report: Trade-offs and Co-benefits of Landscape Change Scenarios on Bird Communities and Ecosystem Services in the Sacramento-San Joaquin River Delta.</em> Point Blue Conservation Science, Petaluma, CA<br><a href="https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf" target="_blank" class="external-link"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"></a></p>
-<p>Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T (2023) Priority Bird Conservation Areas in California’s Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed Science 21(3). DOI: <a href="https://doi.org/10.15447/sfews.2023v21iss3art4" class="external-link">10.15447/sfews.2023v21iss3art4</a><br><a href="https://www.kristendybala.com/files/Dybala2023_PriorityBirdConservationAreas.pdf" target="_blank" class="external-link"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"></a></p>
-<p>Dybala KE, Reiter ME, Hickey CM (<em>In press</em>) Multiple-benefit Conservation in Practice: A Framework for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed Science.</p>
-<p><a href="https://doi.org/10.5281/zenodo.7672193" target="_blank" class="external-link"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"></a> Supplemental Spatial Data for Quantifying Multidimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. DOI: 10.5281/zenodo.7672193</p>
-</blockquote>
+<ul>
+<li>
+<a href="articles/project_overview.html">Project Overview</a>: Prior and current phases of this project’s development</li>
+<li>
+<a href="articles/supporting_information.html">Supporting Information</a>: Reports, publications, and data sets including all previously developed metrics, models, spatial data, and alternative landscapes.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="funding-statement">Funding Statement<a class="anchor" aria-label="anchor" href="#funding-statement"></a>
@@ -166,7 +157,7 @@ install.packages("DeltaMultipleBenefits")
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Kristen Dybala <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2787-4600" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Kristen Dybala <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2787-4600" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -189,7 +180,7 @@ install.packages("DeltaMultipleBenefits")
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
