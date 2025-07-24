@@ -59,15 +59,6 @@ Support. Each category is represented by multiple metrics:
 
 <img src="man/figures/multiple_benefits_graphic.png" width="100%" />
 
-All metrics are currently one of two types:
-
-- **simple metrics:** quantitative values or qualitative scores assigned
-  to each land cover class and summarized over the entire landscape
-
-- **spatial models:** models that require information about the spatial
-  distribution of land covers to estimate a total value, such as the
-  total suitable habitat estimated from a species distribution model
-
 *This framework is still in development and designed to readily
 incorporate additional species, models, data, and metrics. Please
 contact us to collaborate on incorporating additional metrics or data.*
@@ -85,9 +76,10 @@ realistic scenarios of future landscape change can also be evaluated.
 
 ### Evaluating New Scenarios
 
-This package includes a vignette that serves as a tutorial outlining the
-major steps of analyzing alternative Delta landscapes and comparing them
-to each other, including:
+This package includes a [vignette](articles/DeltaMultipleBenefits.html)
+that serves as a tutorial outlining the major steps of analyzing
+alternative Delta landscapes and comparing them to each other,
+including:
 
 1.  Preparing new landscape scenarios for analysis
 2.  Summarizing the net change in the total area of each land cover
@@ -97,8 +89,8 @@ to each other, including:
 
 ## For more information
 
-- [Project Overview](articles/project_overview.html): Prior and current
-  phases of this project’s development
+- [Project Overview](articles/overview.html): Prior and current phases
+  of this project’s development
 - [Supporting Information](articles/supporting_information.html):
   Reports, publications, and data sets including all previously
   developed metrics, models, spatial data, and alternative landscapes.
