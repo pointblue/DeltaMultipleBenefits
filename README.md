@@ -27,11 +27,6 @@ engagement in the Sacramento-San Joaquin River Delta by identifying
 potential benefits and trade-offs of proposed or anticipated changes in
 land cover.
 
-**Your help is needed! We are currently seeking input on approaches to
-developing tidal wetland restoration scenarios. Please see [our recent
-article](articles/tidal_wetland_restoration.html) for more
-information.**
-
 ## Installation
 
 <!--You can install the released version of DeltaMultipleBenefits from [CRAN](https://CRAN.R-project.org) with:
@@ -73,21 +68,6 @@ All metrics are currently one of two types:
   distribution of land covers to estimate a total value, such as the
   total suitable habitat estimated from a species distribution model
 
-All simple metrics and species distribution models that have already
-been developed for this framework are available for download:
-
-> <a href="https://doi.org/10.5281/zenodo.7504874"
-> target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"/></a>
-> Metrics Data for Quantifying Multidimensional Impacts of Landscape
-> Change in California’s Sacramento–San Joaquin Delta. DOI:
-> 10.5281/zenodo.7504874 *(also included in the `DeltaMultipleBenefits`
-> package)*
->
-> <a href="https://doi.org/10.5281/zenodo.7531945"
-> target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"/></a>
-> Distribution models for riparian landbirds and waterbirds in the
-> Sacramento-San Joaquin Delta. DOI: 10.5281/zenodo.7531945
-
 *This framework is still in development and designed to readily
 incorporate additional species, models, data, and metrics. Please
 contact us to collaborate on incorporating additional metrics or data.*
@@ -103,18 +83,6 @@ driven by one or two individual drivers of landscape change, allowing
 evaluation of their individual impacts. However, more complex and
 realistic scenarios of future landscape change can also be evaluated.
 
-All landscapes that have already been developed for this framework are
-available for download, including a baseline landscape, a restoration
-landscape representing Delta Plan restoration targets for non-tidal
-wetlands and riparian habitat, a perennial crop expansion landscape, and
-a combination of restoration and perennial crop expansion.
-
-> <a href="https://apps.wildlife.ca.gov/bios6/?bookmark=356"
-> target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"/></a>
-> Baseline and projected future land use and land cover in the
-> Sacramento-San Joaquin Delta *(including predicted presence of focal
-> taxa under baseline conditions)*
-
 ### Evaluating New Scenarios
 
 This package includes a vignette that serves as a tutorial outlining the
@@ -127,36 +95,13 @@ to each other, including:
 3.  Estimating the net change in simple metrics
 4.  Estimating the net change in metrics informed by spatial models
 
-## Supporting Information
+## For more information
 
-> Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T. 2023. *Final
-> Project Report: Trade-offs and Co-benefits of Landscape Change
-> Scenarios on Bird Communities and Ecosystem Services in the
-> Sacramento-San Joaquin River Delta.* Point Blue Conservation Science,
-> Petaluma, CA<br> <a
-> href="https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf"
-> target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"/></a>
->
-> Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali
-> T (2023) Priority Bird Conservation Areas in California’s
-> Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed
-> Science 21(3). DOI:
-> [10.15447/sfews.2023v21iss3art4](https://doi.org/10.15447/sfews.2023v21iss3art4)<br>
-> <a
-> href="https://www.kristendybala.com/files/Dybala2023_PriorityBirdConservationAreas.pdf"
-> target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20"/></a>
->
-> Dybala KE, Reiter ME, Hickey CM (*In press*) Multiple-benefit
-> Conservation in Practice: A Framework for Quantifying
-> Multi-dimensional Impacts of Landscape Change in California’s
-> Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed
-> Science.
->
-> <a href="https://doi.org/10.5281/zenodo.7672193"
-> target="_blank"><img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg" width="18" height="18"/></a>
-> Supplemental Spatial Data for Quantifying Multidimensional Impacts of
-> Landscape Change in California’s Sacramento–San Joaquin Delta. DOI:
-> 10.5281/zenodo.7672193
+- [Project Overview](articles/project_overview.html): Prior and current
+  phases of this project’s development
+- [Supporting Information](articles/supporting_information.html):
+  Reports, publications, and data sets including all previously
+  developed metrics, models, spatial data, and alternative landscapes.
 
 ## Funding Statement
 
