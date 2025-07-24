@@ -33,7 +33,7 @@ This vignette serves as a tutorial outlining the major steps of analyzing altern
 3. Estimating the net change in simple metrics  
 4. Estimating the net change in metrics informed by spatial models  
 
-Here, we use a toy land cover data set as an example of how to work through these steps, but to reproduce the analyses conducted in Dybala et al. (In review)[doi:Link TBD](https://doi.org), the original baseline land cover data, scenarios, distribution models, and other required supporting data can be accessed online (see "Supporting Data" below) or are included with this package. 
+Here, we use a toy land cover data set as an example of how to work through these steps, but to reproduce the analyses conducted in [Dybala et al. (2025)](https://doi.org/10.15447/sfews.2025v23iss2art2){target="_blank"}, the original baseline land cover data, scenarios, distribution models, and other required supporting data can be downloaded (see [Supporting Information](articles/supporting_information.html)) or are included with this package. 
 
 ```{r setup}
 library(DeltaMultipleBenefits)
@@ -181,7 +181,7 @@ landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
   
 # Step 3. Estimating the net change in simple metrics
 
-We developed several "simple metrics" representing several categories of benefits including: *agricultural livelihoods*, *water quality*, and *climate change resilience*. For example, agricultural livelihood metrics include the number of agricultural jobs, their average annual wage, and gross production value. These are all "simple metrics" in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple compared to estimating the net change in metrics derived from a spatial model (see below), and the steps are similar to estimating the net change in land cover area above. However, the uncertainty in the value of each metric for each land cover class, such as resulting from spatial or temporal variation, can also be accounted for in estimating the uncertainty in the net change. The values assigned to each land cover class for each metric are available to download via Zenodo (doi:[10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874)), but are also included in this package: 
+We developed several "simple metrics" representing several categories of benefits including: *agricultural livelihoods*, *water quality*, and *climate change resilience*. For example, agricultural livelihood metrics include the number of agricultural jobs, their average annual wage, and gross production value. These are all "simple metrics" in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple compared to estimating the net change in metrics derived from a spatial model (see below), and the steps are similar to estimating the net change in land cover area above. However, the uncertainty in the value of each metric for each land cover class, such as resulting from spatial or temporal variation, can also be accounted for in estimating the uncertainty in the net change. The values assigned to each land cover class for each metric are available to download via [Zenodo](https://doi.org/10.5281/zenodo.7504874)), but are also included in this package: 
 
 ```{r metrics1, eval = FALSE}
 data(metrics, package = 'DeltaMultipleBenefits')
@@ -233,9 +233,9 @@ scores_change %>%
   
 # Step 4. Estimating the net change in metrics informed by spatial models
 
-In addition to the "simple metrics" described above, we developed spatial distribution models for riparian landbirds and waterbirds that predict the probability of species presence for each pixel on the landscape, depending on the land cover class at that pixel, the composition of land cover classes in the surrounding area, and other features of the landscape. We used the probability of presence predictions as an indicator of suitable habitat, and to represent the benefits category of *biodiversity support*. Evaluating the net change in biodiversity support between scenario and baseline landscapes is necessarily more complicated than evaluating the "simple metrics" above, but also allows for more nuance and spatial variation.
+In addition to the "simple metrics" described above, we developed species distribution models for riparian landbirds and waterbirds that predict the probability of species presence for each pixel on the landscape, depending on the land cover class at that pixel, the composition of land cover classes in the surrounding area, and other features of the landscape. We used the probability of presence predictions as an indicator of suitable habitat, and to represent the benefits category of *biodiversity support*. Evaluating the net change in biodiversity support between scenario and baseline landscapes is necessarily more complicated than evaluating the "simple metrics" above, but also allows for more nuance and spatial variation.
 
-Currently, the only spatial models supported are the distribution models for riparian landbird species and groups of waterbird species. Their development is described in a manuscript ([Dybala et al. In review - Link TBD](https://doi.org)) and the models are available to download via Zenodo (doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)). However, spatial models for other species, and for other benefits categories could be incorporated in future versions of this package as they are developed.
+Currently, the only spatial models supported are the distribution models for riparian landbird species and groups of waterbird species. Their development is described in a manuscript ([Dybala et al. 2023](https://doi.org/10.15447/sfews.2023v21iss3art4){target="_blank"}) and the models are available to download via Zenodo (doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)). However, spatial models for other species and for other benefits categories could be incorporated in future versions of this package as they are developed.
 
 ## 4.1 Riparian landbird models
 
@@ -396,7 +396,7 @@ purrr::map(names(landscapes),
              overwrite = TRUE))
 ```
 
-__update_pwater:__ The waterbird distribution models also included `pwater` indicating the proportion of the original survey area that was flooded. For prediction purposes, we used information about the observed probability of surface water being present in each cell, during each season over several years. This surface water data was derived from Point Blue's Water Tracker, which analyzes remote sensing data to detect surface water. However, in a scenario of future landscape change, such as conversion of a grassland to a managed wetland, we would expect the probability of surface water to also change. Therefore, if both a baseline and scenario landscape are provided, this function will analyze the provided `pwater` raster by the baseline land cover class to identify the average probability of surface water, and then for the scenario, assigns the expected probability of surface water to any cells that have changed land cover class. If only one landscape is provided, The original baseline `pwater` raster layers for the Delta are available to download from Zenodo doi: [link TBD](https://doi.org). Here, we randomly generate an example baseline `pwater` and then use the function to create an updated `pwater` layer for our example scenario.
+__update_pwater:__ The waterbird distribution models also included `pwater` indicating the proportion of the original survey area that was flooded. For prediction purposes, we used information about the observed probability of surface water being present in each cell, during each season over several years. This surface water data was derived from Point Blue's Water Tracker, which analyzes remote sensing data to detect surface water. However, in a scenario of future landscape change, such as conversion of a grassland to a managed wetland, we would expect the probability of surface water to also change. Therefore, if both a baseline and scenario landscape are provided, this function will analyze the provided `pwater` raster by the baseline land cover class to identify the average probability of surface water, and then for the scenario, assigns the expected probability of surface water to any cells that have changed land cover class. If only one landscape is provided, The original baseline `pwater` raster layers for the Delta are available to download from [Zenodo](https://doi.org/10.5281/zenodo.7672193){target="_blank"}. Here, we randomly generate an example baseline `pwater` and then use the function to create an updated `pwater` layer for our example scenario.
 
 ```{r pwater, eval = FALSE}
 pwater_base_fall = rast(landscapes$baseline,
@@ -643,28 +643,6 @@ __sum_change:__ Again, use this function to estimate the net change in the total
 scores_change_habitat = DeltaMultipleBenefits::sum_change(habitat_totals)
 ```
 
-# Supporting Data
+# References
 
-* Baseline and scenario rasters: 
-Dybala KE. 2023. Baseline and projected future land use and land cover in the Sacramento-San Joaquin Delta. Available from: <https://wildlife.ca.gov/Data/BIOS>
-
-* Metrics (also included in the *DeltaMultipleBenefits* package): 
-Dybala KE. 2023. Multiple-benefit Conservation in Practice: Metrics Data for Quantifying Multidimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. doi: [10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874).
-
-* Species distribution models: 
-Dybala KE, Sesser KA, Reiter ME, Shuford WD, Golet GH, Hickey CM, Gardali T. 2023. Distribution models for riparian landbirds and waterbirds in the Sacramento-San Joaquin Delta. doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945).
-
-* Supplemental spatial data: 
-Dybala KE. 2023. Multiple-benefit Conservation in Practice: Supplemental Spatial Data for Quantifying Multidimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. doi: [10.5281/zenodo.7672193](https://doi.org/10.5281/zenodo.7672193).
-
-
-# Relevant Literature
-
-Dybala K, Sesser K, Reiter M, Shuford WD, Golet GH, Hickey C, Gardali T (2023) Priority Bird Conservation Areas in California’s Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed Science 21(3). DOI: [10.15447/sfews.2023v21iss3art4](https://doi.org/10.15447/sfews.2023v21iss3art4)<br>
-[<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20">](https://www.kristendybala.com/files/Dybala2023_PriorityBirdConservationAreas.pdf){target="_blank"}
-
-Dybala KE, Reiter ME, Hickey CM (*In press*) Multiple-benefit Conservation in Practice: A Framework for Quantifying Multi-dimensional Impacts of Landscape Change in California’s Sacramento–San Joaquin Delta. San Francisco Estuary and Watershed Science.
-
-Dybala KE, Sesser K, Reiter M, Hickey C, Gardali T (2023) *Final Project Report: Trade-offs and Co-benefits of Landscape Change Scenarios on Bird Communities and Ecosystem Services in the Sacramento-San Joaquin River Delta.* Point Blue Conservation Science, Petaluma, CA<br>
-[<img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/file-pdf.svg" width="20" height="20">](https://www.kristendybala.com/files/Dybala2023_DeltaMultipleBenefits_Report.pdf){target="_blank"}
-
+See [Supporting Information](articles/supporting_information.html)
