@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 knitr::include_graphics("man/figures/PB_logo_bl_CMYK_Full_Color_cs.png")
 ```
 
-# DeltaMultipleBenefits
+# DeltaMultipleBenefits - Estimating co-benefits and trade-offs of landscape change <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
 
@@ -77,12 +77,11 @@ This package includes a [vignette](articles/DeltaMultipleBenefits.html) that ser
 
 ## For more information
 
-* [Project Overview](articles/overview.html): Prior and current phases of this project's development
-* [Supporting Information](articles/supporting_information.html): Reports, publications, and data sets including all previously developed metrics, models, spatial data, and alternative landscapes.
+-   [Project Overview](articles/overview.html): Prior and current phases of this project's development
+-   [Supporting Information](articles/supporting_information.html): Reports, publications, and data sets including all previously developed metrics, models, spatial data, and alternative landscapes.
 
 ## Funding Statement
 
 These data were originally developed as part of the project *Trade-offs and Co-benefits of Landscape Change on Bird Communities and Ecosystem Services in the Sacramento–San Joaquin River Delta*, funded by Proposition 1 Delta Water Quality and Ecosystem Restoration Program, Grant Agreement Number – Q1996022, administered by the California Department of Fish and Wildlife.
 
 A second phase of development is currently underway, *Trade-offs and Co-benefits of Landscape Change in the Sacramento-San Joaquin River Delta: Phase II Tidal Wetlands and Restoration*, funded by the Water Quality, Supply, and Infrastructure Improvement Act of 2014 (Proposition 1, CWC § 79707), grant agreement number Q2296017, administered by the California Department of Fish and Wildlife.
-

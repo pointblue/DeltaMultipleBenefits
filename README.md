@@ -3,7 +3,7 @@
 
 <img src="man/figures/PB_logo_bl_CMYK_Full_Color_cs.png" width="20%" />
 
-# DeltaMultipleBenefits
+# DeltaMultipleBenefits - Estimating co-benefits and trade-offs of landscape change <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
 
