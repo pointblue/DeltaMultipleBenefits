@@ -5,7 +5,7 @@
 \alias{key}
 \title{Land cover classification scheme for the \code{DeltaMultipleBenefits} framework}
 \format{
-\subsection{\code{key} A data frame with 41 rows and 7 columns:}{
+\subsection{\code{key} A data frame with 81 rows and 7 columns:}{
 
 \describe{
 \item{CODE_BASELINE}{Numeric value used to encode rasters}
@@ -19,7 +19,7 @@
 }
 }
 \source{
-Dybala et al. In prep (URL to be determined)
+Dybala et al. 2023 (https://doi.org/10.15447/sfews.2023v21iss3art4); Dybala et al. In Prep
 }
 \usage{
 key
