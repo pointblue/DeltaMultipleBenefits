@@ -47,10 +47,10 @@ function is generally agnostic as to the names of the rasters and the land
 cover classes it expects, but it does expect the rasters to have unique
 names and to have land cover class levels defined (i.e., not just contain
 numeric codes; see \code{\link[terra:factors]{terra::levels()}}). However, if \code{rollup = TRUE} (the
-default), riparian and managed wetland subclasses are expected to have
-names that begin with \code{'RIPARIAN_'} or \code{'WETLAND_MANAGED_'}. These
+default), riparian and wetland subclasses are expected to have
+names that begin with \code{'RIPARIAN_'} or \code{'WETLAND_'}. These
 subclasses will be summarized into a total area of \code{'RIPARIAN'} and
-\code{'WETLAND_MANAGED'} land cover classes.
+\code{'WETLAND'} land cover classes.
 
 This function relies on \code{\link[terra:freq]{terra::freq()}} to summarize the total number of
 cells of each value within each raster and optionally each zone provided,

@@ -11,10 +11,10 @@
 #'   cover classes it expects, but it does expect the rasters to have unique
 #'   names and to have land cover class levels defined (i.e., not just contain
 #'   numeric codes; see [terra::levels()]). However, if `rollup = TRUE` (the
-#'   default), riparian and managed wetland subclasses are expected to have
-#'   names that begin with `'RIPARIAN_'` or `'WETLAND_MANAGED_'`. These
+#'   default), riparian and wetland subclasses are expected to have
+#'   names that begin with `'RIPARIAN_'` or `'WETLAND_'`. These
 #'   subclasses will be summarized into a total area of `'RIPARIAN'` and
-#'   `'WETLAND_MANAGED'` land cover classes.
+#'   `'WETLAND'` land cover classes.
 #'
 #'   This function relies on [terra::freq()] to summarize the total number of
 #'   cells of each value within each raster and optionally each zone provided,
@@ -113,14 +113,14 @@ sum_landcover = function(landscapes, mask = NULL, zones = NULL, pixel_area = 1,
   }
 
   if(rollup) {
-    # add roll-up of riparian & managed wetland subtypes
+    # add roll-up of riparian & wetland subclasses
     res = dplyr::bind_rows(
       res,
-      res %>% dplyr::filter(grepl('RIPARIAN_|WETLAND_MANAGED', .data$CODE_NAME)) %>%
+      res %>% dplyr::filter(grepl('RIPARIAN_|WETLAND_', .data$CODE_NAME)) %>%
         dplyr::mutate(
           CODE_NAME = dplyr::case_when(
             grepl('RIPARIAN_', .data$CODE_NAME) ~ 'RIPARIAN',
-            grepl('WETLAND_MANAGED', .data$CODE_NAME) ~ 'WETLAND_MANAGED',
+            grepl('WETLAND_', .data$CODE_NAME) ~ 'WETLAND',
             TRUE ~ .data$CODE_NAME)) %>%
         dplyr::group_by(
           dplyr::across(dplyr::any_of(c('scenario', 'ZONE', 'CODE_NAME')))) %>%
