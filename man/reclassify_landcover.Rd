@@ -10,7 +10,7 @@ reclassify_landcover(landscape_stack, SDM)
 \item{landscape_stack}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
 
 \item{SDM}{The name of intended species distribution model: \code{"riparian"},
-\code{"waterbird_fall"}, or \code{"waterbird_win"}}
+\code{"waterbird_fall"}, \code{"waterbird_win"}, or \code{"tima"}}
 }
 \value{
 SpatRaster with layers for each land cover class
