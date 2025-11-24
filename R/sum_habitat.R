@@ -10,7 +10,13 @@
 #'   file structure within `pathin` is used to infer the name of the
 #'   corresponding `SDM` and `landscape_name`. However, `SDM` or both `SDM` and
 #'   `landscape_name` can be optionally specified to only process a subset of
-#'   these.
+#'   these. The `regex` option can also be used to specify a subset of the
+#'   rasters within `pathin/SDM/landscape_name`.
+#'
+#'   If SDM is one of the recognized models (`"riparian"`, `"waterbird_fall"`,
+#'   `"waterbird_win"`, or `"tima"`), the output will produce nicer labels for
+#'   the `METRIC` and `METRIC_SUBTYPE` fields. Otherwise, `METRIC_SUBTYPE` will be
+#'   filled with the `SDM` value.
 #'
 #'   If provided, `key` should refer to a tibble, dataframe, or filepath to a
 #'   CSV containing the fields `spp` and `label`, used for converting the
@@ -27,15 +33,16 @@
 #'   running [fit_SDM()] or [transform_SDM()]
 #' @param SDM,landscape_name Optional character strings defining the
 #'   subdirectories within `pathin` for which habitat should be summarized; see
-#'   Details; SDM must be one of `"riparian"`, `"waterbird_fall"`, or
-#'   `"waterbird_win"`.
+#'   Details.
+#' @param regex Passed to `list.files` for selecting a subset of rasters from
+#'   `pathin/SDM/landscape_name`; default is ".tif$"
 #' @param zones Optional `SpatRaster` or character string giving the filepath to
 #'   a raster encoding zones within which pixel values should be summarized
 #' @param subtype Optional character string appended to the field
 #'   METRIC_SUBTYPE, such as for distinguishing probability of presence from
 #'   presence/absence
 #' @param rollup Logical; If `TRUE` (default), summarize total habitat across
-#'   all species/groups by set of SDMs
+#'   all species/groups by set of SDMs and add to output
 #' @param key Optional tibble, dataframe, or character string defining the
 #'   filepath passed to [readr::read_csv()], used to translate the individual
 #'   species names as encoded in the file names in pathin to readable METRIC
@@ -53,23 +60,23 @@
 #' @examples
 #' # See vignette
 
-sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL,
+sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL, regex = '.tif$',
                        zones = NULL, subtype = NULL,
                        rollup = TRUE, key = NULL, scale = NULL) {
 
   if (is.null(SDM)) {
     # assume landscape_name also NULL (and ignore if not)
     # recursively pull in anything in pathin
-    fl = list.files(pathin, '.tif$', recursive = TRUE, full.names = TRUE) %>%
+    fl = list.files(pathin, regex, recursive = TRUE, full.names = TRUE) %>%
       rlang::set_names()
   } else {
     if (is.null(landscape_name)) {
       #recursively pull in anything in pathin/SDM
-      fl = list.files(file.path(pathin, SDM), '.tif$', recursive = TRUE,
+      fl = list.files(file.path(pathin, SDM), regex, recursive = TRUE,
                       full.names = TRUE) %>%
         rlang::set_names()
     } else {
-      fl = list.files(file.path(pathin, SDM, landscape_name), '.tif$',
+      fl = list.files(file.path(pathin, SDM, landscape_name), regex,
                       full.names = TRUE) %>%
         rlang::set_names()
     }
@@ -150,19 +157,31 @@ sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL,
     res = dplyr::rename(res, METRIC = .data$spp)
   }
 
-  res = res %>%
-    dplyr::mutate(
-      METRIC_CATEGORY = 'Biodiversity Support',
-      METRIC_SUBTYPE = dplyr::case_when(
-        SDM == 'riparian' ~ 'Riparian landbird',
-        SDM %in% c('waterbird_fall', 'waterbird_win') ~ 'Waterbird'),
-      METRIC = dplyr::case_when(
-        SDM == 'waterbird_fall' ~ paste0(.data$METRIC, ' (fall)'),
-        SDM == 'waterbird_win' ~ paste0(.data$METRIC, ' (winter)'),
-        TRUE ~ METRIC),
-      SCORE_TOTAL = .data$value) %>%
-    dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
-                  .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
+  if (SDM %in% c('riparian', 'waterbird_fall', 'waterbird_win', 'tima')) {
+    res = res %>%
+      dplyr::mutate(
+        METRIC_CATEGORY = 'Biodiversity Support',
+        METRIC_SUBTYPE = dplyr::case_when(
+          SDM == 'riparian' ~ 'Riparian landbird',
+          SDM %in% c('waterbird_fall', 'waterbird_win') ~ 'Waterbird',
+          SDM == 'tima' ~ 'Tidal marsh bird'),
+        METRIC = dplyr::case_when(
+          SDM == 'waterbird_fall' ~ paste0(.data$METRIC, ' (fall)'),
+          SDM == 'waterbird_win' ~ paste0(.data$METRIC, ' (winter)'),
+          TRUE ~ METRIC),
+        SCORE_TOTAL = .data$value) %>%
+      dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
+                    .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
+  } else {
+    res = res %>%
+      dplyr::mutate(
+        METRIC_CATEGORY = 'Biodiversity Support',
+        METRIC_SUBTYPE = SDM,
+        SCORE_TOTAL = .data$value) %>%
+      dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
+                    .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
+  }
+
 
   if (!is.null(subtype)) {
     res = res %>%

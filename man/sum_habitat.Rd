@@ -8,6 +8,7 @@ sum_habitat(
   pathin,
   SDM = NULL,
   landscape_name = NULL,
+  regex = ".tif$",
   zones = NULL,
   subtype = NULL,
   rollup = TRUE,
@@ -23,8 +24,10 @@ running \code{\link[=fit_SDM]{fit_SDM()}} or \code{\link[=transform_SDM]{transfo
 
 \item{SDM, landscape_name}{Optional character strings defining the
 subdirectories within \code{pathin} for which habitat should be summarized; see
-Details; SDM must be one of \code{"riparian"}, \code{"waterbird_fall"}, or
-\code{"waterbird_win"}.}
+Details.}
+
+\item{regex}{Passed to \code{list.files} for selecting a subset of rasters from
+\code{pathin/SDM/landscape_name}; default is ".tif$"}
 
 \item{zones}{Optional \code{SpatRaster} or character string giving the filepath to
 a raster encoding zones within which pixel values should be summarized}
@@ -34,7 +37,7 @@ METRIC_SUBTYPE, such as for distinguishing probability of presence from
 presence/absence}
 
 \item{rollup}{Logical; If \code{TRUE} (default), summarize total habitat across
-all species/groups by set of SDMs}
+all species/groups by set of SDMs and add to output}
 
 \item{key}{Optional tibble, dataframe, or character string defining the
 filepath passed to \code{\link[readr:read_delim]{readr::read_csv()}}, used to translate the individual
@@ -58,7 +61,13 @@ process multiple rasters located in the \code{pathin} directory at once. The
 file structure within \code{pathin} is used to infer the name of the
 corresponding \code{SDM} and \code{landscape_name}. However, \code{SDM} or both \code{SDM} and
 \code{landscape_name} can be optionally specified to only process a subset of
-these.
+these. The \code{regex} option can also be used to specify a subset of the
+rasters within \code{pathin/SDM/landscape_name}.
+
+If SDM is one of the recognized models (\code{"riparian"}, \code{"waterbird_fall"},
+\code{"waterbird_win"}, or \code{"tima"}), the output will produce nicer labels for
+the \code{METRIC} and \code{METRIC_SUBTYPE} fields. Otherwise, \code{METRIC_SUBTYPE} will be
+filled with the \code{SDM} value.
 
 If provided, \code{key} should refer to a tibble, dataframe, or filepath to a
 CSV containing the fields \code{spp} and \code{label}, used for converting the
