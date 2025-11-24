@@ -38,7 +38,7 @@ identify the locations of \code{unsuitable} land covers. Must be provided if
 
 \item{unsuitable}{optional vector of numerical values representing the land
 cover classifications that should be considered unsuitable \emph{a priori}. If
-not \code{NULL}, \code{landcape} must also be provided.}
+not \code{NULL}, \code{landscape} must also be provided.}
 
 \item{pathout}{Character string defining the filepath
 (\code{pathout/SDM/landscape_name}) where output rasters should be written}
@@ -51,8 +51,9 @@ each model in \code{modlist}
 }
 \description{
 Fit previously-developed species distribution models for riparian landbird
-species and waterbird groups during the fall or winter to a new set of
-predictors, such as those derived from a new scenario of landscape change.
+species, waterbird groups during the fall or winter, or tidal marsh bird
+species to a new set of predictors, such as those derived from a new scenario
+of landscape change.
 }
 \details{
 This function is designed to fit multiple distribution models to the
@@ -68,11 +69,13 @@ predictor representing effort ('area.ha' for riparian landbirds and
 'offset' for waterbirds). For riparian landbird models applied only to the
 Delta, constants should also include a region predictor used as a
 categorical predictor representing the Sacramento Valley (0) or the Delta
-or San Joaquin Valley (1). (See vignette)
+or San Joaquin Valley (1). None needed for tidal marsh birds. (See
+vignette)
 
 \code{factors} are also passed to \code{\link[terra:predict]{terra::predict()}} and provide a way to define
-categorical predictors. For waterbird models, this is necessary to define
-the 'covertype' predictor. (See vignette)
+categorical predictors. For waterbird and tidal marsh bird models, this is
+necessary to define the 'covertype' and 'LANDCOVER' predictors,
+respectively. (See vignette)
 
 \code{unsuitable} land covers will be presumed to have a predicted value of
 zero. The locations of \code{unsuitable} landcovers will be extracted from
