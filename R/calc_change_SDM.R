@@ -18,8 +18,7 @@
 #' @param pathin,SDM Character strings defining the filepath (`pathin/SDM`)
 #'   containing the predicted probability of presence resulting from each
 #'   distribution model, such as those created from running [fit_SDM()] and
-#'   [transform_SDM()]; SDM must be one of `"riparian"`, `"waterbird_fall"`, or
-#'   `"waterbird_win"`.
+#'   [transform_SDM()]
 #' @param baseline_name Character string defining the filepath
 #'   (`pathin/SDM/baseline_name`) containing the predictions for a baseline landscape
 #' @param scenario_name Character string defining the filepath

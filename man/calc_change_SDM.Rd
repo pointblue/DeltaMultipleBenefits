@@ -19,8 +19,7 @@ calc_change_SDM(
 \item{pathin, SDM}{Character strings defining the filepath (\code{pathin/SDM})
 containing the predicted probability of presence resulting from each
 distribution model, such as those created from running \code{\link[=fit_SDM]{fit_SDM()}} and
-\code{\link[=transform_SDM]{transform_SDM()}}; SDM must be one of \code{"riparian"}, \code{"waterbird_fall"}, or
-\code{"waterbird_win"}.}
+\code{\link[=transform_SDM]{transform_SDM()}}}
 
 \item{baseline_name}{Character string defining the filepath
 (\code{pathin/SDM/baseline_name}) containing the predictions for a baseline landscape}
