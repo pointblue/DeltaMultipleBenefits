@@ -19,7 +19,7 @@
 }
 }
 \source{
-Dybala et al. In prep (URL to be determined)
+Dybala et al. 2025 (https://doi.org/10.15447/sfews.2025v23iss2art2)
 }
 \usage{
 metrics

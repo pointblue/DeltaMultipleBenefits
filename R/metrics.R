@@ -14,5 +14,5 @@
 #'   \item{SCORE_MEAN}{Numeric; mean value for each metric and land cover class}
 #'   \item{SCORE_SE}{Numeric; standard error of the mean}
 #' }
-#' @source Dybala et al. In prep (URL to be determined)
+#' @source Dybala et al. 2025 (https://doi.org/10.15447/sfews.2025v23iss2art2)
 "metrics"
