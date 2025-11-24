@@ -16,9 +16,9 @@ python_focal_finalize(
 )
 }
 \arguments{
-\item{pathin, SDM, landscape_name, scale}{Character strings defining the filepath
-(\verb{pathin/SDM/landscape_name,scale}) containing input rasters to be processed, such as
-those created from running \code{\link[=python_focal_run]{python_focal_run()}}}
+\item{pathin, SDM, landscape_name, scale}{Character strings defining the
+filepath (\verb{pathin/SDM/landscape_name,scale}) containing input rasters to be
+processed, such as those created from running \code{\link[=python_focal_run]{python_focal_run()}}}
 
 \item{pathout}{Character string defining the filepath
 (\code{pathout/SDM/landscape_name}) where output rasters should be written}
@@ -52,14 +52,18 @@ in source data with zero.
 If \code{SDM = "riparian"}, pixel counts are converted to a proportion of the
 total number of cells expected within the buffer distance represented by
 \code{scale}, and the \code{scale} is appended to the predictor name in the format
-"_50" or "_2000", as expected by the riparian SDMs.
+"_50" or "_2000", as expected by the riparian bird SDMs.
 
 If \code{SDM = "waterbird_fall"} or \code{SDM = "waterbird_win"}, the \code{scale} is
 appended to the predictor name in the format "_2k", "_5k", or "_10k", as
 expected by the waterbird SDMs.
 
+If \code{SDM = "tima"}, the scale is appended to the predictor name in the
+format "100" or "2000", as expected by the tidal marsh bird SDMs.
+
 The final rasters are then written to the directory
-\code{pathout/SDM/landscape_name}, which will be created if it doesn't yet exist.
+\code{pathout/SDM/landscape_name}, which will be created if it doesn't yet
+exist.
 }
 \examples{
 # See vignette

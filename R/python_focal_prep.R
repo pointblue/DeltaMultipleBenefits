@@ -17,8 +17,8 @@
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param SDM The name of intended species distribution model, for which
-#'   `landscape` will be reclassified: `"riparian"`, `"waterbird_fall"`, or
-#'   `"waterbird_win"`
+#'   `landscape` will be reclassified: `"riparian"`, `"waterbird_fall"`,
+#'   `"waterbird_win"`, or `"tima"`
 #' @param pathout,landscape_name Character strings defining the filepath
 #'   (`pathout/SDM/landscape_name`) where output rasters should be written
 #' @param suffix Character string; custom suffix appended to layer names

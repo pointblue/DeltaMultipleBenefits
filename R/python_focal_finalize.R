@@ -15,18 +15,22 @@
 #'   If `SDM = "riparian"`, pixel counts are converted to a proportion of the
 #'   total number of cells expected within the buffer distance represented by
 #'   `scale`, and the `scale` is appended to the predictor name in the format
-#'   "_50" or "_2000", as expected by the riparian SDMs.
+#'   "_50" or "_2000", as expected by the riparian bird SDMs.
 #'
 #'   If `SDM = "waterbird_fall"` or `SDM = "waterbird_win"`, the `scale` is
 #'   appended to the predictor name in the format "_2k", "_5k", or "_10k", as
 #'   expected by the waterbird SDMs.
 #'
-#'   The final rasters are then written to the directory
-#'   `pathout/SDM/landscape_name`, which will be created if it doesn't yet exist.
+#'   If `SDM = "tima"`, the scale is appended to the predictor name in the
+#'   format "100" or "2000", as expected by the tidal marsh bird SDMs.
 #'
-#' @param pathin,SDM,landscape_name,scale Character strings defining the filepath
-#'   (`pathin/SDM/landscape_name,scale`) containing input rasters to be processed, such as
-#'   those created from running [python_focal_run()]
+#'   The final rasters are then written to the directory
+#'   `pathout/SDM/landscape_name`, which will be created if it doesn't yet
+#'   exist.
+#'
+#' @param pathin,SDM,landscape_name,scale Character strings defining the
+#'   filepath (`pathin/SDM/landscape_name,scale`) containing input rasters to be
+#'   processed, such as those created from running [python_focal_run()]
 #' @param pathout Character string defining the filepath
 #'   (`pathout/SDM/landscape_name`) where output rasters should be written
 #' @param overwrite Logical; passed to [terra::writeRaster()]
@@ -82,6 +86,8 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
   } else if (SDM %in% c('waterbird_fall', 'waterbird_win')) {
     # fix layer names to match model predictors
     names(dat) = paste0(names(dat), '_', as.numeric(scale)/1000, 'k')
+  } else if (SDM == 'tima') {
+    names(dat) = paste0(names(dat), scale)
   }
 
   create_directory(file.path(pathout, SDM, landscape_name))

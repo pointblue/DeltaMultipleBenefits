@@ -19,8 +19,8 @@ python_focal_prep(
 \item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
 
 \item{SDM}{The name of intended species distribution model, for which
-\code{landscape} will be reclassified: \code{"riparian"}, \code{"waterbird_fall"}, or
-\code{"waterbird_win"}}
+\code{landscape} will be reclassified: \code{"riparian"}, \code{"waterbird_fall"},
+\code{"waterbird_win"}, or \code{"tima"}}
 
 \item{pathout, landscape_name}{Character strings defining the filepath
 (\code{pathout/SDM/landscape_name}) where output rasters should be written}

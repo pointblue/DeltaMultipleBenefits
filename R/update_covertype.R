@@ -1,19 +1,21 @@
-#' Update waterbird predictors: covertype
+#' Update waterbird and tidal marsh bird predictors: covertype and LANDCOVER
 #'
-#' Helper function for updating covertype predictors for the waterbird
-#' distribution models.
+#' Helper function for updating covertype and LANDCOVER predictors for the
+#' waterbird and tidal marsh bird distribution models, respectively.
 #'
 #' @details Classifies the `landscape` rasters according to the land cover
 #'   classes that were originally surveyed, which are the only classes for which
-#'   predictions should be generated from the waterbird distribution models.
-#'   Generates file `covertype.tif` at location `pathout/SDM/scenario_name/`.
+#'   predictions should be generated from the waterbird distribution models. For
+#'   `"waterbird_fall"` or `"waterbird_win"` SDMs, generates file
+#'   `covertype.tif` and for `"tima"` SDMs, generates file `LANDCOVER.tif`.
+#'   Output is written to `pathout/SDM/scenario_name/`.
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param key tibble, dataframe, or character string defining a filepath passed
 #'   to [readr::read_csv()], used to interpret the raster values in `landscape`
 #'   to land cover class names; see Details
 #' @param SDM The name of intended species distribution model:
-#'   `"waterbird_fall"`, or `"waterbird_win"`
+#'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
 #' @param mask Optional filepath to a raster that should be used to mask the
 #'   output, e.g. a study area boundary
 #' @param pathout,landscape_name Character strings defining the filepath
@@ -81,6 +83,23 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
       dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
                     .data$covertype, .data$covertype_code) %>%
       tidyr::drop_na()
+  } else if (SDM == 'tima') {
+    key_update = key %>%
+      dplyr::mutate(
+        covertype = dplyr::case_when(
+          CODE_BASELINE %in% c(80:87,190:219) ~ 'WETLAND',
+          CODE_BASELINE %in% c(70:79,170:189) ~ 'RIPARIAN',
+          CODE_BASELINE %in% c(90:92) ~ 'WATER',
+          CODE_BASELINE %in% c(20:30,40:60) ~ 'AGGRPAS',
+          TRUE ~ NA_character_),
+        covertype_code = dplyr::case_when(
+          covertype == 'WETLAND' ~ 1,
+          covertype == 'RIPARIAN' ~ 2,
+          covertype == 'WATER' ~ 3,
+          covertype == 'AGGRPAS' ~ 4)) %>%
+      dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
+                    .data$covertype, .data$covertype_code) %>%
+      tidyr::drop_na()
   }
 
   if (!is.null(mask)) {
@@ -107,7 +126,17 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
     as.data.frame()
 
   create_directory(file.path(pathout, SDM, landscape_name))
-  terra::writeRaster(covertype,
-                     file.path(pathout, SDM, landscape_name, 'covertype.tif'),
-                     overwrite = overwrite)
+
+  if(SDM == 'tima') {
+    names(covertype) = 'LANDCOVER'
+    terra::writeRaster(covertype,
+                       file.path(pathout, SDM, landscape_name, 'LANDCOVER.tif'),
+                       overwrite = overwrite)
+  } else {
+      names(covertype) = 'covertype'
+      terra::writeRaster(covertype,
+                         file.path(pathout, SDM, landscape_name, 'covertype.tif'),
+                         overwrite = overwrite)
+  }
+
 }

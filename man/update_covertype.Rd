@@ -2,7 +2,7 @@
 % Please edit documentation in R/update_covertype.R
 \name{update_covertype}
 \alias{update_covertype}
-\title{Update waterbird predictors: covertype}
+\title{Update waterbird and tidal marsh bird predictors: covertype and LANDCOVER}
 \usage{
 update_covertype(
   landscape,
@@ -22,7 +22,7 @@ to \code{\link[readr:read_delim]{readr::read_csv()}}, used to interpret the rast
 to land cover class names; see Details}
 
 \item{SDM}{The name of intended species distribution model:
-\code{"waterbird_fall"}, or \code{"waterbird_win"}}
+\code{"waterbird_fall"}, \code{"waterbird_win"}, or \code{"tima"}}
 
 \item{mask}{Optional filepath to a raster that should be used to mask the
 output, e.g. a study area boundary}
@@ -36,14 +36,16 @@ output, e.g. a study area boundary}
 Nothing; all files written to \code{pathout}
 }
 \description{
-Helper function for updating covertype predictors for the waterbird
-distribution models.
+Helper function for updating covertype and LANDCOVER predictors for the
+waterbird and tidal marsh bird distribution models, respectively.
 }
 \details{
 Classifies the \code{landscape} rasters according to the land cover
 classes that were originally surveyed, which are the only classes for which
-predictions should be generated from the waterbird distribution models.
-Generates file \code{covertype.tif} at location \verb{pathout/SDM/scenario_name/}.
+predictions should be generated from the waterbird distribution models. For
+\code{"waterbird_fall"} or \code{"waterbird_win"} SDMs, generates file
+\code{covertype.tif} and for \code{"tima"} SDMs, generates file \code{LANDCOVER.tif}.
+Output is written to \verb{pathout/SDM/scenario_name/}.
 }
 \examples{
 # See vignette
