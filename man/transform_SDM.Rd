@@ -8,6 +8,7 @@ transform_SDM(
   pathin,
   SDM,
   landscape_name,
+  regex = ".tif$",
   modlist,
   stat,
   pathout,
@@ -18,8 +19,10 @@ transform_SDM(
 \item{pathin, SDM, landscape_name}{Character strings defining the filepath
 (\code{pathin/SDM/landscape_name}) containing the predicted probability of
 presence resulting from each distribution model, such as those created from
-running \code{\link[=fit_SDM]{fit_SDM()}}; SDM must be one of \code{"riparian"}, \code{"waterbird_fall"},
-or \code{"waterbird_win"}.}
+running \code{\link[=fit_SDM]{fit_SDM()}}}
+
+\item{regex}{Passed to \code{list.files} for selecting a subset of rasters from
+\code{pathin/SDM/landscape_name}; default is ".tif$"}
 
 \item{modlist}{List of model objects of class 'gbm' representing the
 distribution models to which new predictors should be fit.}

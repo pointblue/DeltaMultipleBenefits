@@ -7,8 +7,9 @@
 #' @param pathin,SDM,landscape_name Character strings defining the filepath
 #'   (`pathin/SDM/landscape_name`) containing the predicted probability of
 #'   presence resulting from each distribution model, such as those created from
-#'   running [fit_SDM()]; SDM must be one of `"riparian"`, `"waterbird_fall"`,
-#'   or `"waterbird_win"`.
+#'   running [fit_SDM()]
+#' @param regex Passed to `list.files` for selecting a subset of rasters from
+#'   `pathin/SDM/landscape_name`; default is ".tif$"
 #' @param modlist List of model objects of class 'gbm' representing the
 #'   distribution models to which new predictors should be fit.
 #' @param stat Character string defining the threshold statistic to be used; see
@@ -27,11 +28,11 @@
 #' @examples
 #' # See vignette
 
-transform_SDM = function(pathin, SDM, landscape_name, modlist, stat, pathout,
-                         overwrite = FALSE) {
+transform_SDM = function(pathin, SDM, landscape_name, regex = '.tif$',
+                         modlist, stat, pathout, overwrite = FALSE) {
 
   predictions = list.files(file.path(pathin, SDM, landscape_name),
-                           pattern = '.tif$', full.names = TRUE) %>%
+                           pattern = regex, full.names = TRUE) %>%
     terra::rast()
 
   threshold_list = purrr::map(names(modlist) %>% setNames(names(modlist)),
