@@ -69,15 +69,6 @@ library(tidyr)
 #> The following object is masked from 'package:terra':
 #> 
 #>     extract
-library(magrittr)
-#> 
-#> Attaching package: 'magrittr'
-#> The following object is masked from 'package:tidyr':
-#> 
-#>     extract
-#> The following objects are masked from 'package:terra':
-#> 
-#>     extract, inset
 library(ggplot2)
 library(tibble)
 ```
@@ -147,7 +138,7 @@ head(olinda1)
 #> 5 POLYGON ((-34.8582 -7.99754...
 #> 6 POLYGON ((-34.85957 -7.9960...
 
-new_shp <- olinda1 %>% 
+new_shp <- olinda1 |> 
   # recode existing place name values with supported land cover names in key
   dplyr::mutate(
     CODE_NAME = dplyr::case_when(
@@ -173,7 +164,7 @@ new_shp <- olinda1 %>%
       NM_BAIR %in% c('Jardim Brasil', 'Aguazinha', 'Santa Teresa') ~ 
         'WETLAND_MANAGED_SEASONAL',
       is.na(NM_BAIR) ~ 'PASTURE_ALFALFA',
-      TRUE ~ 'UNKNOWN')) %>% 
+      TRUE ~ 'UNKNOWN')) |> 
   # transfer CODE_BASELINE values from key
   dplyr::left_join(key, by = 'CODE_NAME') 
 
@@ -198,7 +189,7 @@ plotting, we’ll assign factor levels and color codings.
 ``` r
 
 # simplify number of fields, change to SpatVector, and change projection
-new_vect = new_shp %>% 
+new_vect = new_shp |> 
   dplyr::select(CODE_NAME, CODE_BASELINE)
 
 template = terra::rast(new_vect, ncols = 100, nrows = 100)
@@ -208,14 +199,14 @@ baseline = terra::rasterize(x = new_vect,
                             field = 'CODE_BASELINE')
 
 # assign factor levels:
-levels(baseline) <-  key %>% 
-  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) %>% 
-  tidyr::drop_na() %>% as.data.frame()
+levels(baseline) <-  key |> 
+  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) |> 
+  tidyr::drop_na() |> as.data.frame()
 
 # assign color coding
-terra::coltab(baseline) <- key %>% 
-  dplyr::select(CODE_BASELINE, COLOR) %>% tidyr::drop_na() %>%
-  tidyr::complete(CODE_BASELINE = c(0:255)) %>% 
+terra::coltab(baseline) <- key |> 
+  dplyr::select(CODE_BASELINE, COLOR) |> tidyr::drop_na() |>
+  tidyr::complete(CODE_BASELINE = c(0:255)) |> 
   dplyr::pull(COLOR)
 plot(baseline)
 ```
@@ -233,16 +224,16 @@ version from it to serve as our new `scenario` of landscape change.
 # simple example scenario: all wheat pixels (22) are converted to Fremont 
 # cottonwood riparian forest (71)
 scenario <- terra::classify(baseline,
-                            rcl = data.frame(from = 22, to = 71) %>% 
+                            rcl = data.frame(from = 22, to = 71) |> 
                               as.matrix())
 
-levels(scenario) <-  key %>% 
-  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) %>% 
-  tidyr::drop_na() %>% as.data.frame()
+levels(scenario) <-  key |> 
+  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) |> 
+  tidyr::drop_na() |> as.data.frame()
 
-terra::coltab(scenario) <- key %>% 
-  dplyr::select(CODE_BASELINE, COLOR) %>% tidyr::drop_na() %>%
-  tidyr::complete(CODE_BASELINE = c(0:255)) %>% 
+terra::coltab(scenario) <- key |> 
+  dplyr::select(CODE_BASELINE, COLOR) |> tidyr::drop_na() |>
+  tidyr::complete(CODE_BASELINE = c(0:255)) |> 
   dplyr::pull(COLOR)
 
 # stack landscapes to compare
@@ -274,12 +265,12 @@ zone.
 
 ``` r
 
-area = terra::cellSize(baseline, unit = 'ha')[50,50] %>% tibble::deframe()
+area = terra::cellSize(baseline, unit = 'ha')[50,50] |> tibble::deframe()
 
 landcover_totals = DeltaMultipleBenefits::sum_landcover(
   landscapes = landscapes, 
   pixel_area = area,
-  rollup = TRUE) %>%
+  rollup = TRUE) |>
   arrange(scenario, CODE_NAME)
 ```
 
@@ -363,10 +354,10 @@ data.*
 ``` r
 
 scores = DeltaMultipleBenefits::sum_metrics(
-  metricdat = metrics %>%
+  metricdat = metrics |>
     dplyr::filter(
       !(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME))),
-  areadat = landcover_totals %>%
+  areadat = landcover_totals |>
     filter(!(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME)))) 
 ```
 
@@ -387,14 +378,14 @@ Visualize the resulting estimates of net change:
 
 ``` r
 
-scores_change %>% 
+scores_change |> 
   # invert water quality scores so a reduction in pesticide use is shown as a
   # net benefit
   dplyr::mutate(
     net_change = dplyr::if_else(
       METRIC_CATEGORY == 'Water Quality',
       -1 * net_change,
-      net_change)) %>% 
+      net_change)) |> 
   ggplot2::ggplot(ggplot2::aes(net_change, METRIC)) +
   ggplot2::facet_wrap(~METRIC_CATEGORY, ncol = 1, scales = 'free') +
   ggplot2::geom_col() + 
@@ -1087,7 +1078,7 @@ and the net change can be estimated simultaneously.
 habitat_totals = DeltaMultipleBenefits::sum_habitat(
   pathin = 'SDM_results_threshold',
   rollup = TRUE,
-  pixel_area = 0.09) %>%
+  pixel_area = 0.09) |>
   dplyr::mutate(UNIT = 'ha')
 ```
 

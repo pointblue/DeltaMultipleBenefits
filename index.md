@@ -14,13 +14,20 @@ land cover.
 
 ## Installation
 
+You can install the released version from
+[Zenodo](https://zenodo.org/records/7718620) with:
+
+``` R
+remotes::install_url("https://zenodo.org/records/7718620/files/pointblue/DeltaMultipleBenefits-v1.0.0.zip")
+```
+
 You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
 
 # install.packages("devtools")
-devtools::install_github("pointblue/DeltaMultipleBenefits")
+remotes::install_github("pointblue/DeltaMultipleBenefits")
 ```
 
 ## How to use
