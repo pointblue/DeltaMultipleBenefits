@@ -66,9 +66,9 @@ mask by another raster and fill missing values with zero.</p>
 
 
 <dl><dt id="arg-pathin-sdm-landscape-name-scale">pathin, SDM, landscape_name, scale<a class="anchor" aria-label="anchor" href="#arg-pathin-sdm-landscape-name-scale"></a></dt>
-<dd><p>Character strings defining the filepath
-(<code>pathin/SDM/landscape_name,scale</code>) containing input rasters to be processed, such as
-those created from running <code><a href="python_focal_run.html">python_focal_run()</a></code></p></dd>
+<dd><p>Character strings defining the
+filepath (<code>pathin/SDM/landscape_name,scale</code>) containing input rasters to be
+processed, such as those created from running <code><a href="python_focal_run.html">python_focal_run()</a></code></p></dd>
 
 
 <dt id="arg-pathout">pathout<a class="anchor" aria-label="anchor" href="#arg-pathout"></a></dt>
@@ -107,12 +107,15 @@ in source data with zero.</p>
 <p>If <code>SDM = "riparian"</code>, pixel counts are converted to a proportion of the
 total number of cells expected within the buffer distance represented by
 <code>scale</code>, and the <code>scale</code> is appended to the predictor name in the format
-"_50" or "_2000", as expected by the riparian SDMs.</p>
+"_50" or "_2000", as expected by the riparian bird SDMs.</p>
 <p>If <code>SDM = "waterbird_fall"</code> or <code>SDM = "waterbird_win"</code>, the <code>scale</code> is
 appended to the predictor name in the format "_2k", "_5k", or "_10k", as
 expected by the waterbird SDMs.</p>
+<p>If <code>SDM = "tima"</code>, the scale is appended to the predictor name in the
+format "100" or "2000", as expected by the tidal marsh bird SDMs.</p>
 <p>The final rasters are then written to the directory
-<code>pathout/SDM/landscape_name</code>, which will be created if it doesn't yet exist.</p>
+<code>pathout/SDM/landscape_name</code>, which will be created if it doesn't yet
+exist.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -134,7 +137,7 @@ expected by the waterbird SDMs.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

@@ -53,6 +53,7 @@ of presence or absence.</p>
 <span>  <span class="va">pathin</span>,</span>
 <span>  <span class="va">SDM</span>,</span>
 <span>  <span class="va">landscape_name</span>,</span>
+<span>  regex <span class="op">=</span> <span class="st">".tif$"</span>,</span>
 <span>  <span class="va">modlist</span>,</span>
 <span>  <span class="va">stat</span>,</span>
 <span>  <span class="va">pathout</span>,</span>
@@ -68,8 +69,12 @@ of presence or absence.</p>
 <dd><p>Character strings defining the filepath
 (<code>pathin/SDM/landscape_name</code>) containing the predicted probability of
 presence resulting from each distribution model, such as those created from
-running <code><a href="fit_SDM.html">fit_SDM()</a></code>; SDM must be one of <code>"riparian"</code>, <code>"waterbird_fall"</code>,
-or <code>"waterbird_win"</code>.</p></dd>
+running <code><a href="fit_SDM.html">fit_SDM()</a></code></p></dd>
+
+
+<dt id="arg-regex">regex<a class="anchor" aria-label="anchor" href="#arg-regex"></a></dt>
+<dd><p>Passed to <code>list.files</code> for selecting a subset of rasters from
+<code>pathin/SDM/landscape_name</code>; default is ".tif$"</p></dd>
 
 
 <dt id="arg-modlist">modlist<a class="anchor" aria-label="anchor" href="#arg-modlist"></a></dt>
@@ -115,7 +120,7 @@ written (<code>pathout/SDM/landscape_name</code>)</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

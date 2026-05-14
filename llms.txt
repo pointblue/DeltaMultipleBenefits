@@ -1,0 +1,171 @@
+# DeltaMultipleBenefits - Estimating co-benefits and trade-offs of landscape change
+
+![](reference/figures/PB_logo_bl_CMYK_Full_Color_cs.png)
+
+## Introduction
+
+The `DeltaMultipleBenefits` R package serves as an open-source,
+science-based framework for estimating the net impacts of scenarios of
+landscape change on multiple metrics of interest. It is intended to
+support land use planning, management, conservation, and community
+engagement in the Sacramento-San Joaquin River Delta by identifying
+potential benefits and trade-offs of proposed or anticipated changes in
+land cover.
+
+## Installation
+
+You can install the development version from
+[GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("devtools")
+devtools::install_github("pointblue/DeltaMultipleBenefits")
+```
+
+## How to use
+
+This package provides tools for evaluating land cover rasters supplied
+by the user to estimate the magnitude of the benefits associated with
+each landscape and the differences in benefits among landscapes, such as
+between current baseline land cover and a proposed or anticipated
+alternative land cover.
+
+### Benefit Categories and Metrics
+
+The benefit categories currently addressed include: Agricultural
+Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity
+Support. Each category is represented by multiple metrics:
+
+![](reference/figures/multiple_benefits_graphic.png)
+
+*This framework is still in development and designed to readily
+incorporate additional species, models, data, and metrics. Please
+contact us to collaborate on incorporating additional metrics or data.*
+
+### Scenarios & Alternative Landscapes
+
+By comparing landscape totals for each metric estimated from a baseline
+landscape and alternative landscapes representing proposed or
+anticipated changes, the expected direction and magnitude of the net
+change in each metric is estimated. In the initial development of this
+framework, we built simple alternative landscapes representing changes
+driven by one or two individual drivers of landscape change, allowing
+evaluation of their individual impacts. However, more complex and
+realistic scenarios of future landscape change can also be evaluated.
+
+### Evaluating New Scenarios
+
+This package includes a
+[vignette](https://pointblue.github.io/DeltaMultipleBenefits/articles/DeltaMultipleBenefits.md)
+that serves as a tutorial outlining the major steps of analyzing
+alternative Delta landscapes and comparing them to each other,
+including:
+
+1.  Preparing new landscape scenarios for analysis
+2.  Summarizing the net change in the total area of each land cover
+    class
+3.  Estimating the net change in simple metrics
+4.  Estimating the net change in metrics informed by spatial models
+
+## For more information
+
+- [Project
+  Overview](https://pointblue.github.io/DeltaMultipleBenefits/articles/overview.md):
+  Prior and current phases of this project’s development
+- [Supporting
+  Information](https://pointblue.github.io/DeltaMultipleBenefits/articles/supporting_information.md):
+  Reports, publications, and data sets including all previously
+  developed metrics, models, spatial data, and alternative landscapes.
+
+## Funding Statement
+
+These data were originally developed as part of the project *Trade-offs
+and Co-benefits of Landscape Change on Bird Communities and Ecosystem
+Services in the Sacramento–San Joaquin River Delta*, funded by
+Proposition 1 Delta Water Quality and Ecosystem Restoration Program,
+Grant Agreement Number – Q1996022, administered by the California
+Department of Fish and Wildlife.
+
+A second phase of development is currently underway, *Trade-offs and
+Co-benefits of Landscape Change in the Sacramento-San Joaquin River
+Delta: Phase II Tidal Wetlands and Restoration*, funded by the Water
+Quality, Supply, and Infrastructure Improvement Act of 2014 (Proposition
+1, CWC § 79707), grant agreement number Q2296017, administered by the
+California Department of Fish and Wildlife.
+
+# Package index
+
+## All functions
+
+- [`calc_change_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/calc_change_SDM.md)
+  : Calculate the difference between predictions of species presence for
+  a baseline and scenario landscape
+
+- [`create_directory()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_directory.md)
+  : create_directory
+
+- [`fit_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/fit_SDM.md)
+  : Apply species distribution models to new landscapes.
+
+- [`key`](https://pointblue.github.io/DeltaMultipleBenefits/reference/key.md)
+  :
+
+  Land cover classification scheme for the `DeltaMultipleBenefits`
+  framework
+
+- [`metrics`](https://pointblue.github.io/DeltaMultipleBenefits/reference/metrics.md)
+  : Metrics by land cover class and benefits category
+
+- [`python_dist()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_dist.md)
+  : Calculate Euclidean distance via Python
+
+- [`python_focal_finalize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_finalize.md)
+  : Final processing of focal stats for SDMs
+
+- [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
+  : Prepare landscape rasters for focal statistics via Python
+
+- [`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md)
+  : Run focal statistics via Python
+
+- [`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
+  : Reclassify landscape rasters by SDM
+
+- [`roosts_original`](https://pointblue.github.io/DeltaMultipleBenefits/reference/roosts_original.md)
+  : Traditional nighttime crane roost locations
+
+- [`sum_change()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/sum_change.md)
+  : Summarize net change between scenario and baseline landscapes
+
+- [`sum_habitat()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/sum_habitat.md)
+  : Summarize total habitat scores
+
+- [`sum_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/sum_landcover.md)
+  : Summarize total area of land cover classes
+
+- [`sum_metrics()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/sum_metrics.md)
+  : Summarize total metric scores
+
+- [`transform_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/transform_SDM.md)
+  : Transform predictions from species distribution models to binary
+
+- [`update_covertype()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_covertype.md)
+  : Update waterbird and tidal marsh bird predictors: covertype and
+  LANDCOVER
+
+- [`update_pwater()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_pwater.md)
+  : Update waterbird predictors: pwater & pfld
+
+- [`update_roosts()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_roosts.md)
+  : Update waterbird predictors: crane roost locations
+
+# Articles
+
+### All vignettes
+
+- [DeltaMultipleBenefits](https://pointblue.github.io/DeltaMultipleBenefits/articles/DeltaMultipleBenefits.md):
+- [Project
+  Overview](https://pointblue.github.io/DeltaMultipleBenefits/articles/overview.md):
+- [Supporting
+  Information](https://pointblue.github.io/DeltaMultipleBenefits/articles/supporting_information.md):

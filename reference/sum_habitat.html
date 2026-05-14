@@ -53,6 +53,7 @@ rasters.</p>
 <span>  <span class="va">pathin</span>,</span>
 <span>  SDM <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  landscape_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  regex <span class="op">=</span> <span class="st">".tif$"</span>,</span>
 <span>  zones <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rollup <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -75,8 +76,12 @@ running <code><a href="fit_SDM.html">fit_SDM()</a></code> or <code><a href="tran
 <dt id="arg-sdm-landscape-name">SDM, landscape_name<a class="anchor" aria-label="anchor" href="#arg-sdm-landscape-name"></a></dt>
 <dd><p>Optional character strings defining the
 subdirectories within <code>pathin</code> for which habitat should be summarized; see
-Details; SDM must be one of <code>"riparian"</code>, <code>"waterbird_fall"</code>, or
-<code>"waterbird_win"</code>.</p></dd>
+Details.</p></dd>
+
+
+<dt id="arg-regex">regex<a class="anchor" aria-label="anchor" href="#arg-regex"></a></dt>
+<dd><p>Passed to <code>list.files</code> for selecting a subset of rasters from
+<code>pathin/SDM/landscape_name</code>; default is ".tif$"</p></dd>
 
 
 <dt id="arg-zones">zones<a class="anchor" aria-label="anchor" href="#arg-zones"></a></dt>
@@ -92,7 +97,7 @@ presence/absence</p></dd>
 
 <dt id="arg-rollup">rollup<a class="anchor" aria-label="anchor" href="#arg-rollup"></a></dt>
 <dd><p>Logical; If <code>TRUE</code> (default), summarize total habitat across
-all species/groups by set of SDMs</p></dd>
+all species/groups by set of SDMs and add to output</p></dd>
 
 
 <dt id="arg-key">key<a class="anchor" aria-label="anchor" href="#arg-key"></a></dt>
@@ -118,7 +123,12 @@ process multiple rasters located in the <code>pathin</code> directory at once. T
 file structure within <code>pathin</code> is used to infer the name of the
 corresponding <code>SDM</code> and <code>landscape_name</code>. However, <code>SDM</code> or both <code>SDM</code> and
 <code>landscape_name</code> can be optionally specified to only process a subset of
-these.</p>
+these. The <code>regex</code> option can also be used to specify a subset of the
+rasters within <code>pathin/SDM/landscape_name</code>.</p>
+<p>If SDM is one of the recognized models (<code>"riparian"</code>, <code>"waterbird_fall"</code>,
+<code>"waterbird_win"</code>, or <code>"tima"</code>), the output will produce nicer labels for
+the <code>METRIC</code> and <code>METRIC_SUBTYPE</code> fields. Otherwise, <code>METRIC_SUBTYPE</code> will be
+filled with the <code>SDM</code> value.</p>
 <p>If provided, <code>key</code> should refer to a tibble, dataframe, or filepath to a
 CSV containing the fields <code>spp</code> and <code>label</code>, used for converting the
 filenames of the rasters within <code>pathin</code> to a more readable label, which
@@ -146,7 +156,7 @@ each pixel.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

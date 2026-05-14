@@ -101,10 +101,10 @@ function is generally agnostic as to the names of the rasters and the land
 cover classes it expects, but it does expect the rasters to have unique
 names and to have land cover class levels defined (i.e., not just contain
 numeric codes; see <code><a href="https://rspatial.github.io/terra/reference/factors.html" class="external-link">terra::levels()</a></code>). However, if <code>rollup = TRUE</code> (the
-default), riparian and managed wetland subclasses are expected to have
-names that begin with <code>'RIPARIAN_'</code> or <code>'WETLAND_MANAGED_'</code>. These
+default), riparian and wetland subclasses are expected to have
+names that begin with <code>'RIPARIAN_'</code> or <code>'WETLAND_'</code>. These
 subclasses will be summarized into a total area of <code>'RIPARIAN'</code> and
-<code>'WETLAND_MANAGED'</code> land cover classes.</p>
+<code>'WETLAND'</code> land cover classes.</p>
 <p>This function relies on <code><a href="https://rspatial.github.io/terra/reference/freq.html" class="external-link">terra::freq()</a></code> to summarize the total number of
 cells of each value within each raster and optionally each zone provided,
 which are then multiplied by <code>pixel_area</code> as an estimate of the total area
@@ -142,7 +142,7 @@ be summarized, and the names of each region should be defined (see
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
