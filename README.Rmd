@@ -21,7 +21,7 @@ knitr::include_graphics("man/figures/PB_logo_bl_CMYK_Full_Color_cs.png")
 
 <!-- badges: start -->
 
-[![DOI badge](assets/zenodo.7718620.svg)](https://doi.org/10.5281/zenodo.7718620) `r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')` ![License badge](assets/license-GPL3-blue.svg) ![StatusActive](assets/active.svg)
+[![DOI badge](man/figures/zenodo.7718620.svg)](https://doi.org/10.5281/zenodo.7718620) `r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')` ![License badge](man/figures/license-GPL3-blue.svg) ![StatusActive](man/figures/active.svg)
 
 <!-- badges: end -->
 
@@ -31,26 +31,15 @@ The `DeltaMultipleBenefits` R package serves as an open-source, science-based fr
 
 ## Installation
 
-````{=html}
-<!--You can install the released version of DeltaMultipleBenefits from [CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("DeltaMultipleBenefits")
-```
-
-And the development version from [GitHub](https://github.com/) with:-->
-````
-
 You can install the released version from [Zenodo](https://zenodo.org/records/7718620) with:
 
 ```         
-remotes::install_url("https://zenodo.org/records/7718620/files/pointblue/DeltaMultipleBenefits-v1.0.0.zip")
+remotes::install_url("https://zenodo.org/records/7718620/files/pointblue/DeltaMultipleBenefits-v1.0.0.zip?download=1")
 ```
 
-You can install the development version from [GitHub](https://github.com/) with:
+Or the latest development version from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
 remotes::install_github("pointblue/DeltaMultipleBenefits")
 ```
 
