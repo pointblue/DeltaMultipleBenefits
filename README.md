@@ -9,7 +9,7 @@
 
 [![DOI
 badge](man/figures/zenodo.7718620.svg)](https://doi.org/10.5281/zenodo.7718620)
-[![](https://img.shields.io/badge/devel%20version-1.0.0-blue.svg)](https://github.com/pointblue/DeltaMultipleBenefits)
+[![](https://img.shields.io/badge/devel%20version-1.1.0-blue.svg)](https://github.com/pointblue/DeltaMultipleBenefits)
 ![License badge](man/figures/license-GPL3-blue.svg)
 ![StatusActive](man/figures/active.svg)
 
