@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/pointblue/DeltaMultipleBenefits/blob/v1.1.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/pointblue/DeltaMultipleBenefits/blob/main/DESCRIPTION)
 
 Dybala K (2026). *DeltaMultipleBenefits: Projecting the Multiple
 Benefits of Land Cover Change in the Sacramento-San Joaquin River
