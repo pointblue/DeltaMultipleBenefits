@@ -21,7 +21,7 @@ knitr::include_graphics("man/figures/PB_logo_bl_CMYK_Full_Color_cs.png")
 
 <!-- badges: start -->
 
-[![DOI](https://zenodo.org/badge/380353580.svg)](https://zenodo.org/badge/latestdoi/380353580) `r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')` `r badger::badge_license()` `r badger::badge_repostatus('active')`
+[![DOI badge](assets/zenodo.7718620.svg)](https://doi.org/10.5281/zenodo.7718620) `r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')` ![License badge](assets/license-GPL3-blue.svg) ![StatusActive](assets/active.svg)
 
 <!-- badges: end -->
 
@@ -41,11 +41,17 @@ install.packages("DeltaMultipleBenefits")
 And the development version from [GitHub](https://github.com/) with:-->
 ````
 
+You can install the released version from [Zenodo](https://zenodo.org/records/7718620) with:
+
+```         
+remotes::install_url("https://zenodo.org/records/7718620/files/pointblue/DeltaMultipleBenefits-v1.0.0.zip")
+```
+
 You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("pointblue/DeltaMultipleBenefits")
+remotes::install_github("pointblue/DeltaMultipleBenefits")
 ```
 
 ## How to use
@@ -77,8 +83,8 @@ This package includes a [vignette](articles/DeltaMultipleBenefits.html) that ser
 
 ## For more information
 
--   [Project Overview](articles/overview.html): Prior and current phases of this project's development
--   [Supporting Information](articles/supporting_information.html): Reports, publications, and data sets including all previously developed metrics, models, spatial data, and alternative landscapes.
+- [Project Overview](articles/overview.html): Prior and current phases of this project's development
+- [Supporting Information](articles/supporting_information.html): Reports, publications, and data sets including all previously developed metrics, models, spatial data, and alternative landscapes.
 
 ## Funding Statement
 

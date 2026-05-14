@@ -7,13 +7,11 @@
 
 <!-- badges: start -->
 
-[![DOI](https://zenodo.org/badge/380353580.svg)](https://zenodo.org/badge/latestdoi/380353580)
+[![DOI
+badge](assets/zenodo.7718620.svg)](https://doi.org/10.5281/zenodo.7718620)
 [![](https://img.shields.io/badge/devel%20version-1.0.0-blue.svg)](https://github.com/pointblue/DeltaMultipleBenefits)
-[![License: GPL (\>=
-3)](https://img.shields.io/badge/license-GPL%20(%3E=%203)-blue.svg)](https://cran.r-project.org/web/licenses/GPL%20(%3E=%203))
-[![Project Status: Active - The project has reached a stable, usable
-state and is being actively
-developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+![License badge](assets/license-GPL3-blue.svg)
+![StatusActive](assets/active.svg)
 
 <!-- badges: end -->
 
@@ -35,12 +33,17 @@ install.packages("DeltaMultipleBenefits")
 ```
 &#10;And the development version from [GitHub](https://github.com/) with:-->
 
+You can install the released version from
+[Zenodo](https://zenodo.org/records/7718620) with:
+
+    remotes::install_url("https://zenodo.org/records/7718620/files/pointblue/DeltaMultipleBenefits-v1.0.0.zip")
+
 You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("pointblue/DeltaMultipleBenefits")
+remotes::install_github("pointblue/DeltaMultipleBenefits")
 ```
 
 ## How to use
