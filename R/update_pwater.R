@@ -106,23 +106,23 @@ update_pwater = function(waterdat, mask = NULL, pathout, SDM, landscape_name,
     levels(scenario_landscape) <- NULL
 
     # compare two landscapes and find the pixels that have changed land cover class
-    changes = terra::diff(c(scenario_landscape, baseline_landscape)) %>%
-      terra::subst(from = 0, to = NA) %>% #no change = NA
+    changes = terra::diff(c(scenario_landscape, baseline_landscape)) |>
+      terra::subst(from = 0, to = NA) |> #no change = NA
       terra::classify(rcl = matrix(c(-Inf, Inf, 1), nrow = 1)) # all others = 1
 
     # calculate mean pwater by land cover class (detailed) in the baseline
     # landscape - unmasked, so including any surrounding buffer area
-    mwater = terra::zonal(pwater, baseline_landscape, fun = mean, na.rm = TRUE) %>%
-      setNames(c('value', 'pwater')) %>%
-      tidyr::drop_na() %>%
+    mwater = terra::zonal(pwater, baseline_landscape, fun = mean, na.rm = TRUE) |>
+      setNames(c('value', 'pwater')) |>
+      tidyr::drop_na() |>
       dplyr::left_join(terra::freq(baseline_landscape), by = 'value')
 
     # assign mean baseline pwater values to changed pixels in each scenario
-    pwater_new = scenario_landscape %>%
-      terra::mask(changes) %>% #keep only changed pixels
+    pwater_new = scenario_landscape |>
+      terra::mask(changes) |> #keep only changed pixels
       #reclassify by landcover class
-      terra::classify(rcl = mwater %>%
-                        dplyr::select(.data$value, .data$pwater) %>%
+      terra::classify(rcl = mwater |>
+                        dplyr::select(.data$value, .data$pwater) |>
                         as.matrix(), others = NA)
 
     if (floor) {

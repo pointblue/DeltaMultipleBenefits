@@ -59,20 +59,20 @@ update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
   # check how much traditional roosts overlap with incompatible land covers:
   # orchard, vineyard, riparian, woodland, scrub, urban
   levels(landscape) <- NULL
-  roost_overlay = landscape %>%
-    terra::subst(from = unsuitable, to = 1) %>%
-    terra::subst(from = c(2:999), to = 0) %>% #everything else
+  roost_overlay = landscape |>
+    terra::subst(from = unsuitable, to = 1) |>
+    terra::subst(from = c(2:999), to = 0) |> #everything else
     terra::extract(roosts)
 
   # identify polygons to exclude with >20% incompatible landcover
-  incompatible = roost_overlay %>% setNames(c('ID', 'landscape')) %>%
-    dplyr::group_by(.data$ID, .data$landscape) %>%
-    dplyr::count() %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(.data$ID) %>%
-    dplyr::mutate(ncell = sum(.data$n), prop = .data$n/.data$ncell) %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(.data$landscape == 1 & .data$prop > proportion) %>%
+  incompatible = roost_overlay |> setNames(c('ID', 'landscape')) |>
+    dplyr::group_by(.data$ID, .data$landscape) |>
+    dplyr::count() |>
+    dplyr::ungroup() |>
+    dplyr::group_by(.data$ID) |>
+    dplyr::mutate(ncell = sum(.data$n), prop = .data$n/.data$ncell) |>
+    dplyr::ungroup() |>
+    dplyr::filter(.data$landscape == 1 & .data$prop > proportion) |>
     dplyr::arrange(dplyr::desc(.data$prop))
 
   roosts_update = roosts[-which(roosts$Roost_ID %in% incompatible$ID)]

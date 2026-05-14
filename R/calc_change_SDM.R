@@ -39,23 +39,23 @@ calc_change_SDM = function(pathin, SDM, baseline_name, scenario_name, pathout,
                            overwrite = FALSE, differentiate = TRUE) {
 
   baseline = list.files(file.path(pathin, SDM, baseline_name), '.tif',
-                        full.names = TRUE) %>% terra::rast()
+                        full.names = TRUE) |> terra::rast()
   scenario = list.files(file.path(pathin, SDM, scenario_name), '.tif',
-                        full.names = TRUE) %>% terra::rast()
+                        full.names = TRUE) |> terra::rast()
 
   delta = purrr::map(
     names(baseline),
     ~terra::diff(c(baseline[[.x]],
-            scenario[[.x]]))) %>%
-    stats::setNames(names(baseline)) %>%
+            scenario[[.x]]))) |>
+    stats::setNames(names(baseline)) |>
     terra::rast()
 
   # distinguish between two types of zeroes in the resulting difference layer:
   # -- never was habitat and still isn't vs. already was habitat and still is
   if (differentiate) {
     res = terra::cover(
-      delta %>% terra::subst(0, NA),
-      baseline %>% terra::subst(from = c(0, 1), to = c(NA, 0)))
+      delta |> terra::subst(0, NA),
+      baseline |> terra::subst(from = c(0, 1), to = c(NA, 0)))
     } else {
     res = delta
     }

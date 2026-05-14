@@ -57,7 +57,6 @@
 #'   [python_focal_finalize()], [update_covertype()], [update_pwater()],
 #'   [update_roosts()], [python_dist()]
 #' @importFrom gbm predict.gbm
-#' @importFrom magrittr %>%
 #' @importFrom purrr map
 #' @export
 #'
@@ -81,7 +80,7 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
   # scenario-independent predictors (in pathin) and scenario-specific predictors
   predictors = c(list.files(file.path(pathin, SDM), pattern = '.tif$', full.names = TRUE),
                  list.files(file.path(pathin, SDM, landscape_name), pattern = '.tif$',
-                            full.names = TRUE)) %>%
+                            full.names = TRUE)) |>
     terra::rast()
 
   # NOTE: This step is slow:
@@ -92,8 +91,8 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
                  model = modlist[[.x]],
                  object = terra::subset(
                    x = predictors,
-                   subset = modlist[[.x]]$contributions %>%
-                     dplyr::filter(!var %in% names(constants)) %>%
+                   subset = modlist[[.x]]$contributions |>
+                     dplyr::filter(!var %in% names(constants)) |>
                      dplyr::pull(var)),
                  n.trees = modlist[[.x]]$n.trees,
                  na.rm = TRUE,
@@ -110,7 +109,7 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
     # writing raster
     mask = terra::classify(landscape,
                            rcl = data.frame(from = unsuitable,
-                                            to = 0) %>% as.matrix(),
+                                            to = 0) |> as.matrix(),
                            others = NA)
 
     purrr::map(names(modlist),
@@ -118,14 +117,14 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
                  model = modlist[[.x]],
                  object = terra::subset(
                    x = predictors,
-                   subset = modlist[[.x]]$contributions %>%
-                     dplyr::filter(!var %in% names(constants)) %>%
+                   subset = modlist[[.x]]$contributions |>
+                     dplyr::filter(!var %in% names(constants)) |>
                      dplyr::pull(var)),
                  n.trees = modlist[[.x]]$n.trees,
                  na.rm = TRUE,
                  type = 'response',
                  const = constants,
-                 factors = factors) %>%
+                 factors = factors) |>
                  terra::cover(
                    x = mask,
                    y = .,

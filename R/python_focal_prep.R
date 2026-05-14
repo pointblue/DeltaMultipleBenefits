@@ -32,7 +32,6 @@
 #'   each land cover class.
 #' @seealso [python_focal_run()], [python_focal_finalize()]
 #' @importFrom rlang .data
-#' @importFrom magrittr %>%
 #' @export
 #'
 #' @examples
@@ -57,8 +56,8 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
   }
 
   # split layer by land cover classes to represent presence/absence
-  layernames = terra::freq(landscape) %>% dplyr::pull(.data$value)
-  presence = terra::segregate(landscape, other = 0) %>%
+  layernames = terra::freq(landscape) |> dplyr::pull(.data$value)
+  presence = terra::segregate(landscape, other = 0) |>
     stats::setNames(layernames)
 
   # reclassify according to riparian and waterbird model inputs

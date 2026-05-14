@@ -30,94 +30,94 @@ reclassify_landcover = function(landscape_stack, SDM) {
       # sum of all riparian subclasses
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('RIPARIAN'),
       # sum of all wetland subclasses
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('WETLAND', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('WETLAND', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('WETLAND'),
       # sum of perennial crops, grassland/pasture, and other ag
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('ORCH|VINE', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('ORCH|VINE', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('ORCHVIN'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('PASTURE|GRASS',
-                                     names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+                                     names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('GRASSPAS'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('FIELD|GRAIN|ROW',
-                                     names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+                                     names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('AG'),
       # sum of open water and submerged veg
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('WATER|_SUB',
-                                     names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+                                     names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('WATER')
     )
     # rename riparian and wetland subclasses if present:
     if ('WETLAND_MANAGED_PERENNIAL' %in% names(landscape_stack)) {
       res = c(res,
-              terra::subset(landscape_stack, 'WETLAND_MANAGED_PERENNIAL') %>%
+              terra::subset(landscape_stack, 'WETLAND_MANAGED_PERENNIAL') |>
                 stats::setNames('PERM'))
     }
     if (any(grepl('FOREST_POFR', names(landscape_stack)))) {
       res = c(res,
               terra::subset(landscape_stack,
-                            names(landscape_stack)[grepl('RIPARIAN_FOREST_POFR', names(landscape_stack))]) %>%
-                sum(na.rm = TRUE) %>%
+                            names(landscape_stack)[grepl('RIPARIAN_FOREST_POFR', names(landscape_stack))]) |>
+                sum(na.rm = TRUE) |>
                 stats::setNames('POFR'))
     }
     if (any(grepl('RIPARIAN_FOREST_QULO|RIPARIAN_FOREST_QUER', names(landscape_stack)))) {
       res = c(res,
               terra::subset(landscape_stack,
-                            names(landscape_stack)[grepl('RIPARIAN_FOREST_QULO|RIPARIAN_FOREST_QUER', names(landscape_stack))]) %>%
-                sum(na.rm = TRUE) %>%
+                            names(landscape_stack)[grepl('RIPARIAN_FOREST_QULO|RIPARIAN_FOREST_QUER', names(landscape_stack))]) |>
+                sum(na.rm = TRUE) |>
                 stats::setNames('QULO'))
     }
     if (any(grepl('RIPARIAN_FOREST_SALIX', names(landscape_stack)))) {
       res = c(res,
               terra::subset(landscape_stack,
-                            names(landscape_stack)[grepl('RIPARIAN_FOREST_SALIX', names(landscape_stack))]) %>%
-                sum(na.rm = TRUE) %>%
+                            names(landscape_stack)[grepl('RIPARIAN_FOREST_SALIX', names(landscape_stack))]) |>
+                sum(na.rm = TRUE) |>
                 stats::setNames('SALIX'))
     }
     if (any(grepl('RIPARIAN_FOREST_MIXED', names(landscape_stack)))) {
       res = c(res,
               terra::subset(landscape_stack,
-                            names(landscape_stack)[grepl('RIPARIAN_FOREST_MIXED', names(landscape_stack))]) %>%
-                sum(na.rm = TRUE) %>%
+                            names(landscape_stack)[grepl('RIPARIAN_FOREST_MIXED', names(landscape_stack))]) |>
+                sum(na.rm = TRUE) |>
                 stats::setNames('MIXEDFOREST'))
     }
     if (any(grepl('RIPARIAN_SCRUB_MIXED', names(landscape_stack)))) {
       res = c(res,
               terra::subset(landscape_stack,
-                            names(landscape_stack)[grepl('RIPARIAN_SCRUB_MIXED', names(landscape_stack))]) %>%
-                sum(na.rm = TRUE) %>%
+                            names(landscape_stack)[grepl('RIPARIAN_SCRUB_MIXED', names(landscape_stack))]) |>
+                sum(na.rm = TRUE) |>
                 stats::setNames('MIXEDSHRUB'))
     }
     if (any(grepl('RIPARIAN_SCRUB_SALIX', names(landscape_stack)))) {
       res = c(res,
               terra::subset(landscape_stack,
-                            names(landscape_stack)[grepl('RIPARIAN_SCRUB_SALIX', names(landscape_stack))]) %>%
-                sum(na.rm = TRUE) %>%
+                            names(landscape_stack)[grepl('RIPARIAN_SCRUB_SALIX', names(landscape_stack))]) |>
+                sum(na.rm = TRUE) |>
                 stats::setNames('SALIXSHRUB'))
     }
     if (any(grepl('RIPARIAN_SCRUB_INTRO', names(landscape_stack)))) {
       res = c(res,
               terra::subset(landscape_stack,
-                            names(landscape_stack)[grepl('RIPARIAN_SCRUB_INTRO', names(landscape_stack))]) %>%
-                sum(na.rm = TRUE) %>%
+                            names(landscape_stack)[grepl('RIPARIAN_SCRUB_INTRO', names(landscape_stack))]) |>
+                sum(na.rm = TRUE) |>
                 stats::setNames('INTROSCRUB'))
     }
     if (any(grepl('IDLE', names(landscape_stack)))) {
@@ -147,52 +147,52 @@ reclassify_landcover = function(landscape_stack, SDM) {
       # other wetlands, and woodland/scrub
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('woodw'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('ORCHARD|VINEYARD',
-                                     names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+                                     names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('orch'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('WETLAND', names(landscape_stack)) &
                                  !grepl('WETLAND_MANAGED', names(landscape_stack))]) |>
-        sum(na.rm = TRUE) %>%
+        sum(na.rm = TRUE) |>
         stats::setNames('wet'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('WETLAND_MANAGED',
-                                     names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+                                     names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('duwet'),
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('WOODLAND|^SCRUB$', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>% stats::setNames('for'),
+        names(landscape_stack)[grepl('WOODLAND|^SCRUB$', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |> stats::setNames('for'),
       # for fall, combine all grains
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('GRAIN', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('GRAIN', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('grain'),
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('IDLE', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('IDLE', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('fal'),
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('WATER|FLOATING_VEG|MUDFLAT', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('WATER|FLOATING_VEG|MUDFLAT', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('water'),
       # keep others as-is and rename to match model inputs
       terra::subset(landscape_stack,
                     c('PASTURE_ALFALFA', 'PASTURE_OTHER', 'GRASSLAND',
                       'RICE', 'FIELD_CORN', 'ROW', 'FIELD_OTHER',
-                      'URBAN', 'BARREN')) %>%
+                      'URBAN', 'BARREN')) |>
         stats::setNames(
           c('alf', 'ip', 'dryp', 'rice', 'corn', 'row', 'field',
             'dev', 'barren'))
@@ -203,51 +203,51 @@ reclassify_landcover = function(landscape_stack, SDM) {
       # other wetlands, and woodland/scrub
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('RIPARIAN', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('woodw'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('ORCHARD|VINEYARD',
-                                     names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+                                     names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('orch'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('WETLAND', names(landscape_stack)) &
                                  !grepl('WETLAND_MANAGED', names(landscape_stack))]) |>
-        sum(na.rm = TRUE) %>%
+        sum(na.rm = TRUE) |>
         stats::setNames('wet'),
       terra::subset(
         landscape_stack,
         names(landscape_stack)[grepl('WETLAND_MANAGED',
-                                     names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+                                     names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('duwet'),
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('WOODLAND|^SCRUB$', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>% stats::setNames('for'),
+        names(landscape_stack)[grepl('WOODLAND|^SCRUB$', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |> stats::setNames('for'),
       # for winter, keep wheat separate from other grains
       terra::subset(
-        landscape_stack, c('GRAIN&HAY_OTHER', 'GRAIN&HAY_WHEAT')) %>%
+        landscape_stack, c('GRAIN&HAY_OTHER', 'GRAIN&HAY_WHEAT')) |>
         stats::setNames(c('grain', 'ww')),
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('IDLE', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('IDLE', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('fal'),
       terra::subset(
         landscape_stack,
-        names(landscape_stack)[grepl('WATER|FLOATING_VEG|MUDFLAT', names(landscape_stack))]) %>%
-        sum(na.rm = TRUE) %>%
+        names(landscape_stack)[grepl('WATER|FLOATING_VEG|MUDFLAT', names(landscape_stack))]) |>
+        sum(na.rm = TRUE) |>
         stats::setNames('water'),
       # keep others as-is and rename to match model inputs
       terra::subset(
         landscape_stack,
         c('PASTURE_ALFALFA', 'PASTURE_OTHER', 'GRASSLAND',
           'RICE', 'FIELD_CORN', 'ROW', 'FIELD_OTHER',
-           'URBAN', 'BARREN')) %>%
+           'URBAN', 'BARREN')) |>
         stats::setNames(
           c('alf', 'ip', 'dryp', 'rice', 'corn', 'row', 'field',
             'dev', 'barren'))

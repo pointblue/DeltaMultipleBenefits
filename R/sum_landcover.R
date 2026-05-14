@@ -52,7 +52,6 @@
 #' @return tibble
 #' @seealso [sum_habitat()], [sum_metrics()]
 #' @importFrom methods is
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 #'
@@ -64,9 +63,9 @@ sum_landcover = function(landscapes, mask = NULL, zones = NULL, pixel_area = 1,
 
   if (is(landscapes, 'character')) {
     # treat as filepath, and bring in file names:
-    fl = list.files(landscapes, '.tif$', full.names = TRUE) %>%
+    fl = list.files(landscapes, '.tif$', full.names = TRUE) |>
       rlang::set_names(gsub('.tif', '', list.files(landscapes, '.tif$')))
-    landscapes = purrr::map(fl, ~terra::rast(.x)) %>% terra::rast()
+    landscapes = purrr::map(fl, ~terra::rast(.x)) |> terra::rast()
   } else if (!is(landscapes, 'SpatRaster')) {
     stop('function expects "landscapes" to be either a character string or a SpatRaster')
   }
@@ -82,10 +81,10 @@ sum_landcover = function(landscapes, mask = NULL, zones = NULL, pixel_area = 1,
 
   if (is.null(zones)) {
     # total area of each unique value for each layer in rasters
-    res = terra::freq(landscapes, bylayer = TRUE, usenames = TRUE) %>%
-      as.data.frame() %>%
-      dplyr::mutate(area = .data$count * pixel_area) %>%
-      dplyr::select(scenario = .data$layer, CODE_NAME = .data$value, .data$area) %>%
+    res = terra::freq(landscapes, bylayer = TRUE, usenames = TRUE) |>
+      as.data.frame() |>
+      dplyr::mutate(area = .data$count * pixel_area) |>
+      dplyr::select(scenario = .data$layer, CODE_NAME = .data$value, .data$area) |>
       dplyr::arrange(.data$scenario, .data$CODE_NAME)
 
   } else {
@@ -100,15 +99,15 @@ sum_landcover = function(landscapes, mask = NULL, zones = NULL, pixel_area = 1,
     zseg = terra::segregate(zones, other = NA)
 
     res = purrr::map_df(
-      terra::as.list(landscapes) %>% rlang::set_names(names(landscapes)),
-      ~terra::zonal(zseg, .x, 'sum', na.rm = TRUE) %>%
+      terra::as.list(landscapes) |> rlang::set_names(names(landscapes)),
+      ~terra::zonal(zseg, .x, 'sum', na.rm = TRUE) |>
         rlang::set_names(c('value', znames)),
-      .id = 'layer') %>%
+      .id = 'layer') |>
       tidyr::pivot_longer(dplyr::all_of(znames),
-                          names_to = 'ZONE', values_to = 'count') %>%
-      dplyr::mutate(area = .data$count * pixel_area) %>%
+                          names_to = 'ZONE', values_to = 'count') |>
+      dplyr::mutate(area = .data$count * pixel_area) |>
       dplyr::select(scenario = .data$layer, .data$ZONE, CODE_NAME = .data$value,
-                    .data$area) %>%
+                    .data$area) |>
       dplyr::arrange(.data$scenario, .data$ZONE, .data$CODE_NAME)
   }
 
@@ -116,15 +115,15 @@ sum_landcover = function(landscapes, mask = NULL, zones = NULL, pixel_area = 1,
     # add roll-up of riparian & wetland subclasses
     res = dplyr::bind_rows(
       res,
-      res %>% dplyr::filter(grepl('RIPARIAN_|WETLAND_', .data$CODE_NAME)) %>%
+      res |> dplyr::filter(grepl('RIPARIAN_|WETLAND_', .data$CODE_NAME)) |>
         dplyr::mutate(
           CODE_NAME = dplyr::case_when(
             grepl('RIPARIAN_', .data$CODE_NAME) ~ 'RIPARIAN',
             grepl('WETLAND_', .data$CODE_NAME) ~ 'WETLAND',
-            TRUE ~ .data$CODE_NAME)) %>%
+            TRUE ~ .data$CODE_NAME)) |>
         dplyr::group_by(
-          dplyr::across(dplyr::any_of(c('scenario', 'ZONE', 'CODE_NAME')))) %>%
-        # dplyr::group_by(scenario, CODE_NAME) %>%
+          dplyr::across(dplyr::any_of(c('scenario', 'ZONE', 'CODE_NAME')))) |>
+        # dplyr::group_by(scenario, CODE_NAME) |>
         dplyr::summarize(area = sum(.data$area), .groups = 'drop'))
   }
 

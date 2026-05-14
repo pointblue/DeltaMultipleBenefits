@@ -43,7 +43,7 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
   }
 
   if (SDM == 'waterbird_fall') {
-    key_update = key %>%
+    key_update = key |>
       dplyr::mutate(
         covertype = dplyr::case_when(
           CODE_NAME == 'RICE' ~ 'Rice',
@@ -56,13 +56,13 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
           covertype == 'Alfalfa' ~ 1,
           covertype == 'Irrigated pasture' ~ 2,
           covertype == 'Rice' ~ 3,
-          covertype == 'Wetland' ~ 4)) %>%
+          covertype == 'Wetland' ~ 4)) |>
       dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
-                    .data$covertype, .data$covertype_code) %>%
+                    .data$covertype, .data$covertype_code) |>
       tidyr::drop_na()
 
   } else if (SDM == 'waterbird_win') {
-    key_update = key %>%
+    key_update = key |>
       dplyr::mutate(
         covertype = dplyr::case_when(
           CODE_NAME == 'PASTURE_ALFALFA' ~ 'Alfalfa',
@@ -79,12 +79,12 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
           covertype == 'Irrigated pasture' ~ 3,
           covertype == 'Rice' ~ 4,
           covertype == 'Wetland' ~ 5,
-          covertype == 'Winter wheat' ~ 6)) %>%
+          covertype == 'Winter wheat' ~ 6)) |>
       dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
-                    .data$covertype, .data$covertype_code) %>%
+                    .data$covertype, .data$covertype_code) |>
       tidyr::drop_na()
   } else if (SDM == 'tima') {
-    key_update = key %>%
+    key_update = key |>
       dplyr::mutate(
         covertype = dplyr::case_when(
           CODE_BASELINE %in% c(80:87,190:219) ~ 'WETLAND',
@@ -96,9 +96,9 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
           covertype == 'WETLAND' ~ 1,
           covertype == 'RIPARIAN' ~ 2,
           covertype == 'WATER' ~ 3,
-          covertype == 'AGGRPAS' ~ 4)) %>%
+          covertype == 'AGGRPAS' ~ 4)) |>
       dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
-                    .data$covertype, .data$covertype_code) %>%
+                    .data$covertype, .data$covertype_code) |>
       tidyr::drop_na()
   }
 
@@ -113,16 +113,16 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
 
   covertype = terra::classify(
     landscape,
-    rcl = key_update %>%
+    rcl = key_update |>
       dplyr::select(from = .data$CODE_BASELINE,
-                    to = .data$covertype_code) %>%
+                    to = .data$covertype_code) |>
       as.matrix(),
     others = NA)
-  levels(covertype) = key_update %>%
-    dplyr::select(.data$covertype_code, .data$covertype) %>%
-    dplyr::distinct() %>%
-    tidyr::drop_na() %>%
-    dplyr::arrange(.data$covertype_code) %>%
+  levels(covertype) = key_update |>
+    dplyr::select(.data$covertype_code, .data$covertype) |>
+    dplyr::distinct() |>
+    tidyr::drop_na() |>
+    dplyr::arrange(.data$covertype_code) |>
     as.data.frame()
 
   create_directory(file.path(pathout, SDM, landscape_name))

@@ -57,7 +57,7 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
   }
 
   dat = list.files(file.path(pathin, SDM, landscape_name, scale),
-                   pattern = '.tif$', full.names = TRUE) %>% terra::rast()
+                   pattern = '.tif$', full.names = TRUE) |> terra::rast()
 
   if (!is.null(mask)) {
     if (is(mask, 'character')) {
@@ -68,7 +68,7 @@ python_focal_finalize = function(pathin, landscape_name, SDM, scale, pathout,
     dat = terra::mask(dat, mask)
 
     if (cover) { # fill NAs within mask boundary with zero (e.g. pfld)
-      dat = terra::cover(dat, mask %>% terra::subst(from = 1, to = 0))
+      dat = terra::cover(dat, mask |> terra::subst(from = 1, to = 0))
     }
   }
 

@@ -43,7 +43,6 @@
 #'  `net_change`, and optionally `SCENARIO_SE`, `BASELINE_SE`, `net_change_se`,
 #'  `U`, `lcl`, `ucl`, and `z`; see Details
 #'@seealso [sum_habitat()], [sum_metrics()]
-#'@importFrom magrittr %>%
 #'@importFrom rlang .data
 #'@export
 #'
@@ -54,13 +53,13 @@ sum_change = function(dat, k = 2) {
   dat = dplyr::rename_with(dat, ~gsub('area|SCORE_TOTAL', 'value', .x))
 
   res = dplyr::left_join(
-    dat %>% dplyr::filter(.data$scenario != 'baseline') %>%
-      dplyr::rename_with(~gsub('value', 'SCENARIO_VALUE', .x)) %>%
+    dat |> dplyr::filter(.data$scenario != 'baseline') |>
+      dplyr::rename_with(~gsub('value', 'SCENARIO_VALUE', .x)) |>
       dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)),
-    dat %>% dplyr::filter(.data$scenario == 'baseline') %>%
-      dplyr::rename_with(~gsub('value', 'BASELINE_VALUE', .x)) %>%
-      dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)) %>%
-      dplyr::select(-.data$scenario)) %>%
+    dat |> dplyr::filter(.data$scenario == 'baseline') |>
+      dplyr::rename_with(~gsub('value', 'BASELINE_VALUE', .x)) |>
+      dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)) |>
+      dplyr::select(-.data$scenario)) |>
     dplyr::mutate(net_change = .data$SCENARIO_VALUE - .data$BASELINE_VALUE)
 
   if ('value_SE' %in% names(dat)) {

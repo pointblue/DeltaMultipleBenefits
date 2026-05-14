@@ -52,7 +52,6 @@
 #' @return tibble
 #' @seealso [fit_SDM()], [transform_SDM()]
 #' @importFrom methods is
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @importFrom readr read_csv
 #' @export
@@ -67,17 +66,17 @@ sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL, regex = '.tif$
   if (is.null(SDM)) {
     # assume landscape_name also NULL (and ignore if not)
     # recursively pull in anything in pathin
-    fl = list.files(pathin, regex, recursive = TRUE, full.names = TRUE) %>%
+    fl = list.files(pathin, regex, recursive = TRUE, full.names = TRUE) |>
       rlang::set_names()
   } else {
     if (is.null(landscape_name)) {
       #recursively pull in anything in pathin/SDM
       fl = list.files(file.path(pathin, SDM), regex, recursive = TRUE,
-                      full.names = TRUE) %>%
+                      full.names = TRUE) |>
         rlang::set_names()
     } else {
       fl = list.files(file.path(pathin, SDM, landscape_name), regex,
-                      full.names = TRUE) %>%
+                      full.names = TRUE) |>
         rlang::set_names()
     }
   }
@@ -86,7 +85,7 @@ sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL, regex = '.tif$
     # sum total
     res = purrr::map_df(
       fl,
-      ~terra::rast(.x) %>% terra::values() %>% sum(na.rm = TRUE) %>%
+      ~terra::rast(.x) |> terra::values() |> sum(na.rm = TRUE) |>
         dplyr::as_tibble(),
       .id = 'pathin')
   } else {
@@ -100,17 +99,17 @@ sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL, regex = '.tif$
     # zonal total
     res = purrr::map_df(
       fl,
-      ~terra::rast(.x) %>%
-        terra::zonal(zones, 'sum', na.rm = TRUE) %>%
-        dplyr::as_tibble() %>%
+      ~terra::rast(.x) |>
+        terra::zonal(zones, 'sum', na.rm = TRUE) |>
+        dplyr::as_tibble() |>
         rlang::set_names(c('ZONE', 'value')),
       .id = 'pathin'
     )
   }
 
-  res = res %>%
+  res = res |>
     dplyr::mutate(pathin = gsub(!!pathin, '', pathin),
-           pathin = gsub('^\\/|.tif$', '', pathin)) %>%
+           pathin = gsub('^\\/|.tif$', '', pathin)) |>
     tidyr::separate(pathin, sep = '/', into = c('SDM', 'scenario', 'spp'),
                     fill = 'left')
 
@@ -118,25 +117,25 @@ sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL, regex = '.tif$
     # first find max value across all rasters for a scenario and SDM, then sum over landscape
 
     totals = purrr::pmap_df(
-      res %>% dplyr::select(.data$SDM, .data$scenario) %>% dplyr::distinct(),
+      res |> dplyr::select(.data$SDM, .data$scenario) |> dplyr::distinct(),
       function(SDM, scenario) {
         combined = list.files(file.path(pathin, SDM, scenario),
-                              '.tif$', full.names = TRUE) %>%
-          terra::rast() %>% max(na.rm = TRUE)
+                              '.tif$', full.names = TRUE) |>
+          terra::rast() |> max(na.rm = TRUE)
         if (is.null(zones)) {
-          terra::values(combined) %>% sum(na.rm = TRUE) %>%
+          terra::values(combined) |> sum(na.rm = TRUE) |>
             dplyr::as_tibble()
         } else {
-          terra::zonal(combined, zones, 'sum', na.rm = TRUE) %>%
-            dplyr::as_tibble() %>%
+          terra::zonal(combined, zones, 'sum', na.rm = TRUE) |>
+            dplyr::as_tibble() |>
             rlang::set_names(c('ZONE', 'value'))
         }
-      }) %>%
-      dplyr::bind_cols(res %>%
+      }) |>
+      dplyr::bind_cols(res |>
                          dplyr::select(.data$SDM, dplyr::any_of('ZONE'),
-                                       .data$scenario) %>%
-                         dplyr::distinct() %>%
-                         dplyr::select(-dplyr::any_of('ZONE'))) %>%
+                                       .data$scenario) |>
+                         dplyr::distinct() |>
+                         dplyr::select(-dplyr::any_of('ZONE'))) |>
       dplyr::mutate(spp = 'TOTAL')
 
       res = dplyr::bind_rows(res, totals)
@@ -150,15 +149,15 @@ sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL, regex = '.tif$
       stop('function expects "key" to be a character string, tibble, or data.frame')
     }
 
-    res = res %>%
-      dplyr::left_join(key %>% dplyr::select(.data$spp, METRIC = .data$label),
+    res = res |>
+      dplyr::left_join(key |> dplyr::select(.data$spp, METRIC = .data$label),
                        by = 'spp')
   } else {
     res = dplyr::rename(res, METRIC = .data$spp)
   }
 
   if (SDM %in% c('riparian', 'waterbird_fall', 'waterbird_win', 'tima')) {
-    res = res %>%
+    res = res |>
       dplyr::mutate(
         METRIC_CATEGORY = 'Biodiversity Support',
         METRIC_SUBTYPE = dplyr::case_when(
@@ -169,27 +168,27 @@ sum_habitat = function(pathin, SDM = NULL, landscape_name = NULL, regex = '.tif$
           SDM == 'waterbird_fall' ~ paste0(.data$METRIC, ' (fall)'),
           SDM == 'waterbird_win' ~ paste0(.data$METRIC, ' (winter)'),
           TRUE ~ METRIC),
-        SCORE_TOTAL = .data$value) %>%
+        SCORE_TOTAL = .data$value) |>
       dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
                     .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
   } else {
-    res = res %>%
+    res = res |>
       dplyr::mutate(
         METRIC_CATEGORY = 'Biodiversity Support',
         METRIC_SUBTYPE = SDM,
-        SCORE_TOTAL = .data$value) %>%
+        SCORE_TOTAL = .data$value) |>
       dplyr::select(.data$scenario, dplyr::any_of('ZONE'), .data$METRIC_CATEGORY,
                     .data$METRIC_SUBTYPE, .data$METRIC, .data$SCORE_TOTAL)
   }
 
 
   if (!is.null(subtype)) {
-    res = res %>%
+    res = res |>
       dplyr::mutate(METRIC_SUBTYPE = paste(.data$METRIC_SUBTYPE, subtype))
   }
 
   if (!is.null(scale)) {
-    res = res %>%
+    res = res |>
       dplyr::mutate(SCORE_TOTAL = .data$SCORE_TOTAL * scale)
   }
 
