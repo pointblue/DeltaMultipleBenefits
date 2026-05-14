@@ -3,13 +3,10 @@ Title: Projecting the Multiple Benefits of Land Cover Change in the
     Sacramento-San Joaquin River Delta
 Version: 1.0.0
 Year: 2023
-Authors@R: 
-    person("Kristen", "Dybala", , "kdybala@pointblue.org", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-2787-4600"))
+Authors@R: person("Kristen", "Dybala", email = "kdybala@pointblue.org", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2787-4600"))
 Description: This package supports land use planning, management, conservation, and community engagement in the Sacramento-San Joaquin River Delta by providing tools for applying existing models and data to user-supplied landscapes to estimate a range of benefits to the Delta community and how they compare to a baseline landscape and alternative future landscape scenarios. Currently, the benefit categories addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics, representing either values applied to each land cover class and summarized over the entire landscape or the total amount of suitable habitat projected from species distribution models. By comparing landscape totals for each metric estimated from a baseline landscape and alternative scenarios of future landscape change, the expected direction and magnitude of the net change in each metric is estimated. 
 License: GPL (>= 3)
-URL: https://github.com/pointblue/DeltaMultipleBenefits,
-    https://pointblue.github.io/DeltaMultipleBenefits/
+URL: https://github.com/pointblue/DeltaMultipleBenefits, https://pointblue.github.io/DeltaMultipleBenefits/
 BugReports: https://github.com/pointblue/DeltaMultipleBenefits/issues
 Depends: 
     R (>= 2.10)
