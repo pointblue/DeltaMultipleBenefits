@@ -1,7 +1,9 @@
 # Calculate Euclidean distance via Python
 
-Function to call python script for calculating Euclidean distances on
-landscape rasters via arcpy.
+Wrapper function to call a python script for calculating Euclidean
+distances on landscape rasters. On first call this function imports the
+arcpy module and Spatial Analyst extensions then sources the Python
+script "dist_stats.py".
 
 ## Usage
 
@@ -14,7 +16,8 @@ python_dist(
   filename = "droost_km.tif",
   scale = NULL,
   mask = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  python = NULL
 )
 ```
 
@@ -55,30 +58,40 @@ python_dist(
   [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html);
   does not apply to the intermediate step of writing `droost_raw.tif`
 
+- python:
+
+  Optional filepath to the preferred version of arcpy, passed to
+  [`reticulate::use_python`](https://rstudio.github.io/reticulate/reference/use_python.html).
+  See details.
+
 ## Value
 
 Nothing; all files written to `pathout/SDM/landscape_name`
 
 ## Details
 
-Calls the `dist_stats.py` function to calculate the Euclidean distance
-for all cells in the input raster without a value to the nearest cell
-with a value (e.g., for calculating distance to a crane roost or a
-stream).
+This function calls the `dist_stats.py` script to calculate the
+Euclidean distance for all cells in the input raster without a value to
+the nearest cell with a value (e.g., for calculating distance to a crane
+roost or a stream).
 
 Raw python results will be written to
 `pathin/landscape_name/droost_raw.tif`, and then optionally scaled
 and/or masked, before writing the final output to
 `pathout/SDM/landscape_name/`. Currently supported scale options
 include: `km` to divide the results by 1000 and return distances in
-kilometers or `sqrt` to take the square root of the results.
+kilometers or `sqrt` to take the square root of the results. Note that
+the initial raw output from `dist_stats.py` to
+`pathin/landscape_name/droost_raw.tif` will not overwrite existing
+rasters; old versions must be deleted before re-running.
 
-Important: This function requires the availability of arcpy and Spatial
-Analyst extensions. While these statistics can be entirely calculated in
-R, arcpy is much faster. Note: the initial raw output from
-`dist_stats.py` to `pathin/landscape_name/droost_raw.tif` will not
-overwrite existing rasters; old versions must be deleted before
-re-running.
+*Important:* This function requires the availability of arcpy and
+Spatial Analyst extensions. Use the `python` argument to specify the
+local pathway to arcpy, particularly if other versions of Python are
+installed. For example: 'C:/Program
+Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that
+the python argument is applied only on the first use within each
+session, and must be repeated in each session.
 
 ## Examples
 
