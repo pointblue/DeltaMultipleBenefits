@@ -1,6 +1,6 @@
-import arcpy
-from arcpy import env  
-from arcpy.sa import *  
+# import arcpy
+# from arcpy import env  
+# from arcpy.sa import *  
 
 def dist_stats(fullpathin, filename, fullpathout):
   # Set environment settings

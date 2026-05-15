@@ -12,7 +12,8 @@ python_dist(
   filename = "droost_km.tif",
   scale = NULL,
   mask = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  python = NULL
 )
 }
 \arguments{
@@ -34,32 +35,41 @@ a raster that should be used to mask the output, e.g. a study area boundary}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; does not apply to
 the intermediate step of writing \code{droost_raw.tif}}
+
+\item{python}{Optional filepath to the preferred version of arcpy, passed to
+\code{reticulate::use_python}. See details.}
 }
 \value{
 Nothing; all files written to \code{pathout/SDM/landscape_name}
 }
 \description{
-Function to call python script for calculating Euclidean distances on
-landscape rasters via arcpy.
+Wrapper function to call a python script for calculating Euclidean distances
+on landscape rasters. On first call this function imports the arcpy module
+and Spatial Analyst extensions then sources the Python script
+"dist_stats.py".
 }
 \details{
-Calls the \code{dist_stats.py} function to calculate the Euclidean
-distance for all cells in the input raster without a value to the nearest
-cell with a value (e.g., for calculating distance to a crane roost or a
-stream).
+This function calls the \code{dist_stats.py} script to calculate the
+Euclidean distance for all cells in the input raster without a value to the
+nearest cell with a value (e.g., for calculating distance to a crane roost
+or a stream).
 
 Raw python results will be written to
 \code{pathin/landscape_name/droost_raw.tif}, and then optionally scaled and/or
 masked, before writing the final output to \verb{pathout/SDM/landscape_name/}.
 Currently supported scale options include: \code{km} to divide the results by
 1000 and return distances in kilometers or \code{sqrt} to take the square root
-of the results.
-
-Important: This function requires the availability of arcpy and Spatial
-Analyst extensions. While these statistics can be entirely calculated in R,
-arcpy is much faster. Note: the initial raw output from \code{dist_stats.py} to
+of the results. Note that the initial raw output from \code{dist_stats.py} to
 \code{pathin/landscape_name/droost_raw.tif} will not overwrite existing rasters;
 old versions must be deleted before re-running.
+
+\emph{Important:} This function requires the availability of arcpy and Spatial
+Analyst extensions. Use the \code{python} argument to specify the local pathway
+to arcpy, particularly if other versions of Python are installed. For
+example: 'C:/Program
+Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that the
+python argument is applied only on the first use within each session, and
+must be repeated in each session.
 }
 \examples{
 # See vignette

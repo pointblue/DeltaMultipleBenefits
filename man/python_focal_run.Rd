@@ -11,13 +11,14 @@ python_focal_run(
   regex = NULL,
   scale,
   fun = "SUM",
-  pathout
+  pathout,
+  python = NULL
 )
 }
 \arguments{
 \item{pathin, SDM, landscape_name}{Character strings defining the filepath
-(\code{pathin/SDM/landscape_name}) containing input rasters to be processed, such as
-those created from running \code{\link[=python_focal_prep]{python_focal_prep()}}}
+(\code{pathin/SDM/landscape_name}) containing input rasters to be processed,
+such as those created from running \code{\link[=python_focal_prep]{python_focal_prep()}}}
 
 \item{regex}{Optional regular expression to process only a subset of the
 rasters in \code{pathin/SDM/landscape_name}}
@@ -29,17 +30,21 @@ stats are calculated}
 
 \item{pathout}{Filepath for the directory where output rasters should be
 written}
+
+\item{python}{Optional filepath to the preferred version of arcpy, passed to
+\code{reticulate::use_python}. See details.}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
 each land cover class.
 }
 \description{
-Function to call python script for calculating focal statistics on landscape
-rasters via arcpy.
+Wrapper function to call a python script for calculating focal statistics on
+landscape rasters. On first call this function imports the arcpy module and
+Spatial Analyst extensions then sources the Python script "focal_stats.py".
 }
 \details{
-This function calls the \code{focal_stats.py} function to summarize cell
+This function calls the \code{focal_stats.py} script to summarize cell
 values for the input raster within a buffer distance defined by \code{scale}.
 Summary functions may include \code{'SUM'} or \code{'MEAN'}. The default of \verb{fun = SUM'} is intended to be called only after first running
 \code{\link[=python_focal_prep]{python_focal_prep()}}, which prepares rasters representing the
@@ -50,9 +55,13 @@ function can also be used with \code{fun = 'MEAN'} to estimate the mean
 probability of open water for a given land cover class within a given
 distance (i.e. _pfld predictors for waterbird models). See vignette.
 
-Important: This function requires the availability of arcpy and Spatial
-Analyst extensions. While these statistics can be entirely calculated in R,
-arcpy is much faster. See vignette for more details.
+\emph{Important:} This function requires the availability of arcpy and Spatial
+Analyst extensions. Use the \code{python} argument to specify the local pathway
+to arcpy, particularly if other versions of Python are installed. For
+example: 'C:/Program
+Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that the
+python argument is applied only on the first use within each session, and
+must be repeated in each session.
 }
 \examples{
 # See vignette

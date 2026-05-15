@@ -1,16 +1,16 @@
-import arcpy
-from arcpy import env  
-from arcpy.sa import *  
+# import arcpy
+# from arcpy import env
+# from arcpy.sa import *
 
-def focal_stats(pathin, pathout, buffer, fun = 'SUM', regex = '*'):
+def focal_stats(fullpathin, fullpathout, buffer, fun = 'SUM', regex = '*'):
   # Set environment settings
-  env.workspace = pathin
+  env.workspace = fullpathin
 
   # Get a list of the matching rasters in the workspace
   rast = arcpy.ListRasters(regex)
 
   # Set out folder
-  outFolder = pathout
+  outFolder = fullpathout
   
   # Loop through the list of rasters
   for inRaster in rast:

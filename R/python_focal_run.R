@@ -1,9 +1,10 @@
 #' Run focal statistics via Python
 #'
-#' Function to call python script for calculating focal statistics on landscape
-#' rasters via arcpy.
+#' Wrapper function to call a python script for calculating focal statistics on
+#' landscape rasters. On first call this function imports the arcpy module and
+#' Spatial Analyst extensions then sources the Python script "focal_stats.py".
 #'
-#' @details This function calls the `focal_stats.py` function to summarize cell
+#' @details This function calls the `focal_stats.py` script to summarize cell
 #'   values for the input raster within a buffer distance defined by `scale`.
 #'   Summary functions may include `'SUM'` or `'MEAN'`. The default of `fun =
 #'   SUM'` is intended to be called only after first running
@@ -15,13 +16,17 @@
 #'   probability of open water for a given land cover class within a given
 #'   distance (i.e. _pfld predictors for waterbird models). See vignette.
 #'
-#'   Important: This function requires the availability of arcpy and Spatial
-#'   Analyst extensions. While these statistics can be entirely calculated in R,
-#'   arcpy is much faster. See vignette for more details.
+#'   *Important:* This function requires the availability of arcpy and Spatial
+#'   Analyst extensions. Use the `python` argument to specify the local pathway
+#'   to arcpy, particularly if other versions of Python are installed. For
+#'   example: 'C:/Program
+#'   Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that the
+#'   python argument is applied only on the first use within each session, and
+#'   must be repeated in each session.
 #'
 #' @param pathin,SDM,landscape_name Character strings defining the filepath
-#'   (`pathin/SDM/landscape_name`) containing input rasters to be processed, such as
-#'   those created from running [python_focal_prep()]
+#'   (`pathin/SDM/landscape_name`) containing input rasters to be processed,
+#'   such as those created from running [python_focal_prep()]
 #' @param regex Optional regular expression to process only a subset of the
 #'   rasters in `pathin/SDM/landscape_name`
 #' @param scale String representing the buffer size (in m) within which focal
@@ -29,31 +34,35 @@
 #' @param fun Function to summarize focal statistics: `'SUM'` or `'MEAN'`
 #' @param pathout Filepath for the directory where output rasters should be
 #'   written
+#' @param python Optional filepath to the preferred version of arcpy, passed to
+#'   `reticulate::use_python`. See details.
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
 #'   each land cover class.
 #' @seealso [python_focal_prep()], [python_focal_finalize()]
-#' @importFrom reticulate import
-#' @importFrom reticulate source_python
 #' @export
 #'
 #' @examples
 #' # See vignette
 
 python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
-                            scale, fun = 'SUM', pathout) {
+                            scale, fun = 'SUM', pathout, python = NULL) {
 
-  arcpy <- reticulate::import('arcpy')
-  arcpy$CheckOutExtension("Spatial")
-  reticulate::source_python(system.file("python", "focal_stats.py",
-                                        package = "DeltaMultipleBenefits"))
+  # import arcpy if not already
+  if (is.null(.py_state$arcpy)) .py_shared_init(python)
+
+  # load the focal_stats.py script
+  env <- load_py_script('focal_stats')
+
   # create necessary directories
-  create_directory(file.path(pathout, SDM, landscape_name, scale))
+  fullpathin = file.path(pathin, SDM, landscape_name)
+  fullpathout = file.path(pathout, SDM, landscape_name, scale)
+  create_directory(fullpathout)
 
   # run focal_stats.py
-  focal_stats(
-    pathin = file.path(pathin, SDM, landscape_name),
-    pathout = file.path(pathout, SDM, landscape_name, scale),
-    buffer = scale, fun = fun, regex = regex)
+  env$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
+                  buffer = scale, fun = fun, regex = regex)
 
 }
+
+
