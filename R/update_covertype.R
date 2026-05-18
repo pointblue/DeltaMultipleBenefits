@@ -87,10 +87,10 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
     key_update = key |>
       dplyr::mutate(
         covertype = dplyr::case_when(
-          CODE_BASELINE %in% c(80:87,190:219) ~ 'WETLAND',
-          CODE_BASELINE %in% c(70:79,170:189) ~ 'RIPARIAN',
+          CODE_BASELINE %in% c(80:83,89,190:220) ~ 'WETLAND',
+          CODE_BASELINE %in% c(70:77,170:187) ~ 'RIPARIAN',
           CODE_BASELINE %in% c(90:92) ~ 'WATER',
-          CODE_BASELINE %in% c(20:30,40:60) ~ 'AGGRPAS',
+          CODE_BASELINE %in% c(20:28,40:56) ~ 'AGGRPAS',
           TRUE ~ NA_character_),
         covertype_code = dplyr::case_when(
           covertype == 'WETLAND' ~ 1,
