@@ -21,7 +21,7 @@ knitr::include_graphics("man/figures/PB_logo_bl_CMYK_Full_Color_cs.png")
 
 <!-- badges: start -->
 
-[![DOI badge](man/figures/zenodo.7718620.svg)](https://doi.org/10.5281/zenodo.7718620) `r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')` ![License badge](man/figures/license-GPL3-blue.svg) ![StatusActive](man/figures/active.svg)
+[![DOI](man/figures/zenodo.7718619.svg)](https://doi.org/10.5281/zenodo.7718619) `r badger::badge_devel('pointblue/DeltaMultipleBenefits', 'blue')` ![License badge](man/figures/license-GPL3-blue.svg) ![StatusActive](man/figures/active.svg)
 
 <!-- badges: end -->
 

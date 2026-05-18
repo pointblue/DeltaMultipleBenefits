@@ -7,8 +7,7 @@
 
 <!-- badges: start -->
 
-[![DOI
-badge](man/figures/zenodo.7718620.svg)](https://doi.org/10.5281/zenodo.7718620)
+[![DOI](man/figures/zenodo.7718619.svg)](https://doi.org/10.5281/zenodo.7718619)
 [![](https://img.shields.io/badge/devel%20version-1.1.0-blue.svg)](https://github.com/pointblue/DeltaMultipleBenefits)
 ![License badge](man/figures/license-GPL3-blue.svg)
 ![StatusActive](man/figures/active.svg)
