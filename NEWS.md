@@ -1,3 +1,8 @@
+# Unreleased
+
+- Improved how Python functions are called by adding several Python helper functions; avoids importing arcpy and Spatial Analyst extensions repeatedly in the same session.
+- Added a test for the ability to load arcpy.
+
 # DeltaMultipleBenefits 1.1.0 - 2026-05-14
 
 Minor release including many updates and improvements to package documentation, data, and functions. This release also includes partial support for the distribution models developed for tidal marsh bird focal species in Phase 2. Work in progress to test and finalize this support before the next major release.
