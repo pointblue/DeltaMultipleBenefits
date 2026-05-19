@@ -256,16 +256,16 @@ purrr::map(names(landscapes),
              overwrite = TRUE))
 ```
 
-__python_focal_run:__ The second step is to generate focal statistics for each of the separate land cover rasters generated in the previous step. Focal statistics perform a given operation on all cells within a given distance of the focal cell, and repeated for every cell in the raster. This process is slow, and while it can be run entirely in R, it is much faster to use Python. Therefore, this function currently requires Python to be installed on your system and specifically `arcpy` with the Spatial Analyst extension. The R package `reticulate` will be used internally to run a simple python script for generating focal statistics. To ensure the `arcpy` module can be found, you may need to specify which version of Python to use. For example (change the filepath as needed to reflect your system):
+__python_focal_run:__ The second step is to generate focal statistics for each of the separate land cover rasters generated in the previous step. Focal statistics perform a given operation on all cells within a given distance of the focal cell, and repeated for every cell in the raster.
 
-```{r python, eval = FALSE}
-reticulate::use_python('C:/Python27/ArcGISx6410.8/python.exe', required = TRUE)
-```
+In this example, we apply the function `SUM` to the rasters generated in the previous step which have a value of `1` for every cell where the land cover class is present, so that the result will represent the total number of cells of each land cover class within the distance defined by the `scale` argument. The riparian landbird models require focal stats summarizing both landscapes within two different radii: 50m and 2000m. So here we can use `purrr:map2` to iterate over all 4 combinations of landscape and radius. The results are writen to `pathout/SDM/landscape_name/scale`. A `regex` argument provides options for re-running this code for only a subset of the predictors in `pathin`.
 
-In this example, we apply the function `SUM` to the rasters generated in the previous step which have a value of `1` for every cell where the land cover class is present, so that the result will represent the total number of cells of each land cover class within the distance defined by the `scale` argument. The riparian landbird models require focal stats summarizing both landscapes within two different radii: 50m and 2000m. So here we can use `purrr:map2` to iterate over all 4 combinations of landscape and radius. The results are writen to `pathout/SDM/landscape_name/scale`. 
+These calculations are slow, depending on the size and resolution of the rasters. While they could be run entirely in R, it is much faster to use Python. Therefore, this function currently requires Python to be installed on your system and specifically `arcpy` with the Spatial Analyst extension. The R package `reticulate` will be used internally to run a simple python script for generating focal statistics. On first run, the function will try to load arcpy and Spatial Analyst extensions, but to ensure the correct version of Python can be found, you likely need to specify the correct filepath. See example below.
  
 *Note that there is no `overwrite` option for this function. If the files already exist in `pathout/SDM/landscape_name`, it will return an error. Previous versions should be deleted manually or `pathout` changed.*
 ```{r riparian2, eval = FALSE}
+pythonpath = ('C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe', required = TRUE)
+
 purrr::map2(.x = c(rep(names(landscapes), each = 2)),
             .y = c(rep(c('50', '2000'), 2)),
            ~DeltaMultipleBenefits::python_focal_run(
@@ -274,7 +274,8 @@ purrr::map2(.x = c(rep(names(landscapes), each = 2)),
              SDM = 'riparian',
              scale = .y,
              fun = 'SUM',
-             pathout = 'SDM_predictors/focal_stats'))
+             pathout = 'SDM_predictors/focal_stats'
+             python = pythonpath))
 ```
 
 __python_focal_finalize:__ The third step is to finalize the results of the focal stats in the previous step to generate predictors for use with the riparian distribution models. For `SDM = 'riparian'`, this will result in converting the results of the previous step, which provide the total number of cells of each land cover class, to a proportion of the total number of cells and appending the `scale` value to the predictor name as `_50` or `_2000`, as expected by the original model. As above, we can use `purrr:map2` to iterate over all 4 combinations of landscape and radius. The results are written to the directory `pathout/landscape_name`.
