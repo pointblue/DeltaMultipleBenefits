@@ -47,9 +47,9 @@ layers can be replaced manually before proceeding with \code{\link[=python_focal
 }
 \examples{
 #data(key)
-#r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
-#         ncol = 10, nrow = 10)
-#landcover_presence = reclassify_landcover(r, SDM = 'riparian')
+r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
+         ncol = 10, nrow = 10)
+landcover_presence = suppressWarnings(reclassify_landcover(r, SDM = 'riparian'))
 }
 \seealso{
 \code{\link[=key]{key()}}, \code{\link[=predictors_riparian]{predictors_riparian()}}, \code{\link[=predictors_waterbird_fall]{predictors_waterbird_fall()}},

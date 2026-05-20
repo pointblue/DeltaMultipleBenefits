@@ -41,9 +41,9 @@
 #'
 #' @examples
 #' #data(key)
-#' #r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
-#' #         ncol = 10, nrow = 10)
-#' #landcover_presence = reclassify_landcover(r, SDM = 'riparian')
+#' r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
+#'          ncol = 10, nrow = 10)
+#' landcover_presence = suppressWarnings(reclassify_landcover(r, SDM = 'riparian'))
 
 
 reclassify_landcover = function(landscape, SDM) {
@@ -68,7 +68,7 @@ reclassify_landcover = function(landscape, SDM) {
   # main set of classifications:
   crosswalk = dplyr::full_join(landscape_vars, pred, by = c('value' = 'CODE_NUM'))
 
-  # check for excluded land covers:
+  # check for excluded land covers: (present in landscape but excluded from model)
   excluded = crosswalk |> dplyr::filter(is.na(PREDICTOR_NUM) & count > 0) |>
     dplyr::mutate(prop = count / sum(crosswalk$count, na.rm = TRUE))
 
@@ -153,7 +153,7 @@ subclasses, especially if they represent a significant proportion of the landsca
   if (!all(pred_unique %in% names(presence))) {
 
     missing = pred_unique[!pred_unique %in% names(presence)]
-    print(missing)
+    cat(missing)
     warning("These land cover classes are missing from the landscape but are expected by the
 selected SDM. Creating rasters with all zero values to represent these land covers.
 Check whether they have been excluded from the landscape unintentionally.")
