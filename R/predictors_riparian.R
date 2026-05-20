@@ -1,10 +1,12 @@
 #' Predictors used in distribution models for riparian focal species
 #'
 #' Predictor names and how they crosswalk to the major land cover classes and
-#' subclasses listed in the vegetation `key`. Land cover classes or subclasses
-#' with `NA` values in `PREDICTOR_NAME` and `PREDICTOR_NUM` are excluded from
-#' these models. This data set is primarily for use in the
-#' [reclassify_landcover()] function.
+#' subclasses listed in the vegetation `key`. Land cover classes
+#' or subclasses with `NA` values in `PREDICTOR_NAME` but `999` in
+#' `PREDICTOR_NUM` indicate that they are included as part of a larger grouping
+#' predictor, as flagged in the `RIPARIAN` or `WETLAND` columns.
+#'
+#' This data set is primarily for use in the [reclassify_landcover()] function.
 #'
 #' @format ## `key` A data frame with 81 rows and 6 columns:
 #' \describe{

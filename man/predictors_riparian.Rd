@@ -25,9 +25,12 @@ predictors_riparian
 }
 \description{
 Predictor names and how they crosswalk to the major land cover classes and
-subclasses listed in the vegetation \code{key}. Land cover classes or subclasses
-with \code{NA} values in \code{PREDICTOR_NAME} and \code{PREDICTOR_NUM} are excluded from
-these models. This data set is primarily for use in the
-\code{\link[=reclassify_landcover]{reclassify_landcover()}} function.
+subclasses listed in the vegetation \code{key}. Land cover classes
+or subclasses with \code{NA} values in \code{PREDICTOR_NAME} but \code{999} in
+\code{PREDICTOR_NUM} indicate that they are included as part of a larger grouping
+predictor, as flagged in the \code{RIPARIAN} or \code{WETLAND} columns.
+}
+\details{
+This data set is primarily for use in the \code{\link[=reclassify_landcover]{reclassify_landcover()}} function.
 }
 \keyword{datasets}
