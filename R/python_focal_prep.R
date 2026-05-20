@@ -3,51 +3,65 @@
 #' Prepare for running focal statistics on a landscape raster via Python, to
 #' generate inputs for use with species distribution models.
 #'
-#' Splits landscape raster into separate layers representing the presence (1) or
-#' absence (0) of each land cover class, then regroups and renames them into the
-#' land cover classes used in by the intended species distribution model
-#' (`SDM`), with an optional custom `suffix` appended to the layer name. Cell
-#' values representing land cover presence (1) can also optionally be replaced
-#' with a different `pixel_value` (e.g., the area of each pixel).
+#' This is a wrapper function that calls [reclassify_landcover()] to group and
+#' rename land covers in the provided landscape raster to match predictors in
+#' the intended species distribution model and split them into separate layers
+#' representing the presence (1) or absence (0) of each land cover class for use
+#' in calculating focal statistics. See documentation of that function for
+#' information about Warning messages.
 #'
-#' By providing a `mask`, this function can also optionally use the land cover
-#' presence layers as a mask to extract the values of another layer (e.g.,
-#' surface water data). To distinguish these layers, `suffix` is required to
-#' have two values. See examples.
+#' Optionally, a custom `suffix` can be appended to the layer name and cell
+#' values representing land cover presence (1) can be replaced with a different
+#' `pixel_value` (e.g., the area of each pixel) as needed before writing the
+#' layers to `pathout/SDM/landscape_name`.
+#'
+#' By providing a `mask`, this function can also use the land cover presence
+#' layers as a mask to extract the values of another layer (e.g., surface water
+#' data). To distinguish land cover presence from the values extracted from
+#' another layer, `suffix` is required to have two values. See examples.
 #'
 #' @param landscape SpatRaster created by [terra::rast()]
 #' @param SDM The name of intended species distribution model, for which
 #'   `landscape` will be reclassified: `"riparian"`, `"waterbird_fall"`,
 #'   `"waterbird_win"`, or `"tima"`
-#' @param pathout,landscape_name Character strings defining the filepath
+#' @param pathout,landscape_name Optional character strings defining the filepath
 #'   (`pathout/SDM/landscape_name`) where output rasters should be written
 #' @param suffix Character string; custom suffix appended to layer names
-#'   (optional unless `mask` is not `NULL`)
+#'   (optional unless `mask` is not `NULL`); see Details.
 #' @param mask Optional SpatRaster; see Details
 #' @param pixel_value Numeric value to replace cell values with (optional);
 #'   default `NULL`
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #'
-#' @return Nothing returned to R environment. Writes rasters to `pathout` for
-#'   each land cover class.
+#' @return SpatRaster, though primarily used to write layers to file for use
+#'   with [python_focal_run()]
 #' @seealso [python_focal_run()], [python_focal_finalize()]
-#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
-#' #f <- system.file("ex/elev.tif", package="terra")
-#' #r <- terra::rast(f) # add an example
-#' #python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
+#' library(DeltaMultipleBenefits)
+#' r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
+#'          ncol = 10, nrow = 10))
 #'
-#' #try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#' #pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra')))
-#' ## suffix is required if mask is not `NULL`
+#' #return the presence of each land cover class
+#' presence = suppressWarnings(python_focal_prep(landscape = r, SDM = 'riparian'))
 #'
-#' #python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#' #pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra'),
-#' #suffix = c('_area', '_elev'))
+#' #return the area of the pixel where each land cover class is present
+#' #(useful for summing over moving windows)
+#' area = suppressWarnings(python_focal_prep(landscape = r, SDM = 'waterbird_win', pixel_value = 0.09))
+#'
+#' #mask another raster (e.g., surface water data) by where each land cover is present
+#' w = r
+#' terra::values(w) <- sample(c(0,1), size = 100, replace = TRUE)
+#' #pfld = python_focal_prep(landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)
+#' #returns error: two values for suffix are required if mask is not `NULL`
+#' pfld = suppressWarnings(
+#'    python_focal_prep(
+#'       landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09,
+#'        mask = w, suffix = c('_area', '_pfld')))
 
-python_focal_prep = function(landscape, SDM, pathout, landscape_name,
+python_focal_prep = function(landscape, SDM,
+                             pathout = NULL, landscape_name = NULL,
                              suffix = NULL, mask = NULL, pixel_value = NULL,
                              overwrite = FALSE) {
 
@@ -55,49 +69,52 @@ python_focal_prep = function(landscape, SDM, pathout, landscape_name,
     stop('Provide two suffix values to distinguish unmasked and masked results (e.g., _area and _pfld)')
   }
 
-  # split layer by land cover classes to represent presence/absence
-  layernames = terra::freq(landscape) |> dplyr::pull(.data$value)
-  presence = terra::segregate(landscape, other = 0) |>
-    stats::setNames(layernames)
-
   # reclassify according to riparian and waterbird model inputs
-  presence_reclass = reclassify_landcover(presence, SDM = SDM)
-
-  create_directory(file.path(pathout, SDM, landscape_name))
+  presence = reclassify_landcover(landscape = landscape, SDM = SDM)
 
   # optional: if mask is provided (e.g. pfld data), generate layers
   # reflecting the value of the mask layer wherever each land cover is present
   # --> expect two values provided for "suffix" to distinguish them (e.g., _area
   # and _pfld)
   if (!is.null(mask)) {
-    # where presence_reclass is 0 (land cover not present), change mask to
-    # NA (allowing values in mask path to be summarized only for that specific
-    # land cover)
-    newstack_mask = terra::mask(mask, presence_reclass, maskvalue = 0,
-                                updatevalue = NA)
-    names(newstack_mask) = paste0(names(presence_reclass), suffix[2])
-    terra::writeRaster(newstack_mask,
-                       filename = file.path(pathout, SDM, landscape_name,
-                                            paste0(names(newstack_mask),
-                                                   '.tif')),
-                       overwrite = overwrite)
+    # where land cover is absent (presence = 0), change mask to NA (allowing
+    # values in mask path to be summarized only for that specific land cover)
+    presence_mask = terra::mask(mask, presence, maskvalue = 0, updatevalue = NA)
+    names(presence_mask) = paste0(names(presence), suffix[2])
+
   }
 
-  # finalize original unmasked values:
+  # finalize & write original unmasked values:
   # optional: replace presence (1) with another value (e.g., pixel area)
   if (!is.null(pixel_value)) {
-    presence_reclass = terra::subst(presence_reclass,
-                                    from = 1, to = pixel_value)
+    presence = terra::subst(presence, from = 1, to = pixel_value)
   }
 
   # optional: add suffix
   if (!is.null(suffix)) {
-    names(presence_reclass) = paste0(names(presence_reclass), suffix[1])
+    names(presence) = paste0(names(presence), suffix[1])
   }
 
-  terra::writeRaster(presence_reclass,
-                     filename = file.path(pathout, SDM, landscape_name,
-                                          paste0(names(presence_reclass),
-                                                 '.tif')),
-                     overwrite = overwrite)
+  if (!is.null(pathout) & !is.null(landscape_name)) {
+    create_directory(file.path(pathout, SDM, landscape_name))
+    terra::writeRaster(presence,
+                       filename = file.path(pathout, SDM, landscape_name,
+                                            paste0(names(presence),
+                                                   '.tif')),
+                       overwrite = overwrite)
+
+    if (!is.null(mask)) {
+      terra::writeRaster(presence_mask,
+                         filename = file.path(pathout, SDM, landscape_name,
+                                              paste0(names(presence_mask),
+                                                     '.tif')),
+                         overwrite = overwrite)
+    }
+  }
+
+  if (!is.null(mask)) {
+      presence = c(presence, presence_mask)
+  }
+  return(presence)
+
 }

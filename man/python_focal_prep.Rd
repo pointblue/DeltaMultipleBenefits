@@ -7,8 +7,8 @@
 python_focal_prep(
   landscape,
   SDM,
-  pathout,
-  landscape_name,
+  pathout = NULL,
+  landscape_name = NULL,
   suffix = NULL,
   mask = NULL,
   pixel_value = NULL,
@@ -22,11 +22,11 @@ python_focal_prep(
 \code{landscape} will be reclassified: \code{"riparian"}, \code{"waterbird_fall"},
 \code{"waterbird_win"}, or \code{"tima"}}
 
-\item{pathout, landscape_name}{Character strings defining the filepath
+\item{pathout, landscape_name}{Optional character strings defining the filepath
 (\code{pathout/SDM/landscape_name}) where output rasters should be written}
 
 \item{suffix}{Character string; custom suffix appended to layer names
-(optional unless \code{mask} is not \code{NULL})}
+(optional unless \code{mask} is not \code{NULL}); see Details.}
 
 \item{mask}{Optional SpatRaster; see Details}
 
@@ -36,38 +36,52 @@ default \code{NULL}}
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
 }
 \value{
-Nothing returned to R environment. Writes rasters to \code{pathout} for
-each land cover class.
+SpatRaster, though primarily used to write layers to file for use
+with \code{\link[=python_focal_run]{python_focal_run()}}
 }
 \description{
 Prepare for running focal statistics on a landscape raster via Python, to
 generate inputs for use with species distribution models.
 }
 \details{
-Splits landscape raster into separate layers representing the presence (1) or
-absence (0) of each land cover class, then regroups and renames them into the
-land cover classes used in by the intended species distribution model
-(\code{SDM}), with an optional custom \code{suffix} appended to the layer name. Cell
-values representing land cover presence (1) can also optionally be replaced
-with a different \code{pixel_value} (e.g., the area of each pixel).
+This is a wrapper function that calls \code{\link[=reclassify_landcover]{reclassify_landcover()}} to group and
+rename land covers in the provided landscape raster to match predictors in
+the intended species distribution model and split them into separate layers
+representing the presence (1) or absence (0) of each land cover class for use
+in calculating focal statistics. See documentation of that function for
+information about Warning messages.
 
-By providing a \code{mask}, this function can also optionally use the land cover
-presence layers as a mask to extract the values of another layer (e.g.,
-surface water data). To distinguish these layers, \code{suffix} is required to
-have two values. See examples.
+Optionally, a custom \code{suffix} can be appended to the layer name and cell
+values representing land cover presence (1) can be replaced with a different
+\code{pixel_value} (e.g., the area of each pixel) as needed before writing the
+layers to \code{pathout/SDM/landscape_name}.
+
+By providing a \code{mask}, this function can also use the land cover presence
+layers as a mask to extract the values of another layer (e.g., surface water
+data). To distinguish land cover presence from the values extracted from
+another layer, \code{suffix} is required to have two values. See examples.
 }
 \examples{
-#f <- system.file("ex/elev.tif", package="terra")
-#r <- terra::rast(f) # add an example
-#python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
+library(DeltaMultipleBenefits)
+r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
+         ncol = 10, nrow = 10))
 
-#try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra')))
-## suffix is required if mask is not `NULL`
+#return the presence of each land cover class
+presence = suppressWarnings(python_focal_prep(landscape = r, SDM = 'riparian'))
 
-#python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra'),
-#suffix = c('_area', '_elev'))
+#return the area of the pixel where each land cover class is present
+#(useful for summing over moving windows)
+area = suppressWarnings(python_focal_prep(landscape = r, SDM = 'waterbird_win', pixel_value = 0.09))
+
+#mask another raster (e.g., surface water data) by where each land cover is present
+w = r
+terra::values(w) <- sample(c(0,1), size = 100, replace = TRUE)
+#pfld = python_focal_prep(landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)
+#returns error: two values for suffix are required if mask is not `NULL`
+pfld = suppressWarnings(
+   python_focal_prep(
+      landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09,
+       mask = w, suffix = c('_area', '_pfld')))
 }
 \seealso{
 \code{\link[=python_focal_run]{python_focal_run()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
