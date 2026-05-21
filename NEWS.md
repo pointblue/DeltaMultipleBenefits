@@ -2,6 +2,9 @@
 
 - Improved how Python functions are called by adding several Python helper functions; avoids importing arcpy and Spatial Analyst extensions repeatedly in the same session.
 - Added a test for the ability to load arcpy.
+- `reclassify_landcover` and `python_focal_prep`: Streamlined process of crosswalking land cover classes to predictors used in each set of SDMs
+- `key`: Simplified to full list of recognized land cover classes and subclasses
+- `predictors_tima`, `predictors_riparian`, `predictors_waterbird_fall`, `predictors_waterbird_win`: added data sets laying out the crosswalk between land cover classes and subclasses in `key` with predictors expected by each set of SDMs
 
 # DeltaMultipleBenefits 1.1.0 - 2026-05-14
 
