@@ -35,7 +35,7 @@ transform_SDM = function(pathin, SDM, landscape_name, regex = '.tif$',
                            pattern = regex, full.names = TRUE) |>
     terra::rast()
 
-  threshold_list = purrr::map(names(modlist) |> setNames(names(modlist)),
+  threshold_list = purrr::map(names(modlist) |> stats::setNames(names(modlist)),
                               function(x) {
                                 obs = modlist[[x]]$gbm.call$dataframe[modlist[[x]]$gbm.call$gbm.y]
                                 presence = modlist[[x]]$fitted[obs == 1]

@@ -65,7 +65,7 @@ update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
     terra::extract(roosts)
 
   # identify polygons to exclude with >20% incompatible landcover
-  incompatible = roost_overlay |> setNames(c('ID', 'landscape')) |>
+  incompatible = roost_overlay |> stats::setNames(c('ID', 'landscape')) |>
     dplyr::group_by(.data$ID, .data$landscape) |>
     dplyr::count() |>
     dplyr::ungroup() |>

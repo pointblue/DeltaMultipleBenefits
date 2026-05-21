@@ -113,7 +113,7 @@ update_pwater = function(waterdat, mask = NULL, pathout, SDM, landscape_name,
     # calculate mean pwater by land cover class (detailed) in the baseline
     # landscape - unmasked, so including any surrounding buffer area
     mwater = terra::zonal(pwater, baseline_landscape, fun = mean, na.rm = TRUE) |>
-      setNames(c('value', 'pwater')) |>
+      stats::setNames(c('value', 'pwater')) |>
       tidyr::drop_na() |>
       dplyr::left_join(terra::freq(baseline_landscape), by = 'value')
 
