@@ -21,6 +21,21 @@
 - [`metrics`](https://pointblue.github.io/DeltaMultipleBenefits/reference/metrics.md)
   : Metrics by land cover class and benefits category
 
+- [`predictors_riparian`](https://pointblue.github.io/DeltaMultipleBenefits/reference/predictors_riparian.md)
+  : Predictors used in distribution models for riparian focal species
+
+- [`predictors_tima`](https://pointblue.github.io/DeltaMultipleBenefits/reference/predictors_tima.md)
+  : Predictors used in distribution models for tidal marsh bird focal
+  species
+
+- [`predictors_waterbird_fall`](https://pointblue.github.io/DeltaMultipleBenefits/reference/predictors_waterbird_fall.md)
+  : Predictors used in distribution models for waterbird groups during
+  the fall season
+
+- [`predictors_waterbird_win`](https://pointblue.github.io/DeltaMultipleBenefits/reference/predictors_waterbird_win.md)
+  : Predictors used in distribution models for waterbird groups during
+  the winter season
+
 - [`python_dist()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_dist.md)
   : Calculate Euclidean distance via Python
 
@@ -34,7 +49,7 @@
   : Run focal statistics via Python
 
 - [`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
-  : Reclassify landscape rasters by SDM
+  : Reclassify landscape rasters by SDM group
 
 - [`roosts_original`](https://pointblue.github.io/DeltaMultipleBenefits/reference/roosts_original.md)
   : Traditional nighttime crane roost locations

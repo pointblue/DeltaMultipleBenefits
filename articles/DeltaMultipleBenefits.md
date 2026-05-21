@@ -92,14 +92,14 @@ most specific subclass in the existing scheme:
 data(key, package = 'DeltaMultipleBenefits')
 head(key)
 #> # A tibble: 6 × 7
-#>   CODE_BASELINE CODE_NAME                  CLASS     SUBCLASS DETAIL LABEL COLOR
-#>           <dbl> <chr>                      <chr>     <chr>    <chr>  <chr> <chr>
-#> 1            10 AG_PERENNIAL               PERENNIA… NA       NA     Pere… #940…
-#> 2            11 ORCHARD_DECIDUOUS          NA        DECIDUO… NA     Orch… #940…
-#> 3            15 ORCHARD_CITRUS&SUBTROPICAL NA        CITRUS … NA     Orch… #C76…
-#> 4            19 VINEYARD                   NA        VINEYARD NA     Vine… #ECB…
-#> 5            20 AG_ANNUAL                  ANNUAL C… NA       NA     Annu… #32C…
-#> 6            21 GRAIN&HAY                  NA        GRAIN &… NA     Grai… #FFA…
+#>   CODE_NUM CODE_NAME                  CLASS          SUBCLASS DETAIL LABEL COLOR
+#>      <dbl> <chr>                      <chr>          <chr>    <chr>  <chr> <chr>
+#> 1       10 AG_PERENNIAL               PERENNIAL CRO… NA       NA     Pere… #940…
+#> 2       11 ORCHARD_DECIDUOUS          NA             DECIDUO… NA     Orch… #940…
+#> 3       15 ORCHARD_CITRUS&SUBTROPICAL NA             CITRUS … NA     Orch… #C76…
+#> 4       19 VINEYARD                   NA             VINEYARD NA     Vine… #ECB…
+#> 5       20 AG_ANNUAL                  ANNUAL CROPS   NA       NA     Annu… #32C…
+#> 6       21 GRAIN&HAY                  NA             GRAIN &… NA     Grai… #FFA…
 ```
 
 ### 1.1 Working with polygons
@@ -467,19 +467,7 @@ purrr::map(names(landscapes),
 for each of the separate land cover rasters generated in the previous
 step. Focal statistics perform a given operation on all cells within a
 given distance of the focal cell, and repeated for every cell in the
-raster. This process is slow, and while it can be run entirely in R, it
-is much faster to use Python. Therefore, this function currently
-requires Python to be installed on your system and specifically `arcpy`
-with the Spatial Analyst extension. The R package `reticulate` will be
-used internally to run a simple python script for generating focal
-statistics. To ensure the `arcpy` module can be found, you may need to
-specify which version of Python to use. For example (change the filepath
-as needed to reflect your system):
-
-``` r
-
-reticulate::use_python('C:/Python27/ArcGISx6410.8/python.exe', required = TRUE)
-```
+raster.
 
 In this example, we apply the function `SUM` to the rasters generated in
 the previous step which have a value of `1` for every cell where the
@@ -489,7 +477,19 @@ the `scale` argument. The riparian landbird models require focal stats
 summarizing both landscapes within two different radii: 50m and 2000m.
 So here we can use `purrr:map2` to iterate over all 4 combinations of
 landscape and radius. The results are writen to
-`pathout/SDM/landscape_name/scale`.
+`pathout/SDM/landscape_name/scale`. A `regex` argument provides options
+for re-running this code for only a subset of the predictors in
+`pathin`.
+
+These calculations are slow, depending on the size and resolution of the
+rasters. While they could be run entirely in R, it is much faster to use
+Python. Therefore, this function currently requires Python to be
+installed on your system and specifically `arcpy` with the Spatial
+Analyst extension. The R package `reticulate` will be used internally to
+run a simple python script for generating focal statistics. On first
+run, the function will try to load arcpy and Spatial Analyst extensions,
+but to ensure the correct version of Python can be found, you likely
+need to specify the correct filepath. See example below.
 
 *Note that there is no `overwrite` option for this function. If the
 files already exist in `pathout/SDM/landscape_name`, it will return an
@@ -497,6 +497,7 @@ error. Previous versions should be deleted manually or `pathout`
 changed.*
 
 ``` r
+pythonpath = ('C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe', required = TRUE)
 
 purrr::map2(.x = c(rep(names(landscapes), each = 2)),
             .y = c(rep(c('50', '2000'), 2)),
@@ -506,7 +507,8 @@ purrr::map2(.x = c(rep(names(landscapes), each = 2)),
              SDM = 'riparian',
              scale = .y,
              fun = 'SUM',
-             pathout = 'SDM_predictors/focal_stats'))
+             pathout = 'SDM_predictors/focal_stats'
+             python = pythonpath))
 ```
 
 **python_focal_finalize:** The third step is to finalize the results of

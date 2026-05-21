@@ -9,8 +9,8 @@ to generate inputs for use with species distribution models.
 python_focal_prep(
   landscape,
   SDM,
-  pathout,
-  landscape_name,
+  pathout = NULL,
+  landscape_name = NULL,
   suffix = NULL,
   mask = NULL,
   pixel_value = NULL,
@@ -33,13 +33,13 @@ python_focal_prep(
 
 - pathout, landscape_name:
 
-  Character strings defining the filepath (`pathout/SDM/landscape_name`)
-  where output rasters should be written
+  Optional character strings defining the filepath
+  (`pathout/SDM/landscape_name`) where output rasters should be written
 
 - suffix:
 
   Character string; custom suffix appended to layer names (optional
-  unless `mask` is not `NULL`)
+  unless `mask` is not `NULL`); see Details.
 
 - mask:
 
@@ -57,23 +57,29 @@ python_focal_prep(
 
 ## Value
 
-Nothing returned to R environment. Writes rasters to `pathout` for each
-land cover class.
+SpatRaster, though primarily used to write layers to file for use with
+[`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md)
 
 ## Details
 
-Splits landscape raster into separate layers representing the presence
-(1) or absence (0) of each land cover class, then regroups and renames
-them into the land cover classes used in by the intended species
-distribution model (`SDM`), with an optional custom `suffix` appended to
-the layer name. Cell values representing land cover presence (1) can
-also optionally be replaced with a different `pixel_value` (e.g., the
-area of each pixel).
+This is a wrapper function that calls
+[`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
+to group and rename land covers in the provided landscape raster to
+match predictors in the intended species distribution model and split
+them into separate layers representing the presence (1) or absence (0)
+of each land cover class for use in calculating focal statistics. See
+documentation of that function for information about Warning messages.
 
-By providing a `mask`, this function can also optionally use the land
-cover presence layers as a mask to extract the values of another layer
-(e.g., surface water data). To distinguish these layers, `suffix` is
-required to have two values. See examples.
+Optionally, a custom `suffix` can be appended to the layer name and cell
+values representing land cover presence (1) can be replaced with a
+different `pixel_value` (e.g., the area of each pixel) as needed before
+writing the layers to `pathout/SDM/landscape_name`.
+
+By providing a `mask`, this function can also use the land cover
+presence layers as a mask to extract the values of another layer (e.g.,
+surface water data). To distinguish land cover presence from the values
+extracted from another layer, `suffix` is required to have two values.
+See examples.
 
 ## See also
 
@@ -83,15 +89,27 @@ required to have two values. See examples.
 ## Examples
 
 ``` r
-#f <- system.file("ex/elev.tif", package="terra")
-#r <- terra::rast(f) # add an example
-#python_prep(landscape = r, SDM = 'riparian', pathout = 'example')
+library(DeltaMultipleBenefits)
+r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
+         ncol = 10, nrow = 10))
 
-#try(python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra')))
-## suffix is required if mask is not `NULL`
+#return the presence of each land cover class
+presence = suppressWarnings(python_focal_prep(landscape = r, SDM = 'riparian'))
+#> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM WOODLAND BARREN
 
-#python_prep(landscape = r, SDM = 'waterbird_win', pathout = 'example',
-#pixel_value = 0.09, mask = system.file('ex/elev.tif', package = 'terra'),
-#suffix = c('_area', '_elev'))
+#return the area of the pixel where each land cover class is present
+#(useful for summing over moving windows)
+area = suppressWarnings(python_focal_prep(landscape = r, SDM = 'waterbird_win', pixel_value = 0.09))
+#> ww grain corn field row rice fal alf ip dryp dev wet duwet barren for
+
+#mask another raster (e.g., surface water data) by where each land cover is present
+w = r
+terra::values(w) <- sample(c(0,1), size = 100, replace = TRUE)
+#pfld = python_focal_prep(landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)
+#returns error: two values for suffix are required if mask is not `NULL`
+pfld = suppressWarnings(
+   python_focal_prep(
+      landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09,
+       mask = w, suffix = c('_area', '_pfld')))
+#> grain corn field row rice fal alf ip dryp dev wet duwet barren for
 ```
