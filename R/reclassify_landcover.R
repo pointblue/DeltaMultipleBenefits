@@ -39,7 +39,9 @@
 #'   the list of recognized landcover classes and subclasses and how they
 #'   crosswalk to land cover predictors for each set of SDMs
 #'
+#' @importFrom utils data
 #' @examples
+#' library(DeltaMultipleBenefits)
 #' #data(key)
 #' r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
 #'          ncol = 10, nrow = 10)
@@ -52,28 +54,24 @@ reclassify_landcover = function(landscape, SDM) {
   landscape_vars = terra::freq(landscape)
 
   if (SDM == 'riparian') {
-    data("predictors_riparian")
-    pred = predictors_riparian
+    pred <- DeltaMultipleBenefits::predictors_riparian
   } else if (SDM == 'waterbird_fall') {
-    data("predictors_waterbird_fall")
-    pred = predictors_waterbird_fall
+    pred <- DeltaMultipleBenefits::predictors_waterbird_fall
   } else if (SDM == 'waterbird_win') {
-    data("predictors_waterbird_win")
-    pred = predictors_waterbird_win
+    pred <- DeltaMultipleBenefits::predictors_waterbird_win
   } else if (SDM == 'tima') {
-    data("predictors_tima")
-    pred = predictors_tima
+    pred <- DeltaMultipleBenefits::predictors_tima
   }
 
   # main set of classifications:
   crosswalk = dplyr::full_join(landscape_vars, pred, by = c('value' = 'CODE_NUM'))
 
   # check for excluded land covers: (present in landscape but excluded from model)
-  excluded = crosswalk |> dplyr::filter(is.na(PREDICTOR_NUM) & count > 0) |>
-    dplyr::mutate(prop = count / sum(crosswalk$count, na.rm = TRUE))
+  excluded = crosswalk |> dplyr::filter(is.na(.data$PREDICTOR_NUM) & .data$count > 0) |>
+    dplyr::mutate(prop = .data$count / sum(crosswalk$count, na.rm = TRUE))
 
   if (nrow(excluded) > 0) {
-    print(excluded |> dplyr::select(CODE_NAME, count, prop))
+    print(excluded |> dplyr::select('CODE_NAME', 'count', 'prop'))
     warning("These land cover classes are present in the landscape but are not incorporated
 into the selected SDM and will be excluded from the model predictions;
 Check whether they can be replaced with more specific land cover classes or
@@ -81,29 +79,28 @@ subclasses, especially if they represent a significant proportion of the landsca
   }
 
   r = terra::classify(landscape,
-                      rcl = crosswalk |> dplyr::select(from = value, to = PREDICTOR_NUM) |>
-                        tidyr::drop_na(to),
+                      rcl = crosswalk |> dplyr::select(from = 'value', to = 'PREDICTOR_NUM') |>
+                        tidyr::drop_na(.data[['to']]),
                       others = NA)
-  levels(r) <- crosswalk |> dplyr::select(PREDICTOR_NUM, PREDICTOR_NAME) |>
-    tidyr::drop_na() |> dplyr::distinct() |> dplyr::arrange(PREDICTOR_NUM)
+  levels(r) <- crosswalk |> dplyr::select('PREDICTOR_NUM', 'PREDICTOR_NAME') |>
+    tidyr::drop_na() |> dplyr::distinct() |> dplyr::arrange('PREDICTOR_NUM')
 
   # segregate
-  layernames = terra::freq(r) |> dplyr::pull(.data$value)
-  presence = terra::segregate(r, other = 0) |>
-    stats::setNames(layernames)
+  layernames = terra::freq(r) |> dplyr::pull(.data[['value']])
+  presence = terra::segregate(r, other = 0) |> stats::setNames(layernames)
 
   # add larger grouping predictors necessary for riparian and tima SDMs:
   if (SDM == 'riparian') {
 
     groupvars = c(
       terra::classify(landscape,
-                      rcl = pred |> dplyr::filter(RIPARIAN == 1) |>
-                        dplyr::select(from = CODE_NUM) |>
+                      rcl = pred |> dplyr::filter(.data[['RIPARIAN']] == 1) |>
+                        dplyr::select(from = 'CODE_NUM') |>
                         dplyr::mutate(to = 1),
                       others = 0),
       terra::classify(landscape,
-                      rcl = pred |> dplyr::filter(WETLAND == 1) |>
-                        dplyr::select(from = CODE_NUM) |>
+                      rcl = pred |> dplyr::filter(.data[['WETLAND']] == 1) |>
+                        dplyr::select(from = 'CODE_NUM') |>
                         dplyr::mutate(to = 1),
                       others = 0)
     )
@@ -114,27 +111,27 @@ subclasses, especially if they represent a significant proportion of the landsca
 
     groupvars = c(
       terra::classify(landscape,
-                      rcl = pred |> dplyr::filter(NWET == 1) |>
-                        dplyr::select(from = CODE_NUM) |>
+                      rcl = pred |> dplyr::filter(.data[['NWET']] == 1) |>
+                        dplyr::select(from = 'CODE_NUM') |>
                         dplyr::mutate(to = 1),
                       others = 0),
       terra::classify(landscape,
-                      rcl = pred |> dplyr::filter(TWET == 1) |>
-                        dplyr::select(from = CODE_NUM) |>
+                      rcl = pred |> dplyr::filter(.data[['TWET']] == 1) |>
+                        dplyr::select(from = 'CODE_NUM') |>
                         dplyr::mutate(to = 1),
                       others = 0),
       terra::classify(landscape,
-                      rcl = pred |> dplyr::filter(WETL == 1) |>
-                        dplyr::select(from = CODE_NUM) |>
+                      rcl = pred |> dplyr::filter(.data[['WETL']] == 1) |>
+                        dplyr::select(from = 'CODE_NUM') |>
                         dplyr::mutate(to = 1),
                       others = 0),
       terra::classify(landscape,
-                      rcl = pred |> dplyr::filter(RFOR == 1) |>
-                        dplyr::select(from = CODE_NUM) |>
+                      rcl = pred |> dplyr::filter(.data[['RFOR']] == 1) |>
+                        dplyr::select(from = 'CODE_NUM') |>
                         dplyr::mutate(to = 1), others = 0),
       terra::classify(landscape,
-                      rcl = pred |> dplyr::filter(RSCR == 1) |>
-                        dplyr::select(from = CODE_NUM) |>
+                      rcl = pred |> dplyr::filter(.data[['RSCR']] == 1) |>
+                        dplyr::select(from = 'CODE_NUM') |>
                         dplyr::mutate(to = 1),
                       others = 0))
     names(groupvars) = c('NWET', 'TWET', 'WETL', 'RFOR', 'RSCR')
@@ -144,7 +141,7 @@ subclasses, especially if they represent a significant proportion of the landsca
 
   # check that all unique predictors are accounted for - may need rasters of all
   # 0 values if landscape contains none
-  pred_unique = unique(na.omit(pred$PREDICTOR_NAME))
+  pred_unique = unique(stats::na.omit(pred$PREDICTOR_NAME))
   if(SDM %in% c('riparian', 'tima')) { # additional grouping vars
     pred_unique = c(pred_unique,
                     pred |> dplyr::select(5:dplyr::last_col()) |> names())

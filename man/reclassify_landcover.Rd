@@ -46,6 +46,7 @@ the landscape and model predictions unintentionally. If needed, the resulting
 layers can be replaced manually before proceeding with \code{\link[=python_focal_run]{python_focal_run()}}.
 }
 \examples{
+library(DeltaMultipleBenefits)
 #data(key)
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
          ncol = 10, nrow = 10)
