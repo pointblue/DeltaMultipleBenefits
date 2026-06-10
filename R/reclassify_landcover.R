@@ -44,7 +44,7 @@
 #' library(DeltaMultipleBenefits)
 #' #data(key)
 #' r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
-#'          ncol = 10, nrow = 10)
+#'          ncol = 10, nrow = 10))
 #' landcover_presence = suppressWarnings(reclassify_landcover(r, SDM = 'riparian'))
 
 
@@ -71,11 +71,23 @@ reclassify_landcover = function(landscape, SDM) {
     dplyr::mutate(prop = .data$count / sum(crosswalk$count, na.rm = TRUE))
 
   if (nrow(excluded) > 0) {
+    warning(
+      strwrap(
+        prefix = " ", initial = "",
+        "Step 1: Caution Advised. These land cover classes are present in the
+        landscape but are not incorporated into the selected SDM and will be
+        excluded from the model predictions; Check whether they can be replaced
+        with more specific land cover classes or subclasses, especially if they
+        represent a significant proportion of the landscape."))
     print(excluded |> dplyr::select('CODE_NAME', 'count', 'prop'))
-    warning("These land cover classes are present in the landscape but are not incorporated
-into the selected SDM and will be excluded from the model predictions;
-Check whether they can be replaced with more specific land cover classes or
-subclasses, especially if they represent a significant proportion of the landscape.")
+
+  } else {
+    message(
+      strwrap(
+        prefix = " ", initial = "",
+        "Step 1: Success (All land cover classes present in the provided
+        landscape will be incorporated into the selected SDM)\n\n"
+      ))
   }
 
   r = terra::classify(landscape,
@@ -148,13 +160,15 @@ subclasses, especially if they represent a significant proportion of the landsca
   }
 
   if (!all(pred_unique %in% names(presence))) {
-
     missing = pred_unique[!pred_unique %in% names(presence)]
     cat(missing)
-    warning("These land cover classes are missing from the landscape but are expected by the
-selected SDM. Creating rasters with all zero values to represent these land covers.
-Check whether they have been excluded from the landscape unintentionally.")
-
+    warning(
+      strwrap(
+        prefix = " ", initial = "",
+        "Step 2: Extreme Caution Advised. These land cover classes are missing from the
+        landscape but are expected by the selected SDM. Rasters will be created
+        with all zero values to represent these land covers in the model, but it
+        is highly recommended to confirm they are absent from the landscape."))
     rnew = landscape
     rnew[!is.na(rnew)] <- 0 # raster with all zero values
     addme = list(rnew) |> rep(length(missing)) |> terra::rast()
@@ -162,7 +176,11 @@ Check whether they have been excluded from the landscape unintentionally.")
     presence = c(presence, addme)
 
   } else {
-    cat('Success: all required land cover classes are represented\n')
+    message(
+      strwrap(
+        prefix = " ", initial = "",
+        "Step 2: Success (All land cover classes required by the model are
+        represented in the landscape)\n"))
   }
 
   return(presence)
