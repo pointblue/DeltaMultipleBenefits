@@ -4,7 +4,6 @@
 key = readxl::read_excel('C:/Users/kdybala/Documents/R_projects/delta_tima/dat_clean/veg_key.xlsx', 'key') |>
   dplyr::select(CODE_NUM, CODE_NAME, CLASS, SUBCLASS, DETAIL, LABEL, COLOR) |>
   dplyr::arrange(CODE_NUM)
-
 usethis::use_data(key, overwrite = TRUE)
 
 predictors_riparian = readxl::read_excel('C:/Users/kdybala/Documents/R_projects/delta_tima/dat_clean/veg_key.xlsx',
