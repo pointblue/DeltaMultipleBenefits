@@ -18,7 +18,7 @@
 #' classify the original land cover polygons.
 #'
 #'
-#' @format ## `key` A data frame with 81 rows and 6 columns:
+#' @format ## `predictors_riparian` A data frame with 81 rows and 7 columns:
 #' \describe{
 #'   \item{CODE_NUM}{Numeric value used to encode rasters, matching `key`}
 #'   \item{CODE_NAME}{Text string joining major land cover classes to subclasses with a '_', matching `key`}

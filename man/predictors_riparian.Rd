@@ -5,7 +5,7 @@
 \alias{predictors_riparian}
 \title{Predictors used in distribution models for riparian focal species}
 \format{
-\subsection{\code{key} A data frame with 81 rows and 6 columns:}{
+\subsection{\code{predictors_riparian} A data frame with 81 rows and 7 columns:}{
 
 \describe{
 \item{CODE_NUM}{Numeric value used to encode rasters, matching \code{key}}
