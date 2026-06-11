@@ -6,8 +6,9 @@
 \title{Predictors used in distribution models for waterbird groups during the winter
 season}
 \format{
-\subsection{\code{key} A data frame with 81 rows and 4 columns:}{
+\subsection{\code{predictors_waterbird_win} A data frame with 81 rows and 4}{
 
+columns:
 \describe{
 \item{CODE_NUM}{Numeric value used to encode rasters, matching \code{key}}
 \item{CODE_NAME}{Text string joining major land cover classes to subclasses with a '_', matching \code{key}}
@@ -24,11 +25,16 @@ predictors_waterbird_win
 }
 \description{
 Predictor names and how they crosswalk to the major land cover classes and
-subclasses listed in the vegetation \code{key}. Land cover classes or subclasses
-with \code{NA} values in \code{PREDICTOR_NAME} and \code{PREDICTOR_NUM} are excluded from
-these models. This data set is primarily for use in the
-\code{\link[=reclassify_landcover]{reclassify_landcover()}} function. This crosswalk is nearly identical to
-\code{predictors_waterbirds_fall} except that in the winter, agricultural fields
-specified as "winter wheat" are separated from other grains.
+subclasses listed in the vegetation \code{key}. This crosswalk is nearly identical
+to \code{predictors_waterbirds_fall} except that in the winter, agricultural
+fields specified as "winter wheat" are separated from other grains.
+}
+\details{
+Land cover classes or subclasses with \code{NA} values in \code{PREDICTOR_NAME} and
+\code{PREDICTOR_NUM} are excluded from these models.
+
+This data set is primarily for use in the \code{\link[=reclassify_landcover]{reclassify_landcover()}} function.
+See \code{\link[=classify_LSPT]{classify_LSPT()}} for an alternative approach to classify the original
+land cover polygons.
 }
 \keyword{datasets}

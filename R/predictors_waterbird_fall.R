@@ -2,14 +2,18 @@
 #' season
 #'
 #' Predictor names and how they crosswalk to the major land cover classes and
-#' subclasses listed in the vegetation `key`. Land cover classes or subclasses
-#' with `NA` values in `PREDICTOR_NAME` and `PREDICTOR_NUM` are excluded from
-#' these models. This data set is primarily for use in the
-#' [reclassify_landcover()] function. This crosswalk is nearly identical to
-#' `predictors_waterbirds_win` except that in the winter, agricultural fields
+#' subclasses listed in the vegetation `key`. This crosswalk is nearly identical
+#' to `predictors_waterbirds_win` except that in the winter, agricultural fields
 #' specified as "winter wheat" are separated from other grains.
 #'
-#' @format ## `key` A data frame with 81 rows and 4 columns:
+#' Land cover classes or subclasses with `NA` values in `PREDICTOR_NAME` and
+#' `PREDICTOR_NUM` are excluded from these models.
+#'
+#' This data set is primarily for use in the [reclassify_landcover()] function.
+#' See [classify_LSPT()] for an alternative approach to classify the original
+#' land cover polygons.
+#'
+#' @format ## `predictors_waterbird_fall` A data frame with 81 rows and 4 columns:
 #' \describe{
 #'   \item{CODE_NUM}{Numeric value used to encode rasters, matching `key`}
 #'   \item{CODE_NAME}{Text string joining major land cover classes to subclasses with a '_', matching `key`}
