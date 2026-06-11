@@ -1,12 +1,22 @@
 #' Predictors used in distribution models for riparian focal species
 #'
 #' Predictor names and how they crosswalk to the major land cover classes and
-#' subclasses listed in the vegetation `key`. Land cover classes
-#' or subclasses with `NA` values in `PREDICTOR_NAME` but `999` in
-#' `PREDICTOR_NUM` indicate that they are included as part of a larger grouping
-#' predictor, as flagged in the `RIPARIAN` or `WETLAND` columns.
+#' subclasses listed in the vegetation `key`. Land cover classes with a `1` in
+#' the `RIPARIAN` or `WETLAND` fields indicate they should be included in
+#' additional predictors representing the proportion cover of those broader
+#' vegetation classes. This data set is primarily for use in the
+#' [reclassify_landcover()] function.
 #'
-#' This data set is primarily for use in the [reclassify_landcover()] function.
+#' The `NOTES` field provides additional information on vegetation classes that
+#' were ultimately excluded from model predictions and can be safely ignored
+#' (i.e. the `WOODLAND&SCRUB` class), as well as notes on more specific
+#' vegetation types from the original source classifications that were excluded
+#' from the predictor when these models were first developed. Therefore, use of
+#' this key to crosswalk land cover data to the predictors for these models
+#' cannot be fully consistent with the original classification scheme used to
+#' develop these models. See [classify_LSPT()] for an alternative approach to
+#' classify the original land cover polygons.
+#'
 #'
 #' @format ## `key` A data frame with 81 rows and 6 columns:
 #' \describe{
@@ -16,6 +26,7 @@
 #'   \item{PREDICTOR_NUM}{Corresponding numeric value used to reclassify land cover rasters for use with tidal marsh bird distribution models}
 #'   \item{RIPARIAN}{Additional predictor grouping riparian subclasses together; 1 indicates the included subclasses}
 #'   \item{WETLAND}{Additional predictor grouping wetland subclasses together; 1 indicates the included subclasses}
+#'   \item{NOTES}{See Details}
 #' }
 #' @source Dybala et al. 2023 (https://doi.org/10.15447/sfews.2023v21iss3art4)
 "predictors_riparian"
