@@ -9,14 +9,14 @@
 #' @format ## `key` A data frame with 81 rows and 7 columns:
 #' \describe{
 #'   \item{CODE_NUM}{Numeric value used to encode rasters}
-#'   \item{NAME_FULL}{Text string joining major land cover classes to subclasses with a '_'}
+#'   \item{CODE_NAME}{Text string joining major land cover classes to subclasses with a '_'}
 #'   \item{CLASS}{Major land cover class grouping}
 #'   \item{SUBCLASS}{Land cover subclass}
 #'   \item{DETAIL}{Further land cover detail}
 #'   \item{LABEL}{Default value for labels used in maps and plots}
 #'   \item{COLOR}{Default hex color code used in maps}
 #' }
-#' @source Dybala et al. 2023 (https://doi.org/10.15447/sfews.2023v21iss3art4);
-#'   Dybala et al. 2025 (https://doi.org/10.15447/sfews.2025v23iss2art2); Dybala
+#' @source Dybala et al. 2023 [https://doi.org/10.15447/sfews.2023v21iss3art4](https://doi.org/10.15447/sfews.2023v21iss3art4);
+#'   Dybala et al. 2025 [https://doi.org/10.15447/sfews.2025v23iss2art2](https://doi.org/10.15447/sfews.2025v23iss2art2); Dybala
 #'   et al. In review
 "key"
