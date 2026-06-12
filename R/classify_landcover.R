@@ -101,6 +101,7 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
 #' @param SDM The name of intended species distribution model: `"riparian"`,
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
 #' @param coltab logical; if TRUE add default color palette
+#' @param verbose logical; if TRUE then print details associated with warning messages
 #' @param ... Unused
 #' @method classify_landcover SpatRaster
 #'
@@ -111,7 +112,7 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
 #' r <- suppressWarnings(classify_landcover(r, SDM = 'riparian'))
 
 
-classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, ...) {
+classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE, ...) {
   if (!inherits(x, "SpatRaster")) stop("x must be a SpatRaster")
   levels(x) <- NULL
   landscape_vars = terra::freq(x, usenames = FALSE)
@@ -152,7 +153,9 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, ...) {
           "Caution Advised. Some land cover classes are not represented by any
           of the predictors for the selected SDM. Check input raster for errors."))
     }
-    print(excluded |> dplyr::select('CODE_NAME', 'count', 'prop'))
+    if (verbose) {
+      print(excluded |> dplyr::select('CODE_NAME', 'count', 'prop'))
+    }
 
   }
 
@@ -178,7 +181,9 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, ...) {
   included = freq(r)$value
   if (!all(pred_unique %in% included)) {
     missing = pred_unique[!pred_unique %in% included]
-    cat(missing)
+    if (verbose) {
+      cat(missing)
+    }
     warning(
       strwrap(
         prefix = " ", initial = "",

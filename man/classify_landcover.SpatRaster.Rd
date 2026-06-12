@@ -4,7 +4,7 @@
 \alias{classify_landcover.SpatRaster}
 \title{Classify landcover for SpatRaster object}
 \usage{
-\method{classify_landcover}{SpatRaster}(x, SDM, coltab = TRUE, ...)
+\method{classify_landcover}{SpatRaster}(x, SDM, coltab = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{SpatRaster}
@@ -13,6 +13,8 @@
 \code{"waterbird_fall"}, \code{"waterbird_win"}, or \code{"tima"}}
 
 \item{coltab}{logical; if TRUE add default color palette}
+
+\item{verbose}{logical; if TRUE then print details associated with warning messages}
 
 \item{...}{Unused}
 }
