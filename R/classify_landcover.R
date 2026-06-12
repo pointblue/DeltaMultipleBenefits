@@ -281,7 +281,6 @@ define_wetland_subclasses = function(x) {
           'Atriplex prostrata - Cotula coronopifolia',
           'Cotula coronopifolia',
           'Sesuvium verrucosum',
-          #'Spergularia marina', 'spergularia marina',
           'Western North American disturbed alkaline marsh and meadow') ~
         'WETLAND_EMERGENT_DISTURBED',
       Habitat_Type == 'emergent wetland' &
