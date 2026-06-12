@@ -1,13 +1,10 @@
 # Predictors used in distribution models for waterbird groups during the fall season
 
 Predictor names and how they crosswalk to the major land cover classes
-and subclasses listed in the vegetation `key`. Land cover classes or
-subclasses with `NA` values in `PREDICTOR_NAME` and `PREDICTOR_NUM` are
-excluded from these models. This data set is primarily for use in the
-[`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
-function. This crosswalk is nearly identical to
-`predictors_waterbirds_win` except that in the winter, agricultural
-fields specified as "winter wheat" are separated from other grains.
+and subclasses listed in the vegetation `key`. This crosswalk is nearly
+identical to `predictors_waterbirds_win` except that in the winter,
+agricultural fields specified as "winter wheat" are separated from other
+grains.
 
 ## Usage
 
@@ -17,7 +14,7 @@ predictors_waterbird_fall
 
 ## Format
 
-### `key` A data frame with 81 rows and 4 columns:
+### `predictors_waterbird_fall` A data frame with 81 rows and 4 columns:
 
 - CODE_NUM:
 
@@ -40,3 +37,13 @@ predictors_waterbird_fall
 ## Source
 
 Dybala et al. 2023 (https://doi.org/10.15447/sfews.2023v21iss3art4)
+
+## Details
+
+Land cover classes or subclasses with `NA` values in `PREDICTOR_NAME`
+and `PREDICTOR_NUM` are excluded from these models.
+
+This data set is primarily for use in the
+[`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
+function. See `classify_LSPT()` for an alternative approach to classify
+the original land cover polygons.

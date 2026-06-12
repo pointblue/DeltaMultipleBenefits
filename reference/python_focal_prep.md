@@ -95,11 +95,13 @@ r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
 
 #return the presence of each land cover class
 presence = suppressWarnings(python_focal_prep(landscape = r, SDM = 'riparian'))
-#> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM WOODLAND BARREN
+#> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)
+#> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM BARREN WOODLAND&SCRUB NOTES
 
 #return the area of the pixel where each land cover class is present
 #(useful for summing over moving windows)
 area = suppressWarnings(python_focal_prep(landscape = r, SDM = 'waterbird_win', pixel_value = 0.09))
+#> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)
 #> ww grain corn field row rice fal alf ip dryp dev wet duwet barren for
 
 #mask another raster (e.g., surface water data) by where each land cover is present
@@ -111,5 +113,6 @@ pfld = suppressWarnings(
    python_focal_prep(
       landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09,
        mask = w, suffix = c('_area', '_pfld')))
+#> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)
 #> grain corn field row rice fal alf ip dryp dev wet duwet barren for
 ```

@@ -131,11 +131,13 @@ another layer, <code>suffix</code> is required to have two values. See examples.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#return the presence of each land cover class</span></span></span>
 <span class="r-in"><span><span class="va">presence</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">python_focal_prep</span><span class="op">(</span>landscape <span class="op">=</span> <span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM WOODLAND BARREN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM BARREN WOODLAND&amp;SCRUB NOTES</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#return the area of the pixel where each land cover class is present</span></span></span>
 <span class="r-in"><span><span class="co">#(useful for summing over moving windows)</span></span></span>
 <span class="r-in"><span><span class="va">area</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">python_focal_prep</span><span class="op">(</span>landscape <span class="op">=</span> <span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ww grain corn field row rice fal alf ip dryp dev wet duwet barren for</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#mask another raster (e.g., surface water data) by where each land cover is present</span></span></span>
@@ -147,6 +149,7 @@ another layer, <code>suffix</code> is required to have two values. See examples.
 <span class="r-in"><span>   <span class="fu">python_focal_prep</span><span class="op">(</span></span></span>
 <span class="r-in"><span>      landscape <span class="op">=</span> <span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'waterbird_fall'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span>,</span></span>
 <span class="r-in"><span>       mask <span class="op">=</span> <span class="va">w</span>, suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'_area'</span>, <span class="st">'_pfld'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> grain corn field row rice fal alf ip dryp dev wet duwet barren for</span>
 </code></pre></div>
     </div>

@@ -21,7 +21,7 @@ key
 
   Numeric value used to encode rasters
 
-- NAME_FULL:
+- CODE_NAME:
 
   Text string joining major land cover classes to subclasses with a '\_'
 
@@ -47,6 +47,6 @@ key
 
 ## Source
 
-Dybala et al. 2023 (https://doi.org/10.15447/sfews.2023v21iss3art4);
-Dybala et al. 2025 (https://doi.org/10.15447/sfews.2025v23iss2art2);
+Dybala et al. 2023 <https://doi.org/10.15447/sfews.2023v21iss3art4>;
+Dybala et al. 2025 <https://doi.org/10.15447/sfews.2025v23iss2art2>;
 Dybala et al. In review
