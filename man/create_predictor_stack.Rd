@@ -39,7 +39,7 @@ before proceeding with \code{\link[=python_focal_run]{python_focal_run()}}.
 \examples{
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
          ncol = 10, nrow = 10))
-landcover_presence = suppressWarnings(reclassify_landcover(r, SDM = 'riparian'))
+r = suppressWarnings(create_predictor_stack(r, SDM = 'riparian'))
 }
 \seealso{
 \code{\link[=classify_landcover]{classify_landcover()}}

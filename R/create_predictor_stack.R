@@ -31,7 +31,7 @@
 #' @examples
 #' r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
 #'          ncol = 10, nrow = 10))
-#' landcover_presence = suppressWarnings(reclassify_landcover(r, SDM = 'riparian'))
+#' r = suppressWarnings(create_predictor_stack(r, SDM = 'riparian'))
 
 
 create_predictor_stack = function(x, SDM) {
