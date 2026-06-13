@@ -48,7 +48,7 @@ generate inputs for use with species distribution models.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">python_focal_prep</span><span class="op">(</span></span>
-<span>  <span class="va">landscape</span>,</span>
+<span>  <span class="va">x</span>,</span>
 <span>  <span class="va">SDM</span>,</span>
 <span>  pathout <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  landscape_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -63,19 +63,20 @@ generate inputs for use with species distribution models.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-landscape">landscape<a class="anchor" aria-label="anchor" href="#arg-landscape"></a></dt>
-<dd><p>SpatRaster created by <code><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">terra::rast()</a></code></p></dd>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>SpatRaster</p></dd>
 
 
 <dt id="arg-sdm">SDM<a class="anchor" aria-label="anchor" href="#arg-sdm"></a></dt>
-<dd><p>The name of intended species distribution model, for which
-<code>landscape</code> will be reclassified: <code>"riparian"</code>, <code>"waterbird_fall"</code>,
-<code>"waterbird_win"</code>, or <code>"tima"</code></p></dd>
+<dd><p>The name of intended species distribution model, for which <code>x</code>
+will be reclassified: <code>"riparian"</code>, <code>"waterbird_fall"</code>, <code>"waterbird_win"</code>,
+or <code>"tima"</code></p></dd>
 
 
 <dt id="arg-pathout-landscape-name">pathout, landscape_name<a class="anchor" aria-label="anchor" href="#arg-pathout-landscape-name"></a></dt>
-<dd><p>Optional character strings defining the filepath
-(<code>pathout/SDM/landscape_name</code>) where output rasters should be written</p></dd>
+<dd><p>Optional character strings defining the
+filepath (<code>pathout/SDM/landscape_name</code>) where output rasters should be
+written</p></dd>
 
 
 <dt id="arg-suffix">suffix<a class="anchor" aria-label="anchor" href="#arg-suffix"></a></dt>
@@ -103,12 +104,10 @@ with <code><a href="python_focal_run.html">python_focal_run()</a></code></p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This is a wrapper function that calls <code><a href="reclassify_landcover.html">reclassify_landcover()</a></code> to group and
-rename land covers in the provided landscape raster to match predictors in
-the intended species distribution model and split them into separate layers
-representing the presence (1) or absence (0) of each land cover class for use
-in calculating focal statistics. See documentation of that function for
-information about Warning messages.</p>
+    <p>This is a wrapper function that calls <code><a href="create_predictor_stack.html">create_predictor_stack()</a></code> to split a
+land cover raster into separate layers representing the presence (1) or
+absence (0) of each land cover class for use in calculating focal statistics.
+See documentation of that function for information about Warning messages.</p>
 <p>Optionally, a custom <code>suffix</code> can be appended to the layer name and cell
 values representing land cover presence (1) can be replaced with a different
 <code>pixel_value</code> (e.g., the area of each pixel) as needed before writing the
@@ -125,33 +124,7 @@ another layer, <code>suffix</code> is required to have two values. See examples.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/pointblue/DeltaMultipleBenefits" class="external-link">DeltaMultipleBenefits</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>,<span class="fl">19</span>,<span class="fl">71</span>,<span class="fl">72</span>,<span class="fl">90</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>         ncol <span class="op">=</span> <span class="fl">10</span>, nrow <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#return the presence of each land cover class</span></span></span>
-<span class="r-in"><span><span class="va">presence</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">python_focal_prep</span><span class="op">(</span>landscape <span class="op">=</span> <span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM BARREN WOODLAND&amp;SCRUB NOTES</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#return the area of the pixel where each land cover class is present</span></span></span>
-<span class="r-in"><span><span class="co">#(useful for summing over moving windows)</span></span></span>
-<span class="r-in"><span><span class="va">area</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">python_focal_prep</span><span class="op">(</span>landscape <span class="op">=</span> <span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ww grain corn field row rice fal alf ip dryp dev wet duwet barren for</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#mask another raster (e.g., surface water data) by where each land cover is present</span></span></span>
-<span class="r-in"><span><span class="va">w</span> <span class="op">=</span> <span class="va">r</span></span></span>
-<span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">#pfld = python_focal_prep(landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)</span></span></span>
-<span class="r-in"><span><span class="co">#returns error: two values for suffix are required if mask is not `NULL`</span></span></span>
-<span class="r-in"><span><span class="va">pfld</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>   <span class="fu">python_focal_prep</span><span class="op">(</span></span></span>
-<span class="r-in"><span>      landscape <span class="op">=</span> <span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'waterbird_fall'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span>,</span></span>
-<span class="r-in"><span>       mask <span class="op">=</span> <span class="va">w</span>, suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'_area'</span>, <span class="st">'_pfld'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> grain corn field row rice fal alf ip dryp dev wet duwet barren for</span>
-</code></pre></div>
+
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

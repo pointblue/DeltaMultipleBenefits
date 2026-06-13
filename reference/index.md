@@ -6,8 +6,20 @@
   : Calculate the difference between predictions of species presence for
   a baseline and scenario landscape
 
+- [`classify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.md)
+  : Classify landcover
+
+- [`classify_landcover(`*`<SpatRaster>`*`)`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md)
+  : Classify landcover for SpatRaster object
+
+- [`classify_landcover(`*`<sf>`*`)`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.sf.md)
+  : Classify landcover data for simple features object
+
 - [`create_directory()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_directory.md)
   : create_directory
+
+- [`create_predictor_stack()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_predictor_stack.md)
+  : Create raster stack representing SDM predictors
 
 - [`fit_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/fit_SDM.md)
   : Apply species distribution models to new landscapes.
@@ -47,9 +59,6 @@
 
 - [`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md)
   : Run focal statistics via Python
-
-- [`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
-  : Reclassify landscape rasters by SDM group
 
 - [`roosts_original`](https://pointblue.github.io/DeltaMultipleBenefits/reference/roosts_original.md)
   : Traditional nighttime crane roost locations

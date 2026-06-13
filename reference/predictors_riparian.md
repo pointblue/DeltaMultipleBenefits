@@ -5,9 +5,7 @@ and subclasses listed in the vegetation `key`. Land cover classes with a
 `1` in the `RIPARIAN` or `WETLAND` fields indicate they should be
 included in additional predictors representing the proportion cover of
 those broader vegetation classes. This data set is primarily for use in
-the
-[`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
-function.
+the `reclassify_landcover()` function.
 
 ## Usage
 

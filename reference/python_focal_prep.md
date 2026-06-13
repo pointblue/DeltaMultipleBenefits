@@ -7,7 +7,7 @@ to generate inputs for use with species distribution models.
 
 ``` r
 python_focal_prep(
-  landscape,
+  x,
   SDM,
   pathout = NULL,
   landscape_name = NULL,
@@ -20,16 +20,15 @@ python_focal_prep(
 
 ## Arguments
 
-- landscape:
+- x:
 
-  SpatRaster created by
-  [`terra::rast()`](https://rspatial.github.io/terra/reference/rast.html)
+  SpatRaster
 
 - SDM:
 
-  The name of intended species distribution model, for which `landscape`
-  will be reclassified: `"riparian"`, `"waterbird_fall"`,
-  `"waterbird_win"`, or `"tima"`
+  The name of intended species distribution model, for which `x` will be
+  reclassified: `"riparian"`, `"waterbird_fall"`, `"waterbird_win"`, or
+  `"tima"`
 
 - pathout, landscape_name:
 
@@ -63,12 +62,11 @@ SpatRaster, though primarily used to write layers to file for use with
 ## Details
 
 This is a wrapper function that calls
-[`reclassify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/reclassify_landcover.md)
-to group and rename land covers in the provided landscape raster to
-match predictors in the intended species distribution model and split
-them into separate layers representing the presence (1) or absence (0)
-of each land cover class for use in calculating focal statistics. See
-documentation of that function for information about Warning messages.
+[`create_predictor_stack()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_predictor_stack.md)
+to split a land cover raster into separate layers representing the
+presence (1) or absence (0) of each land cover class for use in
+calculating focal statistics. See documentation of that function for
+information about Warning messages.
 
 Optionally, a custom `suffix` can be appended to the layer name and cell
 values representing land cover presence (1) can be replaced with a
@@ -87,32 +85,3 @@ See examples.
 [`python_focal_finalize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_finalize.md)
 
 ## Examples
-
-``` r
-library(DeltaMultipleBenefits)
-r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
-         ncol = 10, nrow = 10))
-
-#return the presence of each land cover class
-presence = suppressWarnings(python_focal_prep(landscape = r, SDM = 'riparian'))
-#> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)
-#> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM BARREN WOODLAND&SCRUB NOTES
-
-#return the area of the pixel where each land cover class is present
-#(useful for summing over moving windows)
-area = suppressWarnings(python_focal_prep(landscape = r, SDM = 'waterbird_win', pixel_value = 0.09))
-#> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)
-#> ww grain corn field row rice fal alf ip dryp dev wet duwet barren for
-
-#mask another raster (e.g., surface water data) by where each land cover is present
-w = r
-terra::values(w) <- sample(c(0,1), size = 100, replace = TRUE)
-#pfld = python_focal_prep(landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)
-#returns error: two values for suffix are required if mask is not `NULL`
-pfld = suppressWarnings(
-   python_focal_prep(
-      landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09,
-       mask = w, suffix = c('_area', '_pfld')))
-#> Step 1: Success (All land cover classes present in the provided landscape will be incorporated into the selected SDM)
-#> grain corn field row rice fal alf ip dryp dev wet duwet barren for
-```
