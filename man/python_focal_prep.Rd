@@ -5,7 +5,7 @@
 \title{Prepare landscape rasters for focal statistics via Python}
 \usage{
 python_focal_prep(
-  landscape,
+  x,
   SDM,
   pathout = NULL,
   landscape_name = NULL,
@@ -16,14 +16,15 @@ python_focal_prep(
 )
 }
 \arguments{
-\item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
+\item{x}{SpatRaster}
 
-\item{SDM}{The name of intended species distribution model, for which
-\code{landscape} will be reclassified: \code{"riparian"}, \code{"waterbird_fall"},
-\code{"waterbird_win"}, or \code{"tima"}}
+\item{SDM}{The name of intended species distribution model, for which \code{x}
+will be reclassified: \code{"riparian"}, \code{"waterbird_fall"}, \code{"waterbird_win"},
+or \code{"tima"}}
 
-\item{pathout, landscape_name}{Optional character strings defining the filepath
-(\code{pathout/SDM/landscape_name}) where output rasters should be written}
+\item{pathout, landscape_name}{Optional character strings defining the
+filepath (\code{pathout/SDM/landscape_name}) where output rasters should be
+written}
 
 \item{suffix}{Character string; custom suffix appended to layer names
 (optional unless \code{mask} is not \code{NULL}); see Details.}
@@ -44,12 +45,10 @@ Prepare for running focal statistics on a landscape raster via Python, to
 generate inputs for use with species distribution models.
 }
 \details{
-This is a wrapper function that calls \code{\link[=reclassify_landcover]{reclassify_landcover()}} to group and
-rename land covers in the provided landscape raster to match predictors in
-the intended species distribution model and split them into separate layers
-representing the presence (1) or absence (0) of each land cover class for use
-in calculating focal statistics. See documentation of that function for
-information about Warning messages.
+This is a wrapper function that calls \code{\link[=create_predictor_stack]{create_predictor_stack()}} to split a
+land cover raster into separate layers representing the presence (1) or
+absence (0) of each land cover class for use in calculating focal statistics.
+See documentation of that function for information about Warning messages.
 
 Optionally, a custom \code{suffix} can be appended to the layer name and cell
 values representing land cover presence (1) can be replaced with a different
@@ -62,26 +61,23 @@ data). To distinguish land cover presence from the values extracted from
 another layer, \code{suffix} is required to have two values. See examples.
 }
 \examples{
-library(DeltaMultipleBenefits)
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
          ncol = 10, nrow = 10))
+r = suppressWarnings(python_focal_prep(r, SDM = 'riparian'))
 
-#return the presence of each land cover class
-presence = suppressWarnings(python_focal_prep(landscape = r, SDM = 'riparian'))
+# return the area of the pixel where each land cover class is present
+# (useful for summing over moving windows)
+area = suppressWarnings(python_focal_prep(r, SDM = 'waterbird_win', pixel_value = 0.09))
 
-#return the area of the pixel where each land cover class is present
-#(useful for summing over moving windows)
-area = suppressWarnings(python_focal_prep(landscape = r, SDM = 'waterbird_win', pixel_value = 0.09))
-
-#mask another raster (e.g., surface water data) by where each land cover is present
+# mask another raster (e.g., surface water data) by the presence of each
+land cover class
 w = r
 terra::values(w) <- sample(c(0,1), size = 100, replace = TRUE)
-#pfld = python_focal_prep(landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)
+#pfld = python_focal_prep(r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)
 #returns error: two values for suffix are required if mask is not `NULL`
 pfld = suppressWarnings(
-   python_focal_prep(
-      landscape = r, SDM = 'waterbird_fall', pixel_value = 0.09,
-       mask = w, suffix = c('_area', '_pfld')))
+   python_focal_prep(r, SDM = 'waterbird_fall', pixel_value = 0.09,
+                     mask = w, suffix = c('_area', '_pfld')))
 }
 \seealso{
 \code{\link[=python_focal_run]{python_focal_run()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
