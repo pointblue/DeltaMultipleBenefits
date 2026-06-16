@@ -1,10 +1,23 @@
 # Unreleased
 
-- Improved how Python functions are called by adding several Python helper functions; avoids importing arcpy and Spatial Analyst extensions repeatedly in the same session.
-- Added a test for the ability to load arcpy.
-- `reclassify_landcover` and `python_focal_prep`: Streamlined process of crosswalking land cover classes to predictors used in each set of SDMs
+### Documentation
+- [Supporting Information](articles/supporting_information.html): Added references for Phase II manuscript (in review) and published data sets
+- [Overview](articles/overview.html): Updated information about the completed status of Phase II 
+
+### Data
 - `key`: Simplified to full list of recognized land cover classes and subclasses
 - `predictors_tima`, `predictors_riparian`, `predictors_waterbird_fall`, `predictors_waterbird_win`: added data sets laying out the crosswalk between land cover classes and subclasses in `key` with predictors expected by each set of SDMs
+
+### Functions
+- `utils-py.R`: Added several Python helper functions to improved how Python is called and avoid importing arcpy and Spatial Analyst extensions repeatedly in the same session
+- `reclassify_landcover`: Deprecated and replaced with `classify_landcover` and `create_predictor_stack`
+- `classify_landcover`: Added function with methods for handling `sf` of `SpatRaster` input data; supports classification of land cover polygon data in alignment with `key` and classification of SpatRaster data to align with predictors required by each set of SDMs, respectively
+- `create_predictor_stack`: Added internal function called by `python_focal_prep` to convert a classified raster into a stack of predictor variables
+
+### Tests
+- Added a test for the ability to load arcpy.
+- Added basic tests for `classify_landcover`, `create_predictor_stack`, and `python_focal_prep`
+
 
 # DeltaMultipleBenefits 1.1.0 - 2026-05-14
 
