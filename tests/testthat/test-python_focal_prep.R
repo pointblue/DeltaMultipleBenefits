@@ -4,7 +4,7 @@ test_that('pixel values are correctly applied', {
   codenums = DeltaMultipleBenefits::key$CODE_NUM
   r <- terra::rast(matrix(sample(codenums, size = 1000, replace = TRUE),
                           ncol = 100, nrow = 100))
-  r2 = classify_landcover(r, SDM = 'waterbird_win')
+  r2 = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win'))
   area = python_focal_prep(r2, SDM = 'waterbird_win', pixel_value = 0.09)
   expect_true(all(unique(values(area[[1]] %in% c(0.00, 0.09, NaN)))))
 })

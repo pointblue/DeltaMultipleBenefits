@@ -40,7 +40,7 @@
 #' @examples
 #' codenums = DeltaMultipleBenefits::key$CODE_NUM
 #' r <- terra::rast(matrix(sample(codenums, size = 1000, replace = TRUE), ncol = 100, nrow = 100))
-#' watwin = classify_landcover(r, SDM = 'waterbird_win')
+#' watwin = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win'))
 #' watwin_pred = python_focal_prep(watwin)
 #'
 #' # return the area of the pixel where each land cover class is present
