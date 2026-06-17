@@ -52,15 +52,28 @@
 sum_change = function(dat, k = 2) {
   dat = dplyr::rename_with(dat, ~gsub('area|SCORE_TOTAL', 'value', .x))
 
-  res = dplyr::left_join(
-    dat |> dplyr::filter(.data$scenario != 'baseline') |>
-      dplyr::rename_with(~gsub('value', 'SCENARIO_VALUE', .x)) |>
-      dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)),
-    dat |> dplyr::filter(.data$scenario == 'baseline') |>
-      dplyr::rename_with(~gsub('value', 'BASELINE_VALUE', .x)) |>
-      dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)) |>
-      dplyr::select(-.data$scenario)) |>
-    dplyr::mutate(net_change = .data$SCENARIO_VALUE - .data$BASELINE_VALUE)
+  scenariodat = dplyr::filter(dat, scenario != 'baseline') |>
+    dplyr::rename_with(~gsub('value', 'SCENARIO_VALUE', .x)) |>
+    dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x))
+  scenariodat = split(
+    scenariodat |>
+      dplyr::select(tidyselect::any_of(c('CODE_NAME', 'SCENARIO_VALUE', 'SE'))),
+    scenariodat$scenario)
+
+  res = purrr::map_df(
+    scenariodat,
+    ~.x |> dplyr::full_join(
+      dat |> dplyr::filter(.data$scenario == 'baseline') |>
+        dplyr::rename_with(~gsub('value', 'BASELINE_VALUE', .x)) |>
+        dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)) |>
+        dplyr::select(-.data$scenario),
+      by = dplyr::join_by(CODE_NAME)) |>
+      dplyr::mutate(
+        dplyr::across(c(SCENARIO_VALUE, BASELINE_VALUE),
+                      ~tidyr::replace_na(.x, replace = 0)),
+        net_change = .data$SCENARIO_VALUE - .data$BASELINE_VALUE),
+    .id = 'scenario'
+  )
 
   if ('value_SE' %in% names(dat)) {
     res = dplyr::mutate(res,
