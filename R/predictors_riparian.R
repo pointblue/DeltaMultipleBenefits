@@ -11,12 +11,15 @@
 #' were ultimately excluded from model predictions and can be safely ignored
 #' (i.e. the `WOODLAND&SCRUB` class), as well as notes on more specific
 #' vegetation types from the original source classifications that were excluded
-#' from the predictor when these models were first developed. Therefore, use of
-#' this key to crosswalk land cover data to the predictors for these models
-#' cannot be fully consistent with the original classification scheme used to
-#' develop these models. See [classify_LSPT()] for an alternative approach to
-#' classify the original land cover polygons.
+#' from the predictor when these models were first developed.
 #'
+#' Caution: For riparian landbird SDMs, use of [classify_landcover.SpatRaster()]
+#' on a raster developed from the primary land cover classifications produced by
+#' [classify_landcover.sf()] cannot be completely consistent with the original
+#' classification scheme used to develop these models because of the minor
+#' exceptions detailed in the `NOTES` field. We recommend instead creating a
+#' raster directly based on the `PREDICTORS_RIPARIAN` field produced by
+#' [classify_landcover.sf()].
 #'
 #' @format ## `predictors_riparian` A data frame with 81 rows and 7 columns:
 #' \describe{

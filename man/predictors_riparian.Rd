@@ -30,17 +30,21 @@ subclasses listed in the vegetation \code{key}. Land cover classes with a \code{
 the \code{RIPARIAN} or \code{WETLAND} fields indicate they should be included in
 additional predictors representing the proportion cover of those broader
 vegetation classes. This data set is primarily for use in the
-\code{\link[=reclassify_landcover]{reclassify_landcover()}} function.
+\code{\link[=classify_landcover]{classify_landcover()}} function.
 }
 \details{
 The \code{NOTES} field provides additional information on vegetation classes that
 were ultimately excluded from model predictions and can be safely ignored
 (i.e. the \code{WOODLAND&SCRUB} class), as well as notes on more specific
 vegetation types from the original source classifications that were excluded
-from the predictor when these models were first developed. Therefore, use of
-this key to crosswalk land cover data to the predictors for these models
-cannot be fully consistent with the original classification scheme used to
-develop these models. See \code{\link[=classify_LSPT]{classify_LSPT()}} for an alternative approach to
-classify the original land cover polygons.
+from the predictor when these models were first developed.
+
+Caution: For riparian landbird SDMs, use of \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}
+on a raster developed from the primary land cover classifications produced by
+\code{\link[=classify_landcover.sf]{classify_landcover.sf()}} cannot be completely consistent with the original
+classification scheme used to develop these models because of the minor
+exceptions detailed in the \code{NOTES} field. We recommend instead creating a
+raster directly based on the \code{PREDICTORS_RIPARIAN} field produced by
+\code{\link[=classify_landcover.sf]{classify_landcover.sf()}}.
 }
 \keyword{datasets}
