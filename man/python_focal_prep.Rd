@@ -61,23 +61,23 @@ data). To distinguish land cover presence from the values extracted from
 another layer, \code{suffix} is required to have two values. See examples.
 }
 \examples{
-r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
-         ncol = 10, nrow = 10))
-r = suppressWarnings(python_focal_prep(r, SDM = 'riparian'))
+codenums = DeltaMultipleBenefits::key$CODE_NUM
+r <- terra::rast(matrix(sample(codenums, size = 1000, replace = TRUE), ncol = 100, nrow = 100))
+watwin = classify_landcover(r, SDM = 'waterbird_win')
+watwin_pred = python_focal_prep(watwin)
 
 # return the area of the pixel where each land cover class is present
 # (useful for summing over moving windows)
-area = suppressWarnings(python_focal_prep(r, SDM = 'waterbird_win', pixel_value = 0.09))
+watwin_area = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09)
 
 # mask another raster (e.g., surface water data) by the presence of each
-land cover class
-w = r
-terra::values(w) <- sample(c(0,1), size = 100, replace = TRUE)
-#pfld = python_focal_prep(r, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)
-#returns error: two values for suffix are required if mask is not `NULL`
-pfld = suppressWarnings(
-   python_focal_prep(r, SDM = 'waterbird_fall', pixel_value = 0.09,
-                     mask = w, suffix = c('_area', '_pfld')))
+land cover class:
+w = watwin # simulate surface water data
+levels(w) = NULL
+coltab(w) = NULL
+terra::values(w) <- sample(c(0,1), size = 10000, replace = TRUE)
+#pfld = python_focal_prep(watwin, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w) #returns error
+pfld = python_focal_prep(watwin, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w, suffix = c('_area', '_pfld')))
 }
 \seealso{
 \code{\link[=python_focal_run]{python_focal_run()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
