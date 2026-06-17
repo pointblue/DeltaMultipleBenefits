@@ -1,15 +1,17 @@
 test_that('incomplete land covers produces a warning message', {
   r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
                           ncol = 10, nrow = 10))
-  classify_landcover(r, SDM = 'riparian') |> expect_warning()
+  expect_warning(classify_landcover(r, SDM = 'riparian', verbose = FALSE))
+
 })
 
 # include 50 = generic "GRASSLAND&PASTURE" which should be excluded from waterbird models
 test_that('incomplete land covers & unused land covers produce two warning messages', {
   r <- terra::rast(matrix(sample(c(11,19,71,72,50), size = 100, replace = TRUE),
                           ncol = 10, nrow = 10))
-  classify_landcover(r, SDM = 'waterbird_fall') |> expect_warning() |>
-    expect_warning()
+  expect_warning(
+    expect_warning(
+      classify_landcover(r, SDM = 'waterbird_fall', verbose = FALSE)))
 })
 
 # library(sf)
