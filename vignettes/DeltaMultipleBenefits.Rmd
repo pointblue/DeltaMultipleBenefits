@@ -20,20 +20,18 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-The DeltaMultipleBenefits package facilitates estimating the net impacts of scenarios of landscape change in the Sacramento-San Joaquin River Delta, created with funding from the Proposition 1 Delta Water Quality and Ecosystem Restoration Program administered by the California Department of Fish and Wildlife (Grant Agreement Number–Q1996022). 
+The DeltaMultipleBenefits package provides tools for estimating the net impacts of landscape changes in the Sacramento-San Joaquin River Delta on multiple metrics of interest to the Delta community. It provides models and data to support estimating the magnitude of potential multiple benefits and trade-offs resulting from changes to a baseline landscape. It can be used to estimate the effects of a proposed change to the landscape (e.g., habitat restoration plans) or anticipated changes to the landscape (e.g., agricultural crop conversion trends), individually or in combination with each other. It can be used to investigate the complex interactions among multiple drivers of landscape change and to facilitate discussions about alternative scenarios under consideration.
 
-The package provides tools for applying existing data and species distribution models to user-supplied landscapes to estimate a range of benefits to the Delta community and how they compare to other landscapes. Currently, the benefit categories addressed include: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. 
+The metrics currently supported by this package are grouped into several categories of potential benefits: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape, regions within the landscape, or individual project areas. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. 
 
-Ultimately, this R package is intended to facilitate a more comprehensive multidimensional understanding of the direction and magnitude of the potential impacts of landscape change (proposed or anticipated), communication about the projected synergies and trade-offs among multiple goals, and the identification of solutions to address these trade-offs.
+Importantly, this package is not designed to find an "optimal" solution to maximize benefits and minimize trade-offs, but rather to evaluate and compare realistic proposed alternatives or anticipated future changes. This is because the list of supported metrics is incomplete compared to the many interests, values, and goals held by the Delta community, land managers, organizations, and agencies, so that any optimized solution would be incomplete and potentially misleading. Instead, this package requires users to supply spatial data representing their baseline (current) landscape and alternative scenarios under consideration. Example baseline and scenario landscapes used in the development of this package are publicly available for reuse or modification (see [Supporting Information](articles/supporting_information.html)). 
 
-This vignette serves as a tutorial outlining the major steps of analyzing alternative Delta landscapes and comparing them to each other, including:  
+This vignette serves as a tutorial outlining the major steps of analyzing alternative landscapes and comparing them to each other, including:  
 
 1. Preparing new landscape scenarios for analysis 
 2. Summarizing the net change in the total area of each land cover class
 3. Estimating the net change in simple metrics  
 4. Estimating the net change in metrics informed by spatial models  
-
-Here, we use a toy land cover data set as an example of how to work through these steps, but to reproduce the analyses conducted in [Dybala et al. (2025)](https://doi.org/10.15447/sfews.2025v23iss2art2){target="_blank"}, the original baseline land cover data, scenarios, distribution models, and other required supporting data can be downloaded (see [Supporting Information](articles/supporting_information.html)) or are included with this package. 
 
 ```{r setup}
 library(DeltaMultipleBenefits)
@@ -48,16 +46,26 @@ library(tibble)
   
 # Step 1. Preparing a new landscape scenario for analysis
 
-To prepare a new landscape scenario for analysis with the *DeltaMultipleBenefits* framework, its land cover classifications must first be aligned with those used in the framework, which are designed to work with the existing metrics and species distribution models. This land cover classification scheme includes both natural and agricultural land cover classes, and is organized hierarchically into major land cover classes and subclasses. Certain subclasses are only relevant to certain metrics and species distribution models, while other metrics will apply to the entire major land cover class. Therefore, we generally recommend assigning all land covers in your landscape scenario to the most specific subclass in the existing scheme:
+To prepare a new landscape scenario for analysis with the *DeltaMultipleBenefits* framework, its land cover classifications must first be aligned with those used in the framework, which are designed to work with the existing metrics and species distribution models. This land cover classification scheme includes both natural and agricultural land cover classes, and is organized hierarchically into major land cover classes and subclasses. Following Phase 2 of developing this package, we substantially updated the vegetation key to accommodate many more wetland vegetation suclasses. 
 
 ```{r classify}
 data(key, package = 'DeltaMultipleBenefits')
 head(key)
 ```
 
+We generally recommend assigning all land covers in your landscape scenario to the most specific subclass in the existing scheme as possible. Certain metrics and species distribution models will use individual subclasses, while others will lump them together into broader groupings.
+
 ## 1.1 Working with polygons
 
-As an example of how to align the land cover classifications for a new landscape scenario represented by polygons, we'll work with the `olinda1` dataset from a file contained in the `sf` package. This data set includes place names instead of land cover classifications, but we'll treat them as though they represented land covers and recode them to supported `CODE_NAME` values in the `key`. Finally, we'll join the `key` data to match new `CODE_NAME` values to `CODE_BASELINE` values we'll need later on.
+The most recent, comprehensive land cover and land use data set for the Delta and Suisun Marsh that we are aware of is the "Habitat_types_modern" provided in SFEI's Landscape Scenario Planning Tool v.3.0.0. To support alignment with this data set and its land cover classification scheme, we developed the `classify_landcover.sf()` function to support cross-walking that layer to the land cover classes and subclasses required by the models and metrics in this package. The result of this function is the additon of fields representing the most detailed land cover class or subclass that can be assigned according to the scheme provided in `key`, as well as the corresponding predictors required to fit the species distribution models supported by this package.
+
+```{r classify_lspt}
+# EXAMPLE NOT RUN:
+# lspt <- read_sf('path/to/Habitat_types_modern.shp')
+# lc_classified <- DeltaMultipleBenefits::classify_landcover.sf(lspt)
+```
+
+Alternatively, and to work with other land cover data sources, manually align land cover classes and subclasses with those provided in `key`. As a toy example, and for further demonstrating the additional steps in this vignette, we'll work with the `olinda1` dataset provided with the `sf` package. This data set includes place names instead of land cover classifications, but we'll treat them as though they represented land covers and recode them to supported `CODE_NAME` values in the `key`. Finally, we'll join the `key` data to match new `CODE_NAME` values to `CODE_BASELINE` values we'll need later on.
 
 ```{r classify_poly}
 olinda1 <- sf::st_read(system.file("shape/olinda1.shp", package = "sf"), 
@@ -86,9 +94,9 @@ new_shp <- olinda1 |>
       NM_BAIR %in% c('Varadouro', 'Amparo', 'Amaro Branco') ~ 
         'RIPARIAN_FOREST_QULO',
       NM_BAIR %in% c('Vila Popular', 'Peixinhos', 'Carmo') ~
-        'WETLAND_MANAGED_PERENNIAL',
+        'WETLAND_TULE_CATTAIL_NONTIDAL',
       NM_BAIR %in% c('Jardim Brasil', 'Aguazinha', 'Santa Teresa') ~ 
-        'WETLAND_MANAGED_SEASONAL',
+        'WETLAND_PHRAGMITES_ARUNDO_TIDAL',
       is.na(NM_BAIR) ~ 'PASTURE_ALFALFA',
       TRUE ~ 'UNKNOWN')) |> 
   # transfer CODE_BASELINE values from key
@@ -97,31 +105,21 @@ new_shp <- olinda1 |>
 ggplot2::ggplot(new_shp) + 
   ggplot2::geom_sf(ggplot2::aes(fill = CODE_NAME))
 ```
-
-Next, convert the polygons to a raster format with the desired projection, extent, and resolution. Simple features objects must first be converted to SpatVector objects using `terra::vect()`. Then we'll create a raster template with a small number of columns and rows (and thus coarse resolution) just for demonstration purposes, but to ensure alignment with other rasters in your analysis, it usually works best to use an existing raster as a template. Next, transfer the land cover code values to the template to create a new landscape raster that we'll treat as our "baseline" landscape. Finally, to help with plotting, we'll assign factor levels and color codings.
+Next, convert the polygons to a raster format with the desired projection, extent, and resolution. We'll first create a raster template from the polygon layer with a small number of columns and rows (and thus coarse resolution) just for demonstration purposes. However, to ensure alignment with other rasters in your analysis, it usually works best to use an existing raster as a template. Next, transfer the land cover code values to the template to create a new landscape raster that we'll treat as our "baseline" landscape. Finally, to help with plotting, we'll assign labels and default color codings to each value.
 
 
 ```{r classify_poly3, eval = FALSE}
-# simplify number of fields, change to SpatVector, and change projection
-new_vect = new_shp |> 
-  dplyr::select(CODE_NAME, CODE_BASELINE)
 
-template = terra::rast(new_vect, ncols = 100, nrows = 100)
-
-baseline = terra::rasterize(x = new_vect,
-                            y = template, 
-                            field = 'CODE_BASELINE')
+template = terra::rast(new_shp, ncols = 100, nrows = 100)
+baseline = terra::rasterize(x = new_shp, y = template, field = 'CODE_NUM')
 
 # assign factor levels:
 levels(baseline) <-  key |> 
-  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) |> 
-  tidyr::drop_na() |> as.data.frame()
+  dplyr::select(CODE_NUM, CODE_NAME) |> as.data.frame()
 
 # assign color coding
 terra::coltab(baseline) <- key |> 
-  dplyr::select(CODE_BASELINE, COLOR) |> tidyr::drop_na() |>
-  tidyr::complete(CODE_BASELINE = c(0:255)) |> 
-  dplyr::pull(COLOR)
+  dplyr::select(CODE_NUM, COLOR) |> as.data.frame()
 plot(baseline)
 
 ```
@@ -131,25 +129,23 @@ plot(baseline)
 If the landscape to be analyzed is in a raster format already, the existing land cover values encoded should be similarly translated to the supported values in the existing land cover classification scheme. As an example, we'll use `baseline` raster we created above, and create a new version from it to serve as our new `scenario` of landscape change. 
 
 ```{r classify_raster, eval = FALSE}
-# simple example scenario: all wheat pixels (22) are converted to Fremont 
-# cottonwood riparian forest (71)
+# basic example habitat restoration scenario: all wheat (22) and corn (26) 
+# pixels are converted to Fremont cottonwood riparian forest (71)
 scenario <- terra::classify(baseline,
-                            rcl = data.frame(from = 22, to = 71) |> 
-                              as.matrix())
-
+                         rcl = data.frame(from = c(22, 26), 
+                                          to = c(71, 71)) |> 
+                           as.matrix())
 levels(scenario) <-  key |> 
-  dplyr::select(id = CODE_BASELINE, label = CODE_NAME) |> 
-  tidyr::drop_na() |> as.data.frame()
-
+  dplyr::select(CODE_NUM, CODE_NAME) |> as.data.frame()
 terra::coltab(scenario) <- key |> 
-  dplyr::select(CODE_BASELINE, COLOR) |> tidyr::drop_na() |>
-  tidyr::complete(CODE_BASELINE = c(0:255)) |> 
-  dplyr::pull(COLOR)
+  dplyr::select(CODE_NUM, COLOR) |> as.data.frame()
 
 # stack landscapes to compare
 landscapes = c(baseline, scenario)
 names(landscapes) = c('baseline', 'scenario')
-plot(landscapes) #Note the orange wheat cells have changed to red riparian cells
+plot(landscapes) 
+# Note the light pink wheat and corn cells have changed to orange-red riparian 
+# cells
 ```
   
   
@@ -157,16 +153,20 @@ plot(landscapes) #Note the orange wheat cells have changed to red riparian cells
 
 Built-in functions make it simple to estimate the change in the total area of each land cover class between the baseline and one or more scenario landscape rasters. First, sum the total area of each land cover class in each landscape raster, then summarize the change between them.
 
-__sum_landcover:__ This function takes a SpatRaster with one or more layers and, for each layer, counts the number of pixels of each unique land cover class and multiplies by the provided `pixel_area` value to estimate the total area of each land cover class. It returns a tibble with the scenario name (taken from the names of each raster layer), the `CODE_NAME` of each land cover class, and the total area. Here we'll first use `terra::cellSize` to estimate the area of each pixel in ha. The option `rollup = TRUE` adds extra rows to the output with the sum total area for all riparian and managed wetland subclasses. This function also supports options to mask out portions of the raster and/or to summarize the total area by zone. 
+__sum_landcover:__ This function takes a SpatRaster with one or more layers and, for each layer, counts the number of pixels of each unique land cover class and multiplies by the provided `pixel_area` value to estimate the total area of each land cover class. It returns a tibble with the scenario name (taken from the names of each raster layer), the `CODE_NAME` of each land cover class, and the total area. Here we'll first use `terra::cellSize` to estimate the area of each pixel in ha. The option `rollup = TRUE` adds extra rows to the output with the sum total area for all riparian and wetland subclasses. This function also supports options to mask out portions of the raster and/or to summarize the total area by zones or regions within the landscape. 
 
 ```{r landcover1, eval = FALSE}
-area = terra::cellSize(baseline, unit = 'ha')[50,50] |> tibble::deframe()
+units = 'ha'
+
+area = terra::cellSize(baseline, unit = units)[50,50] |> tibble::deframe()
 
 landcover_totals = DeltaMultipleBenefits::sum_landcover(
   landscapes = landscapes, 
   pixel_area = area,
-  rollup = TRUE) |>
-  arrange(scenario, CODE_NAME)
+  rollup = TRUE,
+  zones = NULL) |>
+  arrange(scenario, CODE_NAME) |> 
+  dplyr::mutate(units = units)
 
 ```
 
@@ -174,7 +174,8 @@ __sum_change:__ This function calculates the net change in the area of each land
 
 ```{r landcover2, eval = FALSE}
 landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
-
+landcover_change
+# Note net increase in riparian (and specifically POFR) and decrease in wheat and corn, as expected.
 ```
   
   
@@ -642,6 +643,9 @@ __sum_change:__ Again, use this function to estimate the net change in the total
 ```{r riparian8, eval = FALSE}
 scores_change_habitat = DeltaMultipleBenefits::sum_change(habitat_totals)
 ```
+
+# Acknowledgements
+This R package was created with funding from the Proposition 1 Delta Water Quality and Ecosystem Restoration Program administered by the California Department of Fish and Wildlife (Grant Agreement Number–Q1996022), and further developed with funding from the Water Quality, Supply, and Infrastructure Improvement Act of 2014 (Proposition 1, CWC § 79707), administered by the California Department of Fish and Wildlife (Grant Agreement Number Q2296017). 
 
 # References
 
