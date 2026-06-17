@@ -48,13 +48,14 @@
 #' watwin_area = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09)
 #'
 #' # mask another raster (e.g., surface water data) by the presence of each
-#' land cover class:
+#' # land cover class:
 #' w = watwin # simulate surface water data
 #' levels(w) = NULL
 #' coltab(w) = NULL
 #' terra::values(w) <- sample(c(0,1), size = 10000, replace = TRUE)
 #' #pfld = python_focal_prep(watwin, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w) #returns error
-#' pfld = python_focal_prep(watwin, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w, suffix = c('_area', '_pfld')))
+#' pfld = python_focal_prep(watwin, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w,
+#'                          suffix = c('_area', '_pfld')))
 
 python_focal_prep = function(x, SDM,
                              pathout = NULL, landscape_name = NULL,
