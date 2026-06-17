@@ -31,6 +31,6 @@ Predictor names and how they crosswalk to the major land cover classes and
 subclasses listed in the vegetation \code{key}. Land cover classes or subclasses
 with \code{NA} values in \code{PREDICTOR_NAME} and \code{PREDICTOR_NUM} are excluded from
 these models. This data set is primarily for use in the
-\code{\link[=reclassify_landcover]{reclassify_landcover()}} function.
+\code{\link[=classify_landcover]{classify_landcover()}} function.
 }
 \keyword{datasets}
