@@ -33,8 +33,6 @@ fields specified as "winter wheat" are separated from other grains.
 Land cover classes or subclasses with \code{NA} values in \code{PREDICTOR_NAME} and
 \code{PREDICTOR_NUM} are excluded from these models.
 
-This data set is primarily for use in the \code{\link[=reclassify_landcover]{reclassify_landcover()}} function.
-See \code{\link[=classify_LSPT]{classify_LSPT()}} for an alternative approach to classify the original
-land cover polygons.
+This data set is primarily for use in the \code{\link[=classify_landcover]{classify_landcover()}} function.
 }
 \keyword{datasets}
