@@ -4,9 +4,9 @@ test_that('pixel values are correctly applied', {
   codenums = DeltaMultipleBenefits::key$CODE_NUM
   r <- terra::rast(matrix(sample(codenums, size = 1000, replace = TRUE),
                           ncol = 100, nrow = 100))
-  r2 = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win'))
+  r2 = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win', verbose = FALSE))
   area = python_focal_prep(r2, SDM = 'waterbird_win', pixel_value = 0.09)
-  expect_true(all(unique(values(area[[1]] %in% c(0.00, 0.09, NaN)))))
+  expect_true(all(unique(terra::values(area[[1]]) %in% c(0.00, 0.09, NaN))))
 })
 
 # TEST ERRORS: (same as for create_predictor stack)
@@ -29,7 +29,7 @@ r <- terra::rast(matrix(sample(codenums, size = 10000, replace = TRUE),
 r2 = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win', verbose = FALSE))
 w = r2
 levels(w) = NULL
-coltab(w) = NULL
+terra::coltab(w) = NULL
 terra::values(w) <- sample(c(0,1), size = 10000, replace = TRUE) # simulate surface water data
 
 test_that('two suffixes must be provided to avoid an error', {
@@ -40,7 +40,7 @@ test_that('two suffixes must be provided to avoid an error', {
 test_that('masking works as expected', {
   pfld = suppressWarnings(python_focal_prep(r2, SDM = 'waterbird_fall', pixel_value = 0.09,
                       mask = w, suffix = c('_area', '_pfld')))
-  expect_true(nlyr(pfld) == length(freq(r2)$value)*2)
+  expect_true(terra::nlyr(pfld) == length(terra::freq(r2)$value)*2)
 })
 
 
