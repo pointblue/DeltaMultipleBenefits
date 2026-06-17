@@ -174,14 +174,14 @@ __sum_change:__ This function calculates the net change in the area of each land
 
 ```{r landcover2, eval = FALSE}
 landcover_change = DeltaMultipleBenefits::sum_change(landcover_totals)
-landcover_change
+head(landcover_change)
 # Note net increase in riparian (and specifically POFR) and decrease in wheat and corn, as expected.
 ```
   
   
 # Step 3. Estimating the net change in simple metrics
 
-We developed several "simple metrics" representing several categories of benefits including: *agricultural livelihoods*, *water quality*, and *climate change resilience*. For example, agricultural livelihood metrics include the number of agricultural jobs, their average annual wage, and gross production value. These are all "simple metrics" in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple compared to estimating the net change in metrics derived from a spatial model (see below), and the steps are similar to estimating the net change in land cover area above. However, the uncertainty in the value of each metric for each land cover class, such as resulting from spatial or temporal variation, can also be accounted for in estimating the uncertainty in the net change. The values assigned to each land cover class for each metric are available to download via [Zenodo](https://doi.org/10.5281/zenodo.7504874)), but are also included in this package: 
+The `DeltaMultipleBenefits` package supports evaluation of several relatively "simple" metrics representing the benefits categories: *agricultural livelihoods*, *water quality*, and *climate change resilience*. For example, agricultural livelihood metrics include the number of agricultural jobs, their average annual wage, and gross production value. These are all "simple" metrics in the sense that a single mean value for each metric is used to represent each land cover class, regardless of where in the Delta the land cover is located. Therefore, estimating the net change in these metrics between a baseline and scenario landscape is relatively simple compared to estimating the net change in metrics derived from a spatial model (see below). The steps for estimating the net change in these simple metrics are similar to estimating the net change in land cover area above. However, the uncertainty in the value of each metric for each land cover class (where available) is also accounted for in estimating the uncertainty in the net change. The values assigned to each land cover class for each metric are included in this package, and are also published and available to download separately (see [Supporting Information](articles/supporting_information.html)).
 
 ```{r metrics1, eval = FALSE}
 data(metrics, package = 'DeltaMultipleBenefits')
@@ -190,17 +190,15 @@ head(metrics)
 
 __sum_metrics:__ First estimate the total landscape score for each metric and landscape raster, by combining total area of each land cover class estimated above with the per-unit-area metrics for each land cover class. For most metrics, this involves multiplying the per-unit-area metrics by the total area of each land cover class and summing over the entire landscape. For Annual Wages (as part of the Agricultural Livelihoods category of benefits), it instead calculates the new weighted average wage across all agricultural hectares (i.e., those supporting agricultural jobs with an associated wage value). For metrics in the Climate Change Resilience category, it instead calculates the new overall average resilience score on a scale of 1 (low resilience) to 10 (high resilience). The function returns a tibble with the scenario name, fields from `metrics` defining metric categories and units, a `SCORE_TOTAL` and a `SCORE_TOTAL_SE`, representing the combined uncertainty. The `units` field is also updated to reflect that the scores are no longer per-hectare, but instead summed over all hectares in the landscape.
 
-The total area of each land cover class as calculated above includes both the area of individual riparian and managed wetland subclasses as well as the roll-up total area, so we must take care not to double-count them in the total landscape scores calcualted here. Thus far, `metrics` are not available for riparian and managed wetland subclasses, and instead apply to riparian and managed wetland land covers generally. Therefore, here we filter out the subclasses to exclude them from this calculation.
+The total area of each land cover class as calculated above includes both the area of individual riparian and managed wetland subclasses as well as the roll-up total area (because we used `rollup = TRUE`), so we must take care not to double-count them in the total landscape scores calcualted here. Thus far, these simple `metrics` are not specific to individual riparian and wetland subclasses and instead apply to riparian and wetland land covers generally. Therefore, here we filter out the subclasses to exclude them from this calculation.
 
-*Note: We will get a warning message here, because our example landscapes do not include all land cover classes present in our metrics data.*
+*Note: We will get a warning message here, because our toy example landscape does not include all land cover classes present in our metrics data.*
 
 ```{r metrics2, eval = FALSE}
 scores = DeltaMultipleBenefits::sum_metrics(
-  metricdat = metrics |>
-    dplyr::filter(
-      !(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME))),
-  areadat = landcover_totals |>
-    filter(!(grepl('RIPARIAN_|WETLAND_MANAGED_|WETLAND_TIDAL|WATER', CODE_NAME)))) 
+  metricdat = metrics,
+  areadat = landcover_totals |> filter(!(grepl('RIPARIAN_|WETLAND_', CODE_NAME)))) 
+head(scores)
 ```
 
 __sum_change:__ Then, we can again use `sum_change` to estimate the difference in each metric between the baseline and scenario landscapes. However, this time because there is uncertainty in the total landscape scores, the uncertainty in the difference will also be estimated. Here we use a coverage factor `k = 2` to approximate a 95% confidence interval for the `net_change`.
@@ -211,18 +209,26 @@ head(scores_change)
 ```
 
 Visualize the resulting estimates of net change:
+(Note no error bar for N loading due to lack of uncertainty estimates)
+
 ```{r metrics_plot, eval = FALSE}
 scores_change |> 
-  # invert water quality scores so a reduction in pesticide use is shown as a
-  # net benefit
   dplyr::mutate(
+    # invert water quality scores so a reduction in pesticide use is shown as a 
+    # net benefit
     net_change = dplyr::if_else(
-      METRIC_CATEGORY == 'Water Quality',
-      -1 * net_change,
-      net_change)) |> 
+      METRIC_CATEGORY == 'Water Quality', -1 * net_change, net_change),
+    # rescale scores and confidence intervals with very large numbers to facilitate
+    # comparisons
+    across(c(net_change, lcl, ucl), 
+           ~case_when(
+             METRIC == 'Gross Production Value' ~ .x/1000,
+             METRIC == 'N loading' ~ .x/1000,
+             TRUE ~ .x))
+    ) |> 
   ggplot2::ggplot(ggplot2::aes(net_change, METRIC)) +
   ggplot2::facet_wrap(~METRIC_CATEGORY, ncol = 1, scales = 'free') +
-  ggplot2::geom_col() + 
+  ggplot2::geom_col(fill = 'gray80') + 
   ggplot2::geom_errorbar(ggplot2::aes(xmin = lcl, xmax = ucl), width = 0.25) +
   # add blank geoms to ensure zeroes line up across facets
   ggplot2::geom_blank(ggplot2::aes(x = -ucl)) + 
@@ -233,9 +239,15 @@ scores_change |>
   
 # Step 4. Estimating the net change in metrics informed by spatial models
 
-In addition to the "simple metrics" described above, we developed species distribution models for riparian landbirds and waterbirds that predict the probability of species presence for each pixel on the landscape, depending on the land cover class at that pixel, the composition of land cover classes in the surrounding area, and other features of the landscape. We used the probability of presence predictions as an indicator of suitable habitat, and to represent the benefits category of *biodiversity support*. Evaluating the net change in biodiversity support between scenario and baseline landscapes is necessarily more complicated than evaluating the "simple metrics" above, but also allows for more nuance and spatial variation.
+In addition to the "simple" metrics described above, the `DeltaMultipleBenefits` package supports evaluation of more complex spatial models that consider not only the total extent of each land cover class in the landscape but also their spatial configuration. For example, whether or not an area is suitable habitat for wildlife species often depends on both the local land cover class as well as the surrounding land cover classes and proximity to specific features on the landscape (such as distance to a water channel). Evaluating the net change in these metrics between scenario and baseline landscapes is necessarily more complicated than evaluating the "simple" metrics above, but also allows for more nuance and spatial variation within the landscape.
 
-Currently, the only spatial models supported are the distribution models for riparian landbird species and groups of waterbird species. Their development is described in a manuscript ([Dybala et al. 2023](https://doi.org/10.15447/sfews.2023v21iss3art4){target="_blank"}) and the models are available to download via Zenodo (doi: [10.5281/zenodo.7531945](https://doi.org/10.5281/zenodo.7531945)). However, spatial models for other species and for other benefits categories could be incorporated in future versions of this package as they are developed.
+The package currently supports application of several species distribution models for birds to represent the *Biodiversity Support* benefits category, with metrics that represent the estimated extent of suitable habitat for each species or group of species. These include models for:
+* 9 riparian landbird species during the breeding season
+* 6 groups of waterbird species, including separate models for the fall and winter seasons
+* 7 tidal wetland bird species, including 3 secretive marsh bird species and 4 tidal wetland songbird species
+See [Supporting Information](articles/supporting_information.html) for links to manuscripts and reports describing their development, and links to download these models.
+
+Spatial models for other species, other benefits categories and metrics, and/or to represent the "simple" metrics in a more nuanced way could be incorporated in future versions of this package as they are developed. Please contact us to suggest future extensions of this package and to collaborate on further development.
 
 ## 4.1 Riparian landbird models
 
