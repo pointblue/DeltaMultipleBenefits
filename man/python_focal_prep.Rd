@@ -63,21 +63,23 @@ another layer, \code{suffix} is required to have two values. See examples.
 \examples{
 codenums = DeltaMultipleBenefits::key$CODE_NUM
 r <- terra::rast(matrix(sample(codenums, size = 1000, replace = TRUE), ncol = 100, nrow = 100))
-watwin = classify_landcover(r, SDM = 'waterbird_win')
-watwin_pred = python_focal_prep(watwin)
+watwin = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win', verbose = FALSE))
+watwin_pred = python_focal_prep(watwin, SDM = 'waterbird_win')
 
 # return the area of the pixel where each land cover class is present
 # (useful for summing over moving windows)
 watwin_area = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09)
 
 # mask another raster (e.g., surface water data) by the presence of each
-land cover class:
+# land cover class:
 w = watwin # simulate surface water data
 levels(w) = NULL
-coltab(w) = NULL
+terra::coltab(w) = NULL
 terra::values(w) <- sample(c(0,1), size = 10000, replace = TRUE)
-#pfld = python_focal_prep(watwin, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w) #returns error
-pfld = python_focal_prep(watwin, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w, suffix = c('_area', '_pfld')))
+#pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask = w)
+#returns error because two suffixes need to be provided
+pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask = w,
+                         suffix = c('_area', '_pfld')) # works
 }
 \seealso{
 \code{\link[=python_focal_run]{python_focal_run()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
