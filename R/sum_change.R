@@ -57,7 +57,10 @@ sum_change = function(dat, k = 2) {
     dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x))
   scenariodat = split(
     scenariodat |>
-      dplyr::select(tidyselect::any_of(c('CODE_NAME', 'SCENARIO_VALUE', 'SE'))),
+      dplyr::select(
+        tidyselect::any_of(
+          c('CODE_NAME', 'METRIC_CATEGORY', 'METRIC', 'UNIT',
+            'SCENARIO_VALUE', 'SCENARIO_SE'))),
     scenariodat$scenario)
 
   res = purrr::map_df(
@@ -66,8 +69,7 @@ sum_change = function(dat, k = 2) {
       dat |> dplyr::filter(.data$scenario == 'baseline') |>
         dplyr::rename_with(~gsub('value', 'BASELINE_VALUE', .x)) |>
         dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x)) |>
-        dplyr::select(-.data$scenario),
-      by = dplyr::join_by(CODE_NAME)) |>
+        dplyr::select(-.data$scenario)) |>
       dplyr::mutate(
         dplyr::across(c(SCENARIO_VALUE, BASELINE_VALUE),
                       ~tidyr::replace_na(.x, replace = 0)),
