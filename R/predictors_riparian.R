@@ -5,7 +5,7 @@
 #' the `RIPARIAN` or `WETLAND` fields indicate they should be included in
 #' additional predictors representing the proportion cover of those broader
 #' vegetation classes. This data set is primarily for use in the
-#' [reclassify_landcover()] function.
+#' [classify_landcover()] function.
 #'
 #' The `NOTES` field provides additional information on vegetation classes that
 #' were ultimately excluded from model predictions and can be safely ignored
