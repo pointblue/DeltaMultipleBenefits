@@ -58,8 +58,26 @@
 
 sum_metrics = function(metricdat, areadat) {
 
-  dat_join = dplyr::full_join(areadat, metricdat) |>
+  # split areadat by scenario
+  areadat = split(areadat |> dplyr::select(-scenario),
+                  areadat$scenario)
+
+  # for each scenario, join full list of available metrics
+  dat_join = purrr::map_df(
+    areadat,
+    ~dplyr::full_join(.x, metricdat, by = dplyr::join_by(CODE_NAME)),
+    .id = 'scenario')
+
+  # check for missing land covers (since we did a full join)
+  tmp = dat_join |> dplyr::filter(is.na(.data$area))
+  if (nrow(tmp) > 0) {
+    message('\nNote: One or more land cover classes in "metricdat" do not have an area estimate in "areadat"; assumed zero')
+  }
+
+  # calculate total scores
+  dat_sum = dat_join |>
     dplyr::mutate(
+      area = replace_na(area, replace = 0), # if missing from areadat, fill with zero
       # retain mean value for Annual Wages for now, otherwise multiply by area
       # for total score
       SCORE_TOTAL = dplyr::if_else(.data$METRIC == 'Annual Wages',
@@ -71,15 +89,9 @@ sum_metrics = function(metricdat, areadat) {
                                       .data$area * .data$SCORE_SE)
       )
 
-  # check for missing land covers (since we did a full join)
-  tmp = dat_join |> dplyr::filter(is.na(.data$area))
-  if (nrow(tmp) > 0) {
-    message('\nNote: One or more land cover classes in "metricdat" do not have an area estimate in "areadat"')
-  }
-
   res = dplyr::bind_rows(
     # for all but annual wages, sum over all land cover classes:
-    dat_join |>
+    dat_sum |>
       dplyr::filter(.data$METRIC != 'Annual Wages') |>
       dplyr::group_by(
         dplyr::across(
@@ -87,11 +99,11 @@ sum_metrics = function(metricdat, areadat) {
             c('scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
               'METRIC', 'UNIT')))) |>
       dplyr::summarize(
-        area = sum(.data$area, na.rm = TRUE),
-        SCORE_TOTAL = sum(.data$SCORE_TOTAL, na.rm = TRUE),
-        SCORE_TOTAL_SE = sqrt(sum(.data$SCORE_TOTAL_SE^2, na.rm = TRUE)),
+        area = sum(.data$area),
+        SCORE_TOTAL = sum(.data$SCORE_TOTAL),
+        SCORE_TOTAL_SE = sqrt(sum(.data$SCORE_TOTAL_SE^2)),
         .groups = 'drop') |>
-      # for climate change resilience, divide by the area
+      # for climate change resilience, also divide by the area
       dplyr::mutate(
         dplyr::across(
           c(.data$SCORE_TOTAL, .data$SCORE_TOTAL_SE),
@@ -101,7 +113,7 @@ sum_metrics = function(metricdat, areadat) {
       dplyr::select(-.data$area),
     # for annual wages: multiply the average wage per-landcover by the
     # proportion of the total ag landscape made up by that land cover
-    dat_join |>
+    dat_sum |>
       dplyr::filter(.data$METRIC == 'Annual Wages' & .data$SCORE_TOTAL > 0) |>
       dplyr::group_by(
         dplyr::across(
@@ -109,12 +121,11 @@ sum_metrics = function(metricdat, areadat) {
             c('scenario', 'ZONE', 'METRIC_CATEGORY', 'METRIC_SUBTYPE',
               'METRIC', 'UNIT')))) |>
       dplyr::mutate(
-        area_ag_total = sum(.data$area, na.rm = TRUE),
+        area_ag_total = sum(.data$area),
         area_prop = .data$area / .data$area_ag_total) |>
       dplyr::summarize(
-        SCORE_TOTAL = sum(.data$SCORE_TOTAL * .data$area_prop, na.rm = TRUE),
-        SCORE_TOTAL_SE = sqrt(sum((.data$SCORE_TOTAL_SE * .data$area_prop)^2,
-                                  na.rm = TRUE)),
+        SCORE_TOTAL = sum(.data$SCORE_TOTAL * .data$area_prop),
+        SCORE_TOTAL_SE = sqrt(sum((.data$SCORE_TOTAL_SE * .data$area_prop)^2)),
         .groups = 'drop')
   )
 
