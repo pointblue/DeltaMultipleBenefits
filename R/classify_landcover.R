@@ -1,5 +1,7 @@
 #' Classify landcover
 #' @rdname classify_landcover
+#' @param x object of class sf, sfc, sfg, or SpatRaster
+#' @param ... Unused
 #' @export
 
 classify_landcover <- function(x, ...) UseMethod("classify_landcover")
@@ -65,7 +67,7 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
         add_riparian_predictors() |>
         add_waterbird_predictors() |>
         add_tima_predictors() |>
-        dplyr::select(-CLASS, -TIDAL)
+        dplyr::select(-.data$CLASS, -.data$TIDAL)
     }
   } else {
     stop('only LSPT is currently supported')
@@ -119,7 +121,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
 
   if (SDM == 'riparian') {
     pred <- DeltaMultipleBenefits::predictors_riparian |>
-      dplyr::select(-NOTES)
+      dplyr::select(-.data$NOTES)
   } else if (SDM == 'waterbird_fall') {
     pred <- DeltaMultipleBenefits::predictors_waterbird_fall
   } else if (SDM == 'waterbird_win') {
@@ -171,14 +173,14 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
     dplyr::arrange('PREDICTOR_NUM')
   if (coltab) {
     # add default color palette
-    coltab(r) <- pred |>
+    terra::coltab(r) <- pred |>
       dplyr::select('PREDICTOR_NUM', 'COLOR') |>
       tidyr::drop_na() |> dplyr::distinct() |> as.data.frame()
   }
 
   # check that all required predictors are accounted for
   pred_unique = unique(pred$PREDICTOR_NAME)
-  included = freq(r)$value
+  included = terra::freq(r)$value
   if (!all(pred_unique %in% included)) {
     missing = pred_unique[!pred_unique %in% included]
     if (verbose) {
@@ -644,7 +646,7 @@ add_code_names = function(x) {
       TRUE ~ CLASS)
   ) |>
     dplyr::left_join(
-      DeltaMultipleBenefits::key |> dplyr::select(CODE_NAME, CODE_NUM),
+      DeltaMultipleBenefits::key |> dplyr::select(.data$CODE_NAME, .data$CODE_NUM),
       by = dplyr::join_by(CODE_NAME))
   return(res)
 }
