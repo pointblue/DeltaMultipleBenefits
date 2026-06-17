@@ -6,6 +6,11 @@
 \usage{
 classify_landcover(x, ...)
 }
+\arguments{
+\item{x}{object of class sf, sfc, sfg, or SpatRaster}
+
+\item{...}{Unused}
+}
 \description{
 Classify landcover
 }

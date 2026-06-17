@@ -165,7 +165,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
     x,
     rcl = crosswalk |>
       dplyr::select(from = 'value', to = 'PREDICTOR_NUM') |>
-      tidyr::drop_na(tidyselect::any_of('to')) |> as.matrix(),
+      tidyr::drop_na(tidyselect::all_of('to')) |> as.matrix(),
     others = NA)
   levels(r) <- crosswalk |>
     dplyr::select('PREDICTOR_NUM', 'PREDICTOR_NAME') |>
@@ -647,6 +647,6 @@ add_code_names = function(x) {
   ) |>
     dplyr::left_join(
       DeltaMultipleBenefits::key |> dplyr::select(.data$CODE_NAME, .data$CODE_NUM),
-      by = dplyr::join_by(CODE_NAME))
+      by = dplyr::join_by(.data$CODE_NAME))
   return(res)
 }
