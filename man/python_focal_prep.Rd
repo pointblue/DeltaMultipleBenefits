@@ -7,6 +7,7 @@
 python_focal_prep(
   x,
   SDM,
+  fill = TRUE,
   suffix = NULL,
   pixel_value = NULL,
   subset = NULL,
@@ -21,6 +22,8 @@ python_focal_prep(
 \item{SDM}{The name of intended species distribution model, for which \code{x}
 will be reclassified: \code{"riparian"}, \code{"waterbird_fall"}, \code{"waterbird_win"},
 or \code{"tima"}}
+
+\item{fill}{logical; see Details}
 
 \item{suffix}{Character string; custom suffix appended to layer names
 (optional unless \code{mask} is not \code{NULL}); see Details.}

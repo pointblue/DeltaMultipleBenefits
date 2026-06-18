@@ -27,6 +27,7 @@
 #' @param SDM The name of intended species distribution model, for which `x`
 #'   will be reclassified: `"riparian"`, `"waterbird_fall"`, `"waterbird_win"`,
 #'   or `"tima"`
+#' @param fill logical; see Details
 #' @param suffix Character string; custom suffix appended to layer names
 #'   (optional unless `mask` is not `NULL`); see Details.
 #' @param subset Optional SpatRaster or string representing filepath to a
@@ -64,9 +65,9 @@
 #' pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask = w,
 #'                          suffix = c('_area', '_pfld')) # works
 
-python_focal_prep = function(x, SDM, suffix = NULL, pixel_value = NULL,
-                             subset = NULL, dir = NULL, overwrite = FALSE,
-                             ...) {
+python_focal_prep = function(x, SDM, fill = TRUE, suffix = NULL,
+                             pixel_value = NULL, subset = NULL, dir = NULL,
+                             overwrite = FALSE, ...) {
 
   if (!is.null(subset) & is.null(suffix)) {
     stop('Provide two suffix values to distinguish unmasked and masked results (e.g., _area and _pfld)')
@@ -75,8 +76,8 @@ python_focal_prep = function(x, SDM, suffix = NULL, pixel_value = NULL,
   # split raster into predictor stack; if multiple layers, repeat for each;
   # keep as a list to allow each set to remain separate
   presence = purrr::map(
-    c(1:nlyr(x)),
-    ~create_predictor_stack(x = x[[.x]], SDM = SDM))
+    c(1:terra::nlyr(x)),
+    ~create_predictor_stack(x = x[[.x]], SDM = SDM, fill = fill))
   landscape_names = names(x)
   names(presence) = landscape_names
 
@@ -112,33 +113,30 @@ python_focal_prep = function(x, SDM, suffix = NULL, pixel_value = NULL,
       presence,
       function(x) {names(x) = paste0(names(x), suffix[1])}
     )
-
   }
 
-  if (!is.null(pathout) & !is.null(landscape_names)) {
-    purrr::map(
-      landscape_names,
-      function(x) {
-        create_directory(file.path(pathout, SDM, x))
-        terra::writeRaster(presence[[x]],
-                           filename = file.path(pathout, SDM, x,
-                                                paste0(names(presence[[x]]),
+  if (!is.null(dir) & !is.null(landscape_names)) {
+    for (i in c(1:length(landscape_names))) {
+      create_directory(file.path(dir, SDM, landscape_names[i]))
+      terra::writeRaster(presence[[i]],
+                         filename = file.path(dir, SDM, landscape_names[i],
+                                              paste0(names(presence[[i]]),
+                                                     '.tif')),
+                         overwrite = overwrite, ...)
+      if (!is.null(subset)) {
+        # also write out masked versions
+        terra::writeRaster(presence_mask[[i]],
+                           filename = file.path(dir, SDM, landscape_names[i],
+                                                paste0(names(presence_mask[[i]]),
                                                        '.tif')),
                            overwrite = overwrite, ...)
-      })
-    if (!is.null(subset)) {
-      # also write out masked versions
-      purrr::map(
-        landscape_names,
-        ~terra::writeRaster(presence_mask[[.x]],
-                            filename = file.path(pathout, SDM, .x,
-                                                 paste0(names(presence_mask[[.x]]),
-                                                        '.tif')),
-                            overwrite = overwrite, ...)
-      )}
-    presence = list('presence' = presence, 'presence_mask' = presence_mask)
+      }
+    }
   }
 
+  if (!is.null(subset)) {
+    presence = list('presence' = presence, 'presence_mask' = presence_mask)
+  }
   return(presence)
 
 }
