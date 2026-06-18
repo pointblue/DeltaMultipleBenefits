@@ -106,6 +106,7 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
 #' @param verbose logical; if TRUE then print details associated with warning messages
 #' @param ... Unused
 #' @method classify_landcover SpatRaster
+#' @returns SpatRaster with the same number of layers as the input `x`
 #'
 #' @export
 #' @examples
@@ -116,6 +117,7 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
 
 classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE, ...) {
   if (!inherits(x, "SpatRaster")) stop("x must be a SpatRaster")
+
   levels(x) <- NULL
   landscape_vars = terra::freq(x, usenames = FALSE)
 
@@ -167,20 +169,26 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
       dplyr::select(from = 'value', to = 'PREDICTOR_NUM') |>
       tidyr::drop_na(tidyselect::all_of('to')) |> as.matrix(),
     others = NA)
-  levels(r) <- crosswalk |>
-    dplyr::select('PREDICTOR_NUM', 'PREDICTOR_NAME') |>
-    tidyr::drop_na() |> dplyr::distinct() |>
-    dplyr::arrange('PREDICTOR_NUM')
-  if (coltab) {
-    # add default color palette
-    terra::coltab(r) <- pred |>
-      dplyr::select('PREDICTOR_NUM', 'COLOR') |>
-      tidyr::drop_na() |> dplyr::distinct() |> as.data.frame()
-  }
+
+  newlevels = list(
+    crosswalk |> dplyr::select(.data$PREDICTOR_NUM, .data$PREDICTOR_NAME) |>
+      dplyr::distinct() |> dplyr::arrange(PREDICTOR_NUM) |> tidyr::drop_na() |>
+      as.data.frame()
+    )
+  levels(r) <- rep(newlevels, nlyr(r))
+
+  newcolors = list(
+    pred |> dplyr::select(.data$PREDICTOR_NUM, .data$COLOR) |>
+      dplyr::distinct() |> dplyr::arrange(PREDICTOR_NUM) |> tidyr::drop_na() |>
+      as.data.frame()
+    )
+  coltab(r) <- rep(newcolors, nlyr(r))
+
+  names(r) = names(x)
 
   # check that all required predictors are accounted for
   pred_unique = unique(pred$PREDICTOR_NAME)
-  included = terra::freq(r)$value
+  included = terra::freq(r, bylayer = TRUE)$value
   if (!all(pred_unique %in% included)) {
     missing = pred_unique[!pred_unique %in% included]
     if (verbose) {

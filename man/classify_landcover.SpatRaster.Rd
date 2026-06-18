@@ -18,6 +18,9 @@
 
 \item{...}{Unused}
 }
+\value{
+SpatRaster with the same number of layers as the input \code{x}
+}
 \description{
 Prepare for fitting SDMs by reclassifying an existing landscape raster
 according to the classifications used by a specific set of species
