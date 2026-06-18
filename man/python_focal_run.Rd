@@ -10,15 +10,16 @@ python_focal_run(
   SDM,
   regex = NULL,
   scale,
-  fun = "SUM",
-  pathout,
+  suffix,
+  fun = "MEAN",
+  dir,
   python = NULL
 )
 }
 \arguments{
 \item{pathin, SDM, landscape_name}{Character strings defining the filepath
 (\code{pathin/SDM/landscape_name}) containing input rasters to be processed,
-such as those created from running \code{\link[=python_focal_prep]{python_focal_prep()}}}
+such as those written from running \code{\link[=python_focal_prep]{python_focal_prep()}}}
 
 \item{regex}{Optional regular expression to process only a subset of the
 rasters in \code{pathin/SDM/landscape_name}}
@@ -26,10 +27,10 @@ rasters in \code{pathin/SDM/landscape_name}}
 \item{scale}{String representing the buffer size (in m) within which focal
 stats are calculated}
 
-\item{fun}{Function to summarize focal statistics: \code{'SUM'} or \code{'MEAN'}}
+\item{fun}{Function to summarize focal statistics: \code{'MEAN'} or \code{'SUM'}}
 
-\item{pathout}{Filepath for the directory where output rasters should be
-written}
+\item{dir}{Filepath for the directory where output rasters should be written
+(as \code{dir/SDM/landscape_name/scale})}
 
 \item{python}{Optional filepath to the preferred version of arcpy, passed to
 \code{reticulate::use_python}. See details.}
@@ -39,29 +40,24 @@ Nothing returned to R environment. Writes rasters to \code{pathout} for
 each land cover class.
 }
 \description{
-Wrapper function to call a python script for calculating focal statistics on
-landscape rasters. On first call this function imports the arcpy module and
-Spatial Analyst extensions then sources the Python script "focal_stats.py".
+Internal function that checks for the availability of Python, imports the
+arcpy module and Spatial Analyst extensions, then sources the Python script
+"focal_stats.py".
 }
 \details{
-This function calls the \code{focal_stats.py} script to summarize cell
-values for the input raster within a buffer distance defined by \code{scale}.
-Summary functions may include \code{'SUM'} or \code{'MEAN'}. The default of \verb{fun = SUM'} is intended to be called only after first running
-\code{\link[=python_focal_prep]{python_focal_prep()}}, which prepares rasters representing the
-presence/absence of individual land cover classes, as defined by each set
-of species distribution models, and allows 'SUM' to effectively count the
-number of pixels of each land cover class within a given distance. This
-function can also be used with \code{fun = 'MEAN'} to estimate the mean
-probability of open water for a given land cover class within a given
-distance (i.e. _pfld predictors for waterbird models). See vignette.
+This function is primarily for internal use by
+\code{\link[=python_focal_stats]{python_focal_stats()}} to calculate focal statistics for each land cover
+predictor, passing the appropriate moving window sizes and summary
+functions required by each species distribution model. For each unique
+directory of land cover predictors, this function calls the
+\code{focal_stats.py} script which reads in all rasters in the directory (unless
+the \code{regex} argument is used) and then summarizes cell values for each
+input raster within a buffer distance defined by \code{scale}.
 
-\emph{Important:} This function requires the availability of arcpy and Spatial
-Analyst extensions. Use the \code{python} argument to specify the local pathway
-to arcpy, particularly if other versions of Python are installed. For
-example: 'C:/Program
-Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that the
-python argument is applied only on the first use within each session, and
-must be repeated in each session.
+Summary functions may include \code{'SUM'} or \code{'MEAN'}. Note that the MEAN of
+binary land cover presence data is equivalent to the proportion cover of
+each land cover class within the buffer distance while the SUM represents
+the count of pixels within the buffer distance.
 }
 \examples{
 # See vignette
@@ -69,3 +65,4 @@ must be repeated in each session.
 \seealso{
 \code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
 }
+\keyword{internal}
