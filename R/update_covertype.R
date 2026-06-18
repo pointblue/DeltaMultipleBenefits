@@ -32,7 +32,7 @@
 #' @examples
 #' # See vignette
 
-update_covertype = function(x, SDM, mask = NULL, pathout = NULL,
+update_covertype = function(x, SDM, mask = NULL, dir = NULL,
                             overwrite = FALSE, ...) {
 
   if (!is.null(mask)) {
@@ -89,9 +89,9 @@ update_covertype = function(x, SDM, mask = NULL, pathout = NULL,
   if (!is.null(pathout)) {
     purrr::map(names(x),
                function(landscape_name) {
-                 create_directory(file.path(pathout, SDM, landscape_name))
+                 create_directory(file.path(dir, SDM, landscape_name))
                  terra::writeRaster(covertype,
-                                    file.path(pathout, SDM, landscape_name,
+                                    file.path(dir, SDM, landscape_name,
                                               paste0(names(covertype),'.tif')),
                                     overwrite = overwrite, ...)
                })

@@ -4,7 +4,7 @@
 \alias{update_covertype}
 \title{Update waterbird and tidal marsh bird predictors: covertype and LANDCOVER}
 \usage{
-update_covertype(x, SDM, mask = NULL, pathout = NULL, overwrite = FALSE, ...)
+update_covertype(x, SDM, mask = NULL, dir = NULL, overwrite = FALSE, ...)
 }
 \arguments{
 \item{x}{SpatRaster}
@@ -15,12 +15,12 @@ update_covertype(x, SDM, mask = NULL, pathout = NULL, overwrite = FALSE, ...)
 \item{mask}{Optional SpatRaster or string representing filepath to a raster
 that should be used to mask the output, e.g. a study area boundary}
 
+\item{dir}{Optional string representing directory passed to
+\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir/SDM/landscape_name}). See Details.}
+
 \item{overwrite}{logical. If \code{TRUE}, output is overwritten}
 
 \item{...}{additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
-
-\item{dir}{Optional string representing directory passed to
-\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir/SDM/landscape_name}). See Details.}
 }
 \value{
 SpatRaster with the same number of layers as the input \code{x}, names
