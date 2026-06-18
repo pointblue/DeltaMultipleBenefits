@@ -17,13 +17,13 @@
 #' unintentionally. If needed, the resulting layers can be replaced manually
 #' before proceeding with [python_focal_run()].
 #'
-#' @param x SpatRaster
+#' @param x SpatRaster; can only have 1 layer
 #' @param SDM The name of intended species distribution model: `"riparian"`,
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
 #'
-#' @return SpatRaster with separate layers for each land cover class included as
-#'   a predictor in the selected SDM representing the presence (1) and absence
-#'   (0)
+#' @returns SpatRaster with separate layers for each land cover class included
+#'   as a predictor in the selected SDM representing the presence (1) and
+#'   absence (0)
 #' @export
 #' @seealso [classify_landcover()]
 #'

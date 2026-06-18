@@ -7,15 +7,15 @@
 create_predictor_stack(x, SDM)
 }
 \arguments{
-\item{x}{SpatRaster}
+\item{x}{SpatRaster; can only have 1 layer}
 
 \item{SDM}{The name of intended species distribution model: \code{"riparian"},
 \code{"waterbird_fall"}, \code{"waterbird_win"}, or \code{"tima"}}
 }
 \value{
-SpatRaster with separate layers for each land cover class included as
-a predictor in the selected SDM representing the presence (1) and absence
-(0)
+SpatRaster with separate layers for each land cover class included
+as a predictor in the selected SDM representing the presence (1) and
+absence (0)
 }
 \description{
 Prepare for fitting SDMs by transforming a landscape raster into a stack of
