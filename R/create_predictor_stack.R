@@ -11,15 +11,17 @@
 #' expected by the selected SDM. See [classify_landcover.SpatRaster()].
 #'
 #' A warning is given if land cover classes expected by the model are absent
-#' from the landscape, and rasters with all zero values are created to represent
-#' them. However, the input raster should be carefully reviewed to ensure they
-#' are truly absent and have not bee excluded from the landscape
-#' unintentionally. If needed, the resulting layers can be replaced manually
-#' before proceeding with [python_focal_run()].
+#' from the landscape. If fill = TRUE (the defualt), the function will create
+#' rasters with all zero values for each missing land cover class. However, the
+#' input raster should be carefully reviewed to ensure they are truly absent and
+#' have not been excluded from the landscape unintentionally. If needed, the
+#' resulting layers can be replaced manually before proceeding with
+#' [python_focal_run()].
 #'
 #' @param x SpatRaster; can only have 1 layer
 #' @param SDM The name of intended species distribution model: `"riparian"`,
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
+#' @param fill logical; see Details
 #'
 #' @returns SpatRaster with separate layers for each land cover class included
 #'   as a predictor in the selected SDM representing the presence (1) and
@@ -34,7 +36,7 @@
 #' r = suppressWarnings(create_predictor_stack(r, SDM = 'riparian'))
 
 
-create_predictor_stack = function(x, SDM) {
+create_predictor_stack = function(x, SDM, fill = TRUE) {
 
   # segregate
   layernames = terra::freq(x)$value
@@ -114,13 +116,18 @@ create_predictor_stack = function(x, SDM) {
         prefix = " ", initial = "",
         "Extreme Caution Advised. Land cover classes are missing from the
         input raster but are expected by the selected SDM. Check input raster
-        for errors. Creating rasters with all zero values, but confirm they are
-        truly absent from the landscape."))
-    rnew = x
-    rnew[!is.na(rnew)] <- 0 # raster with all zero values
-    addme = list(rnew) |> rep(length(missing)) |> terra::rast()
-    names(addme) = missing
-    presence = c(presence, addme)
+        for errors."))
+    if (fill) {
+      message(
+        strwrap(
+          "Because fill = TRUE, creating missing rasters with all zero values,
+          but confirm they are truly absent from the landscape."))
+      rnew = x
+      rnew[!is.na(rnew)] <- 0 # raster with all zero values
+      addme = list(rnew) |> rep(length(missing)) |> terra::rast()
+      names(addme) = missing
+      presence = c(presence, addme)
+    }
   }
 
   return(presence)

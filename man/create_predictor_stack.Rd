@@ -4,13 +4,15 @@
 \alias{create_predictor_stack}
 \title{Create raster stack representing SDM predictors}
 \usage{
-create_predictor_stack(x, SDM)
+create_predictor_stack(x, SDM, fill = TRUE)
 }
 \arguments{
 \item{x}{SpatRaster; can only have 1 layer}
 
 \item{SDM}{The name of intended species distribution model: \code{"riparian"},
 \code{"waterbird_fall"}, \code{"waterbird_win"}, or \code{"tima"}}
+
+\item{fill}{logical; see Details}
 }
 \value{
 SpatRaster with separate layers for each land cover class included
@@ -30,11 +32,12 @@ should already be classified according to the land cover classifications
 expected by the selected SDM. See \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}.
 
 A warning is given if land cover classes expected by the model are absent
-from the landscape, and rasters with all zero values are created to represent
-them. However, the input raster should be carefully reviewed to ensure they
-are truly absent and have not bee excluded from the landscape
-unintentionally. If needed, the resulting layers can be replaced manually
-before proceeding with \code{\link[=python_focal_run]{python_focal_run()}}.
+from the landscape. If fill = TRUE (the defualt), the function will create
+rasters with all zero values for each missing land cover class. However, the
+input raster should be carefully reviewed to ensure they are truly absent and
+have not been excluded from the landscape unintentionally. If needed, the
+resulting layers can be replaced manually before proceeding with
+\code{\link[=python_focal_run]{python_focal_run()}}.
 }
 \examples{
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
