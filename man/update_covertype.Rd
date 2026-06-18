@@ -4,7 +4,7 @@
 \alias{update_covertype}
 \title{Update waterbird and tidal marsh bird predictors: covertype and LANDCOVER}
 \usage{
-update_covertype(x, SDM, mask = NULL, pathout = NULL, overwrite = FALSE)
+update_covertype(x, SDM, mask = NULL, pathout = NULL, overwrite = FALSE, ...)
 }
 \arguments{
 \item{x}{SpatRaster}
@@ -17,8 +17,10 @@ that should be used to mask the output, e.g. a study area boundary}
 
 \item{overwrite}{logical. If \code{TRUE}, output is overwritten}
 
-\item{dir}{Optional string representing output directory
-(\code{dir/SDM/landscape_name}) where output rasters should be written}
+\item{...}{additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
+
+\item{dir}{Optional string representing directory passed to
+\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir/SDM/landscape_name}). See Details.}
 }
 \value{
 SpatRaster with the same number of layers as the input \code{x}, names
@@ -34,9 +36,9 @@ Classifies land cover rasters to generate categorical predictors
 required by the "waterbird_fall", "waterbird_win", and "tima" models. The
 input raster \code{x} should already represent land cover predictors required by
 the selected \code{SDM}, i.e. output from \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}. A
-mask raster can optionally be provided, either as a SpatRaster or a
-filepath to a raster, to first mask the input raster(s) \code{x}, . Output can
-be optionally written to \code{dir/SDM/landscape_name} where \code{landscape_name} is
+\code{mask} raster can optionally be provided, either as a SpatRaster or a
+filepath to a raster, to first mask the input raster(s) \code{x}. Output can be
+optionally written to \code{dir/SDM/landscape_name} where \code{landscape_name} is
 taken from the names of the input raster(s) \code{x}.
 }
 \examples{

@@ -8,9 +8,9 @@
 #'   required by the "waterbird_fall", "waterbird_win", and "tima" models. The
 #'   input raster `x` should already represent land cover predictors required by
 #'   the selected `SDM`, i.e. output from [classify_landcover.SpatRaster()]. A
-#'   mask raster can optionally be provided, either as a SpatRaster or a
-#'   filepath to a raster, to first mask the input raster(s) `x`, . Output can
-#'   be optionally written to `dir/SDM/landscape_name` where `landscape_name` is
+#'   `mask` raster can optionally be provided, either as a SpatRaster or a
+#'   filepath to a raster, to first mask the input raster(s) `x`. Output can be
+#'   optionally written to `dir/SDM/landscape_name` where `landscape_name` is
 #'   taken from the names of the input raster(s) `x`.
 #'
 #' @param x SpatRaster
@@ -18,9 +18,10 @@
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
 #' @param mask Optional SpatRaster or string representing filepath to a raster
 #'   that should be used to mask the output, e.g. a study area boundary
-#' @param dir Optional string representing output directory
-#'   (`dir/SDM/landscape_name`) where output rasters should be written
+#' @param dir Optional string representing directory passed to
+#'   [terra::writeRaster()], as (`dir/SDM/landscape_name`). See Details.
 #' @param overwrite logical. If `TRUE`, output is overwritten
+#' @param ... additional arguments passed to [terra::writeRaster()]
 #'
 #' @returns SpatRaster with the same number of layers as the input `x`, names
 #'   required by the selected `SDM`.
@@ -31,7 +32,8 @@
 #' @examples
 #' # See vignette
 
-update_covertype = function(x, SDM, mask = NULL, pathout = NULL, overwrite = FALSE) {
+update_covertype = function(x, SDM, mask = NULL, pathout = NULL,
+                            overwrite = FALSE, ...) {
 
   if (!is.null(mask)) {
     if (is(mask, 'character')) {
@@ -91,7 +93,7 @@ update_covertype = function(x, SDM, mask = NULL, pathout = NULL, overwrite = FAL
                  terra::writeRaster(covertype,
                                     file.path(pathout, SDM, landscape_name,
                                               paste0(names(covertype),'.tif')),
-                                    overwrite = overwrite)
+                                    overwrite = overwrite, ...)
                })
   }
   return(covertype)
