@@ -18,6 +18,7 @@
     if (!done) {
       if (!is.null(python)) reticulate::use_python(python, required = TRUE)
       .py_state$arcpy <- reticulate::import("arcpy")
+      .py_state$os <- reticulate::import("os")
       .py_state$arcpy$CheckOutExtension("Spatial")
       done <<- TRUE
     }
@@ -29,7 +30,10 @@
 load_py_script <- function(py_name) {
   path <- system.file("python", paste0(py_name, ".py"),
                       package = "DeltaMultipleBenefits")
-  env <- new.env(parent = emptyenv())
+  if (path == "" || !file.exists(path)) {
+    stop("Python script not found: ", py_name)
+  }
+  env <- new.env(parent = globalenv())
   reticulate::source_python(path, convert = FALSE, envir = env)
   env
 }
