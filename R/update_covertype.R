@@ -1,106 +1,37 @@
 #' Update waterbird and tidal marsh bird predictors: covertype and LANDCOVER
 #'
-#' Helper function for updating covertype and LANDCOVER predictors for the
-#' waterbird and tidal marsh bird distribution models, respectively.
+#' Helper function for updating `covertype` and `LANDCOVER` predictors for the
+#' waterbird ("waterbird_fall", "waterbird_win") and tidal marsh ("tima")
+#' distribution models, respectively.
 #'
-#' @details Classifies the `landscape` rasters according to the land cover
-#'   classes that were originally surveyed, which are the only classes for which
-#'   predictions should be generated from the waterbird distribution models. For
-#'   `"waterbird_fall"` or `"waterbird_win"` SDMs, generates file
-#'   `covertype.tif` and for `"tima"` SDMs, generates file `LANDCOVER.tif`.
-#'   Output is written to `pathout/SDM/scenario_name/`.
+#' @details Classifies land cover rasters to generate categorical predictors
+#'   required by the "waterbird_fall", "waterbird_win", and "tima" models. The
+#'   input raster `x` should already represent land cover predictors required by
+#'   the selected `SDM`, i.e. output from [classify_landcover.SpatRaster()]. A
+#'   mask raster can optionally be provided, either as a SpatRaster or a
+#'   filepath to a raster, to first mask the input raster(s) `x`, . Output can
+#'   be optionally written to `dir/SDM/landscape_name` where `landscape_name` is
+#'   taken from the names of the input raster(s) `x`.
 #'
-#' @param landscape SpatRaster created by [terra::rast()]
-#' @param key tibble, dataframe, or character string defining a filepath passed
-#'   to [readr::read_csv()], used to interpret the raster values in `landscape`
-#'   to land cover class names; see Details
+#' @param x SpatRaster
 #' @param SDM The name of intended species distribution model:
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
-#' @param mask Optional filepath to a raster that should be used to mask the
-#'   output, e.g. a study area boundary
-#' @param pathout,landscape_name Character strings defining the filepath
-#'   (`pathout/SDM/landscape_name`) where output rasters should be written
-#' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
+#' @param mask Optional SpatRaster or string representing filepath to a raster
+#'   that should be used to mask the output, e.g. a study area boundary
+#' @param dir Optional string representing output directory
+#'   (`dir/SDM/landscape_name`) where output rasters should be written
+#' @param overwrite logical. If `TRUE`, output is overwritten
 #'
-#' @return Nothing; all files written to `pathout`
-#' @seealso [update_pwater()]; [update_roosts()]
+#' @returns SpatRaster with the same number of layers as the input `x`, names
+#'   required by the selected `SDM`.
+#' @seealso [classify_landcover.SpatRaster()]; [update_pwater()];
+#'   [update_roosts()]
 #' @export
 #'
 #' @examples
 #' # See vignette
 
-update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
-                              landscape_name, overwrite = FALSE) {
-
-  if (is(key, 'character')) {
-    if (grepl('csv', key)) {
-      key = readr::read_csv(key, col_types = readr::cols())
-    } else {
-      stop('if key is a filepath, it should point to a CSV')
-    }
-  } else if (!(is(key, 'tbl') | is(key, 'data.frame'))) {
-    stop('function expects "key" to be a character string, tibble, or data.frame')
-  }
-
-  if (SDM == 'waterbird_fall') {
-    key_update = key |>
-      dplyr::mutate(
-        covertype = dplyr::case_when(
-          CODE_NAME == 'RICE' ~ 'Rice',
-          CODE_NAME == 'PASTURE_OTHER' ~ 'Irrigated pasture',
-          CODE_NAME == 'PASTURE_ALFALFA' ~ 'Alfalfa',
-          CODE_NAME %in%
-            c('WETLAND_MANAGED_PERENNIAL', 'WETLAND_MANAGED_SEASONAL') ~ 'Wetland',
-          TRUE ~ NA_character_),
-        covertype_code = dplyr::case_when(
-          covertype == 'Alfalfa' ~ 1,
-          covertype == 'Irrigated pasture' ~ 2,
-          covertype == 'Rice' ~ 3,
-          covertype == 'Wetland' ~ 4)) |>
-      dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
-                    .data$covertype, .data$covertype_code) |>
-      tidyr::drop_na()
-
-  } else if (SDM == 'waterbird_win') {
-    key_update = key |>
-      dplyr::mutate(
-        covertype = dplyr::case_when(
-          CODE_NAME == 'PASTURE_ALFALFA' ~ 'Alfalfa',
-          CODE_NAME == 'FIELD_CORN' ~ 'Corn',
-          CODE_NAME == 'PASTURE_OTHER' ~ 'Irrigated pasture',
-          CODE_NAME == 'RICE' ~ 'Rice',
-          CODE_NAME %in%
-            c('WETLAND_MANAGED_PERENNIAL', 'WETLAND_MANAGED_SEASONAL') ~ 'Wetland',
-          CODE_NAME == 'GRAIN&HAY_WHEAT' ~ 'Winter wheat',
-          TRUE ~ NA_character_),
-        covertype_code = dplyr::case_when(
-          covertype == 'Alfalfa' ~ 1,
-          covertype == 'Corn' ~ 2,
-          covertype == 'Irrigated pasture' ~ 3,
-          covertype == 'Rice' ~ 4,
-          covertype == 'Wetland' ~ 5,
-          covertype == 'Winter wheat' ~ 6)) |>
-      dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
-                    .data$covertype, .data$covertype_code) |>
-      tidyr::drop_na()
-  } else if (SDM == 'tima') {
-    key_update = key |>
-      dplyr::mutate(
-        covertype = dplyr::case_when(
-          CODE_BASELINE %in% c(80:83,89,190:220) ~ 'WETLAND',
-          CODE_BASELINE %in% c(70:77,170:187) ~ 'RIPARIAN',
-          CODE_BASELINE %in% c(90:92) ~ 'WATER',
-          CODE_BASELINE %in% c(20:28,40:56) ~ 'AGGRPAS',
-          TRUE ~ NA_character_),
-        covertype_code = dplyr::case_when(
-          covertype == 'WETLAND' ~ 1,
-          covertype == 'RIPARIAN' ~ 2,
-          covertype == 'WATER' ~ 3,
-          covertype == 'AGGRPAS' ~ 4)) |>
-      dplyr::select(.data$CODE_NAME, .data$CODE_BASELINE,
-                    .data$covertype, .data$covertype_code) |>
-      tidyr::drop_na()
-  }
+update_covertype = function(x, SDM, mask = NULL, pathout = NULL, overwrite = FALSE) {
 
   if (!is.null(mask)) {
     if (is(mask, 'character')) {
@@ -108,35 +39,60 @@ update_covertype = function(landscape, key, SDM, mask = NULL, pathout,
     } else if (!is(mask, 'SpatRaster')) {
       stop('function expects "mask" to be either a character string or a SpatRaster')
     }
-    landscape = terra::mask(landscape, mask)
+    x = terra::mask(x, mask)
   }
 
-  covertype = terra::classify(
-    landscape,
-    rcl = key_update |>
-      dplyr::select(from = .data$CODE_BASELINE,
-                    to = .data$covertype_code) |>
-      as.matrix(),
-    others = NA)
-  levels(covertype) = key_update |>
-    dplyr::select(.data$covertype_code, .data$covertype) |>
-    dplyr::distinct() |>
-    tidyr::drop_na() |>
-    dplyr::arrange(.data$covertype_code) |>
-    as.data.frame()
+  if (SDM == 'waterbird_fall') {
+    covertype = terra::classify(
+      x,
+      rcl = data.frame(from = c(17, 4, 3, 8),
+                       becomes = c(1, 2, 3, 4)) |>
+        as.matrix(),
+      others = NA)
+    newlevels = list(
+      data.frame(value = c(1:4),
+                 label = c('Alfalfa', 'Irrigated pasture', 'Rice', 'Wetland')))
+    levels(covertype) <- rep(newlevels, nlyr(covertype))
+    names(covertype) = rep('covertype', nlyr(covertype))
 
-  create_directory(file.path(pathout, SDM, landscape_name))
+  } else if (SDM == 'waterbird_win') {
+    covertype = terra::classify(
+      x,
+      rcl = data.frame(from = c(17, 2, 4, 3, 8, 5),
+                       becomes = c(1, 2, 3, 4, 5, 6)) |>
+        as.matrix(),
+      others = NA)
+    newlevels = list(
+      data.frame(value = c(1:6),
+                 label = c('Alfalfa', 'Corn', 'Irrigated pasture', 'Rice', 'Wetland', 'Winter wheat')))
+    levels(covertype) <- rep(newlevels, nlyr(covertype))
+    names(covertype) = rep('covertype', nlyr(covertype))
 
-  if(SDM == 'tima') {
-    names(covertype) = 'LANDCOVER'
-    terra::writeRaster(covertype,
-                       file.path(pathout, SDM, landscape_name, 'LANDCOVER.tif'),
-                       overwrite = overwrite)
-  } else {
-      names(covertype) = 'covertype'
-      terra::writeRaster(covertype,
-                         file.path(pathout, SDM, landscape_name, 'covertype.tif'),
-                         overwrite = overwrite)
+  } else if (SDM == 'tima') {
+    covertype = terra::classify(
+      x,
+      rcl = data.frame(from = c(80, 89, 190, 70, 170, 90, 20, 40),
+                       to = c(83, 89, 220, 77, 187, 92, 28, 56),
+                       becomes = c(1, 1, 1, 2, 2, 3, 4, 4)) |>
+        as.matrix(),
+      others = NA)
+    newlevels = list(
+      data.frame(value = c(1:4),
+                 label = c('WETLAND', 'RIPARIAN', 'WATER', 'AGGRPAS')))
+    levels(covertype) <- rep(newlevels, nlyr(covertype))
+    names(covertype) = rep('LANDCOVER', nlyr(covertype))
+
   }
 
+  if (!is.null(pathout)) {
+    purrr::map(names(x),
+               function(landscape_name) {
+                 create_directory(file.path(pathout, SDM, landscape_name))
+                 terra::writeRaster(covertype,
+                                    file.path(pathout, SDM, landscape_name,
+                                              paste0(names(covertype),'.tif')),
+                                    overwrite = overwrite)
+               })
+  }
+  return(covertype)
 }

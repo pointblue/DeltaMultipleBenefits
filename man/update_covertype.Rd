@@ -4,52 +4,45 @@
 \alias{update_covertype}
 \title{Update waterbird and tidal marsh bird predictors: covertype and LANDCOVER}
 \usage{
-update_covertype(
-  landscape,
-  key,
-  SDM,
-  mask = NULL,
-  pathout,
-  landscape_name,
-  overwrite = FALSE
-)
+update_covertype(x, SDM, mask = NULL, pathout = NULL, overwrite = FALSE)
 }
 \arguments{
-\item{landscape}{SpatRaster created by \code{\link[terra:rast]{terra::rast()}}}
-
-\item{key}{tibble, dataframe, or character string defining a filepath passed
-to \code{\link[readr:read_delim]{readr::read_csv()}}, used to interpret the raster values in \code{landscape}
-to land cover class names; see Details}
+\item{x}{SpatRaster}
 
 \item{SDM}{The name of intended species distribution model:
 \code{"waterbird_fall"}, \code{"waterbird_win"}, or \code{"tima"}}
 
-\item{mask}{Optional filepath to a raster that should be used to mask the
-output, e.g. a study area boundary}
+\item{mask}{Optional SpatRaster or string representing filepath to a raster
+that should be used to mask the output, e.g. a study area boundary}
 
-\item{pathout, landscape_name}{Character strings defining the filepath
-(\code{pathout/SDM/landscape_name}) where output rasters should be written}
+\item{overwrite}{logical. If \code{TRUE}, output is overwritten}
 
-\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
+\item{dir}{Optional string representing output directory
+(\code{dir/SDM/landscape_name}) where output rasters should be written}
 }
 \value{
-Nothing; all files written to \code{pathout}
+SpatRaster with the same number of layers as the input \code{x}, names
+required by the selected \code{SDM}.
 }
 \description{
-Helper function for updating covertype and LANDCOVER predictors for the
-waterbird and tidal marsh bird distribution models, respectively.
+Helper function for updating \code{covertype} and \code{LANDCOVER} predictors for the
+waterbird ("waterbird_fall", "waterbird_win") and tidal marsh ("tima")
+distribution models, respectively.
 }
 \details{
-Classifies the \code{landscape} rasters according to the land cover
-classes that were originally surveyed, which are the only classes for which
-predictions should be generated from the waterbird distribution models. For
-\code{"waterbird_fall"} or \code{"waterbird_win"} SDMs, generates file
-\code{covertype.tif} and for \code{"tima"} SDMs, generates file \code{LANDCOVER.tif}.
-Output is written to \verb{pathout/SDM/scenario_name/}.
+Classifies land cover rasters to generate categorical predictors
+required by the "waterbird_fall", "waterbird_win", and "tima" models. The
+input raster \code{x} should already represent land cover predictors required by
+the selected \code{SDM}, i.e. output from \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}. A
+mask raster can optionally be provided, either as a SpatRaster or a
+filepath to a raster, to first mask the input raster(s) \code{x}, . Output can
+be optionally written to \code{dir/SDM/landscape_name} where \code{landscape_name} is
+taken from the names of the input raster(s) \code{x}.
 }
 \examples{
 # See vignette
 }
 \seealso{
-\code{\link[=update_pwater]{update_pwater()}}; \code{\link[=update_roosts]{update_roosts()}}
+\code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}; \code{\link[=update_pwater]{update_pwater()}};
+\code{\link[=update_roosts]{update_roosts()}}
 }
