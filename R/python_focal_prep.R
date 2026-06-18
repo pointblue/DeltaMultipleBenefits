@@ -8,31 +8,37 @@
 #' absence (0) of each land cover class for use in calculating focal statistics.
 #' See documentation of that function for information about Warning messages.
 #'
-#' Optionally, a custom `suffix` can be appended to the layer name and cell
-#' values representing land cover presence (1) can be replaced with a different
-#' `pixel_value` (e.g., the area of each pixel) as needed before writing the
-#' layers to `pathout/SDM/landscape_name`.
+#' If `suffix` is provided, it is appended to the layer name. If `pixel_value`
+#' is provided, values representing land cover presence (1) are replaced with
+#' this value (e.g., the area of each pixel).
 #'
-#' By providing a `mask`, this function can also use the land cover presence
-#' layers as a mask to extract the values of another layer (e.g., surface water
-#' data). To distinguish land cover presence from the values extracted from
-#' another layer, `suffix` is required to have two values. See examples.
+#' If `subset` is provided, either as a SpatRaster or a filepath to a raster,
+#' the `subset` layer is masked by the presence of each land cover layer, e.g.
+#' to extract from surface water data the extent of surface water within each
+#' land cover class. In this case, both the land cover presence data and the
+#' subset data are returned; to distinguish between these results, `suffix` is
+#' required to have two values. The first is appended to the land cover presence
+#' data and the second is appended to the subset data. See examples.
 #'
-#' @param x SpatRaster
+#' All output can be optionally written to `dir/SDM/landscape_name` where
+#' `landscape_name` is taken from the names of the input raster(s) `x`.
+#'
+#' @param x SpatRaster with layer names corresponding to `landscape_name`
 #' @param SDM The name of intended species distribution model, for which `x`
 #'   will be reclassified: `"riparian"`, `"waterbird_fall"`, `"waterbird_win"`,
 #'   or `"tima"`
-#' @param pathout,landscape_name Optional character strings defining the
-#'   filepath (`pathout/SDM/landscape_name`) where output rasters should be
-#'   written
 #' @param suffix Character string; custom suffix appended to layer names
 #'   (optional unless `mask` is not `NULL`); see Details.
-#' @param mask Optional SpatRaster; see Details
-#' @param pixel_value Numeric value to replace cell values with (optional);
-#'   default `NULL`
-#' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
+#' @param subset Optional SpatRaster or string representing filepath to a
+#'   raster. See Details.
+#' @param pixel_value Optional numeric value to use in place of 1 where land
+#'   covers are present; default `NULL`
+#' @param dir Optional string representing directory passed to
+#'   [terra::writeRaster()], as (`dir/SDM/landscape_name`). See Details.
+#' @param overwrite logical. If `TRUE`, output is overwritten
+#' @param ... additional arguments passed to [terra::writeRaster()]
 #'
-#' @return SpatRaster, though primarily used to write layers to file for use
+#' @returns SpatRaster, though primarily used to write layers to file for use
 #'   with [python_focal_run()]
 #' @seealso [python_focal_run()], [python_focal_finalize()]
 #' @export
@@ -58,61 +64,90 @@
 #' pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask = w,
 #'                          suffix = c('_area', '_pfld')) # works
 
-python_focal_prep = function(x, SDM,
-                             pathout = NULL, landscape_name = NULL,
-                             suffix = NULL, mask = NULL, pixel_value = NULL,
-                             overwrite = FALSE) {
+python_focal_prep = function(x, SDM, suffix = NULL, pixel_value = NULL,
+                             subset = NULL, dir = NULL, overwrite = FALSE,
+                             ...) {
 
-  if (!is.null(mask) & is.null(suffix)) {
+  if (!is.null(subset) & is.null(suffix)) {
     stop('Provide two suffix values to distinguish unmasked and masked results (e.g., _area and _pfld)')
   }
 
-  # split raster into predictor stack
-  presence = create_predictor_stack(x = x, SDM = SDM)
+  # split raster into predictor stack; if multiple layers, repeat for each;
+  # keep as a list to allow each set to remain separate
+  presence = purrr::map(
+    c(1:nlyr(x)),
+    ~create_predictor_stack(x = x[[.x]], SDM = SDM))
+  landscape_names = names(x)
+  names(presence) = landscape_names
 
-  # optional: if mask is provided (e.g. pfld data), generate layers
-  # reflecting the value of the mask layer wherever each land cover is present
+  # optional: if subset is provided (e.g. pfld data), generate layers
+  # reflecting the value of the subset layer wherever each land cover is present
   # --> expect two values provided for "suffix" to distinguish them (e.g., _area
   # and _pfld)
-  if (!is.null(mask)) {
-    # where land cover is absent (presence = 0), change mask to NA (allowing
-    # values in mask path to be summarized only for that specific land cover)
-    presence_mask = terra::mask(mask, presence, maskvalue = 0, updatevalue = NA)
-    names(presence_mask) = paste0(names(presence), suffix[2])
+  if (!is.null(subset)) {
+    if (is(subset, 'character')) {
+      subset = terra::rast(subset)
+    } else if (!is(subset, 'SpatRaster')) {
+      stop('function expects "subset" to be either a character string or a SpatRaster')
+    }
 
+    # where land cover is absent (presence = 0 or NA), change masklayer to NA
+    # (allowing values in mask to be summarized only for that specific land
+    # cover)
+    presence_mask = mask_predictors(lc = presence, masklayer = subset, suffix)
+    names(presence_mask) = landscape_names
   }
 
-  # finalize & write original unmasked values:
   # optional: replace presence (1) with another value (e.g., pixel area)
   if (!is.null(pixel_value)) {
-    presence = terra::subst(presence, from = 1, to = pixel_value)
+    presence = purrr::map(
+      presence,
+      ~terra::classify(.x, rcl = data.frame(from = 1, to = pixel_value) |> as.matrix())
+    )
   }
 
   # optional: add suffix
   if (!is.null(suffix)) {
-    names(presence) = paste0(names(presence), suffix[1])
+    presence = purrr::map(
+      presence,
+      function(x) {names(x) = paste0(names(x), suffix[1])}
+    )
+
   }
 
-  if (!is.null(pathout) & !is.null(landscape_name)) {
-    create_directory(file.path(pathout, SDM, landscape_name))
-    terra::writeRaster(presence,
-                       filename = file.path(pathout, SDM, landscape_name,
-                                            paste0(names(presence),
-                                                   '.tif')),
-                       overwrite = overwrite)
-
-    if (!is.null(mask)) {
-      terra::writeRaster(presence_mask,
-                         filename = file.path(pathout, SDM, landscape_name,
-                                              paste0(names(presence_mask),
-                                                     '.tif')),
-                         overwrite = overwrite)
-    }
+  if (!is.null(pathout) & !is.null(landscape_names)) {
+    purrr::map(
+      landscape_names,
+      function(x) {
+        create_directory(file.path(pathout, SDM, x))
+        terra::writeRaster(presence[[x]],
+                           filename = file.path(pathout, SDM, x,
+                                                paste0(names(presence[[x]]),
+                                                       '.tif')),
+                           overwrite = overwrite, ...)
+      })
+    if (!is.null(subset)) {
+      # also write out masked versions
+      purrr::map(
+        landscape_names,
+        ~terra::writeRaster(presence_mask[[.x]],
+                            filename = file.path(pathout, SDM, .x,
+                                                 paste0(names(presence_mask[[.x]]),
+                                                        '.tif')),
+                            overwrite = overwrite, ...)
+      )}
+    presence = list('presence' = presence, 'presence_mask' = presence_mask)
   }
 
-  if (!is.null(mask)) {
-      presence = c(presence, presence_mask)
-  }
   return(presence)
 
+}
+
+mask_predictors = function(lc, masklayer, suffix) {
+  purrr::map(names(lc),
+             function(x) {
+               r = terra::mask(masklayer, lc[[x]], maskvalues = c(0, NA))
+               names(r) = paste0(names(lc[[x]]), suffix[2])
+               return(r)
+             })
 }

@@ -7,34 +7,36 @@
 python_focal_prep(
   x,
   SDM,
-  pathout = NULL,
-  landscape_name = NULL,
   suffix = NULL,
-  mask = NULL,
   pixel_value = NULL,
-  overwrite = FALSE
+  subset = NULL,
+  dir = NULL,
+  overwrite = FALSE,
+  ...
 )
 }
 \arguments{
-\item{x}{SpatRaster}
+\item{x}{SpatRaster with layer names corresponding to \code{landscape_name}}
 
 \item{SDM}{The name of intended species distribution model, for which \code{x}
 will be reclassified: \code{"riparian"}, \code{"waterbird_fall"}, \code{"waterbird_win"},
 or \code{"tima"}}
 
-\item{pathout, landscape_name}{Optional character strings defining the
-filepath (\code{pathout/SDM/landscape_name}) where output rasters should be
-written}
-
 \item{suffix}{Character string; custom suffix appended to layer names
 (optional unless \code{mask} is not \code{NULL}); see Details.}
 
-\item{mask}{Optional SpatRaster; see Details}
+\item{pixel_value}{Optional numeric value to use in place of 1 where land
+covers are present; default \code{NULL}}
 
-\item{pixel_value}{Numeric value to replace cell values with (optional);
-default \code{NULL}}
+\item{subset}{Optional SpatRaster or string representing filepath to a
+raster. See Details.}
 
-\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
+\item{dir}{Optional string representing directory passed to
+\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir/SDM/landscape_name}). See Details.}
+
+\item{overwrite}{logical. If \code{TRUE}, output is overwritten}
+
+\item{...}{additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{
 SpatRaster, though primarily used to write layers to file for use
@@ -50,15 +52,20 @@ land cover raster into separate layers representing the presence (1) or
 absence (0) of each land cover class for use in calculating focal statistics.
 See documentation of that function for information about Warning messages.
 
-Optionally, a custom \code{suffix} can be appended to the layer name and cell
-values representing land cover presence (1) can be replaced with a different
-\code{pixel_value} (e.g., the area of each pixel) as needed before writing the
-layers to \code{pathout/SDM/landscape_name}.
+If \code{suffix} is provided, it is appended to the layer name. If \code{pixel_value}
+is provided, values representing land cover presence (1) are replaced with
+this value (e.g., the area of each pixel).
 
-By providing a \code{mask}, this function can also use the land cover presence
-layers as a mask to extract the values of another layer (e.g., surface water
-data). To distinguish land cover presence from the values extracted from
-another layer, \code{suffix} is required to have two values. See examples.
+If \code{subset} is provided, either as a SpatRaster or a filepath to a raster,
+the \code{subset} layer is masked by the presence of each land cover layer, e.g.
+to extract from surface water data the extent of surface water within each
+land cover class. In this case, both the land cover presence data and the
+subset data are returned; to distinguish between these results, \code{suffix} is
+required to have two values. The first is appended to the land cover presence
+data and the second is appended to the subset data. See examples.
+
+All output can be optionally written to \code{dir/SDM/landscape_name} where
+\code{landscape_name} is taken from the names of the input raster(s) \code{x}.
 }
 \examples{
 codenums = DeltaMultipleBenefits::key$CODE_NUM
