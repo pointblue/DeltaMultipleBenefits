@@ -47,9 +47,10 @@
 #'   represented by the predictors contained in `pathin/landscape_name`, used to
 #'   identify the locations of `unsuitable` land covers. Must be provided if
 #'   `unsuitable` is not `NULL`.
-#' @param pathout Character string defining the filepath
-#'   (`pathout/SDM/landscape_name`) where output rasters should be written
+#' @param dir Character string defining the filepath
+#'   (`dir/SDM/landscape_name`) where output rasters should be written
 #' @param overwrite Logical; passed to [terra::writeRaster()]
+#' @param ... additional arguments passed to [terra::writeRaster()]
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
 #'   each model in `modlist`
@@ -66,7 +67,7 @@
 
 fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
                    factors = NULL, landscape = NULL, unsuitable = NULL,
-                   pathout, overwrite = FALSE) {
+                   dir, overwrite = FALSE, ...) {
 
   if (is.null(landscape) & !is.null(unsuitable)) {
     stop('Unsuitable cover types specified but landscape not provided')
@@ -131,6 +132,7 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
                    filename = paste0(file.path(pathout, SDM, landscape_name), '/',
                                      .x, '.tif'),
                    overwrite = overwrite,
-                   wopt = list(names = .x)))
+                   wopt = list(names = .x),
+                   ...))
   }
 }

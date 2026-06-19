@@ -13,8 +13,9 @@ fit_SDM(
   factors = NULL,
   landscape = NULL,
   unsuitable = NULL,
-  pathout,
-  overwrite = FALSE
+  dir,
+  overwrite = FALSE,
+  ...
 )
 }
 \arguments{
@@ -40,10 +41,12 @@ identify the locations of \code{unsuitable} land covers. Must be provided if
 cover classifications that should be considered unsuitable \emph{a priori}. If
 not \code{NULL}, \code{landscape} must also be provided.}
 
-\item{pathout}{Character string defining the filepath
-(\code{pathout/SDM/landscape_name}) where output rasters should be written}
+\item{dir}{Character string defining the filepath
+(\code{dir/SDM/landscape_name}) where output rasters should be written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
+
+\item{...}{additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
