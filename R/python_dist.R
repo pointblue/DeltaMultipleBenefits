@@ -30,8 +30,8 @@
 #' @param pathin,landscape_name Character strings defining the filepath
 #'   (`pathin/landscape_name`) where input rasters are located, such as those
 #'   created from running [python_focal_prep()] or [update_roosts()]
-#' @param pathout,SDM Additional character strings defining the filepath
-#'   (`pathout/SDM/landscape_name`) where output raster should be written
+#' @param dir,SDM Additional character strings defining the filepath
+#'   (`dir/SDM/landscape_name`) where output raster should be written
 #' @param filename name of the output raster, including file extension; default
 #'   is 'droost_km.tif', the name of the predictor required by the waterbird
 #'   models
@@ -49,7 +49,7 @@
 #' @examples
 #' # See vignette
 
-python_dist = function(pathin, landscape_name, pathout, SDM,
+python_dist = function(pathin, landscape_name, dir, SDM,
                        filename = 'droost_km.tif', scale = NULL,
                        mask = NULL, overwrite = FALSE, python = NULL) {
 
@@ -91,8 +91,8 @@ python_dist = function(pathin, landscape_name, pathout, SDM,
   }
 
   # write output with final scaled/masked version
-  create_directory(file.path(pathout, SDM, landscape_name))
-  terra::writeRaster(r, file.path(pathout, SDM, landscape_name, filename),
+  create_directory(file.path(dir, SDM, landscape_name))
+  terra::writeRaster(r, file.path(dir, SDM, landscape_name, filename),
                      wopt = list(names = gsub('.tif', '', filename)),
                      overwrite = TRUE)
 }

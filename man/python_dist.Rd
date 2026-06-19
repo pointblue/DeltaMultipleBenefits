@@ -7,7 +7,7 @@
 python_dist(
   pathin,
   landscape_name,
-  pathout,
+  dir,
   SDM,
   filename = "droost_km.tif",
   scale = NULL,
@@ -21,8 +21,8 @@ python_dist(
 (\code{pathin/landscape_name}) where input rasters are located, such as those
 created from running \code{\link[=python_focal_prep]{python_focal_prep()}} or \code{\link[=update_roosts]{update_roosts()}}}
 
-\item{pathout, SDM}{Additional character strings defining the filepath
-(\code{pathout/SDM/landscape_name}) where output raster should be written}
+\item{dir, SDM}{Additional character strings defining the filepath
+(\code{dir/SDM/landscape_name}) where output raster should be written}
 
 \item{filename}{name of the output raster, including file extension; default
 is 'droost_km.tif', the name of the predictor required by the waterbird

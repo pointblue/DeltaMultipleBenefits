@@ -14,12 +14,10 @@
 #'   distribution models to which new predictors should be fit.
 #' @param stat Character string defining the threshold statistic to be used; see
 #'   [dismo::threshold()] for options
-#' @param pathout Filepath for the directory where results rasters should be
-#'   written (`pathout/SDM/landscape_name`)
+#' @param dir Filepath for the directory where results rasters should be
+#'   written (`dir/SDM/landscape_name`)
 #' @param overwrite Logical; passed to [terra::writeRaster()]
 #'
-#' @return Nothing returned to R environment. Writes rasters to
-#'   `pathout/SDM/landscape_name` for each model in `modlist`
 #' @seealso [fit_SDM()]
 #' @importFrom dismo evaluate
 #' @importFrom dismo threshold
@@ -29,7 +27,7 @@
 #' # See vignette
 
 transform_SDM = function(pathin, SDM, landscape_name, regex = '.tif$',
-                         modlist, stat, pathout, overwrite = FALSE) {
+                         modlist, stat, dir, overwrite = FALSE) {
 
   predictions = list.files(file.path(pathin, SDM, landscape_name),
                            pattern = regex, full.names = TRUE) |>
@@ -44,7 +42,7 @@ transform_SDM = function(pathin, SDM, landscape_name, regex = '.tif$',
                                 dismo::threshold(e, stat)
                               })
 
-  create_directory(file.path(pathout, SDM, landscape_name))
+  create_directory(file.path(dir, SDM, landscape_name))
 
   # reclassify using model-specific thresholds and write to file
   purrr::map(names(modlist),
@@ -53,7 +51,7 @@ transform_SDM = function(pathin, SDM, landscape_name, regex = '.tif$',
                 rcl = matrix(c(-Inf, threshold_list[[.x]], 0,
                                threshold_list[[.x]], Inf, 1),
                              nrow = 2, byrow = TRUE),
-                filename = paste0(file.path(pathout, SDM, landscape_name, .x),
+                filename = paste0(file.path(dir, SDM, landscape_name, .x),
                                   '.tif'),
                 overwrite = overwrite,
                 wopt = list(names = .x))

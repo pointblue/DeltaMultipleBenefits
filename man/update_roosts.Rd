@@ -9,7 +9,7 @@ update_roosts(
   unsuitable = c(11:19, 60, 70:79, 100:120),
   proportion = 0.2,
   roosts,
-  pathout,
+  dir,
   landscape_name,
   overwrite = FALSE
 )
@@ -31,14 +31,11 @@ Details}
 giving the filepath to polygons representing the location of traditional
 crane roosts; expects attribute called "Roost_ID"}
 
-\item{pathout, landscape_name}{Character strings defining the filepath
-(\code{pathout/landscape_name}) where updated roost location rasters should be
+\item{dir, landscape_name}{Character strings defining the filepath
+(\code{dir/landscape_name}) where updated roost location rasters should be
 written}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
-}
-\value{
-Nothing; all files written to \code{pathout/landscape_name}
 }
 \description{
 Helper function for estimating impact of landscape changes on the locations

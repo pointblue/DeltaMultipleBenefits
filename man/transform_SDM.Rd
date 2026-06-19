@@ -11,7 +11,7 @@ transform_SDM(
   regex = ".tif$",
   modlist,
   stat,
-  pathout,
+  dir,
   overwrite = FALSE
 )
 }
@@ -30,14 +30,10 @@ distribution models to which new predictors should be fit.}
 \item{stat}{Character string defining the threshold statistic to be used; see
 \code{\link[dismo:threshold]{dismo::threshold()}} for options}
 
-\item{pathout}{Filepath for the directory where results rasters should be
-written (\code{pathout/SDM/landscape_name})}
+\item{dir}{Filepath for the directory where results rasters should be
+written (\code{dir/SDM/landscape_name})}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
-}
-\value{
-Nothing returned to R environment. Writes rasters to
-\code{pathout/SDM/landscape_name} for each model in \code{modlist}
 }
 \description{
 Use model-specific threshold values to transform predicted probabilities of

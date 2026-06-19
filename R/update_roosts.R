@@ -30,12 +30,11 @@
 #' @param roosts SpatVector created by [terra::vect()] or character string
 #'   giving the filepath to polygons representing the location of traditional
 #'   crane roosts; expects attribute called "Roost_ID"
-#' @param pathout,landscape_name Character strings defining the filepath
-#'   (`pathout/landscape_name`) where updated roost location rasters should be
+#' @param dir,landscape_name Character strings defining the filepath
+#'   (`dir/landscape_name`) where updated roost location rasters should be
 #'   written
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #'
-#' @return Nothing; all files written to `pathout/landscape_name`
 #' @seealso [update_covertype()], [update_pwater()]
 #' @export
 #'
@@ -43,7 +42,7 @@
 #' # See vignette
 
 update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
-                         proportion = 0.2, roosts, pathout, landscape_name,
+                         proportion = 0.2, roosts, dir, landscape_name,
                          overwrite = FALSE) {
 
   if (is(roosts, 'character')) {
@@ -78,8 +77,8 @@ update_roosts = function(landscape, unsuitable = c(11:19, 60, 70:79, 100:120),
   roosts_update = roosts[-which(roosts$Roost_ID %in% incompatible$ID)]
   roosts_raster = terra::rasterize(roosts_update, landscape)
 
-  create_directory(file.path(pathout, landscape_name))
+  create_directory(file.path(dir, landscape_name))
   terra::writeRaster(roosts_raster,
-                     file.path(pathout, landscape_name, 'roosts.tif'),
+                     file.path(dir, landscape_name, 'roosts.tif'),
                      overwrite = overwrite)
 }
