@@ -48,10 +48,6 @@ not \code{NULL}, \code{landscape} must also be provided.}
 
 \item{...}{additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
-\value{
-Nothing returned to R environment. Writes rasters to \code{pathout} for
-each model in \code{modlist}
-}
 \description{
 Fit previously-developed species distribution models for riparian landbird
 species, waterbird groups during the fall or winter, or tidal marsh bird
@@ -90,7 +86,6 @@ predictions.
 
 }
 \seealso{
-\code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_run]{python_focal_run()}},
-\code{\link[=python_focal_finalize]{python_focal_finalize()}}, \code{\link[=update_covertype]{update_covertype()}}, \code{\link[=update_pwater]{update_pwater()}},
-\code{\link[=update_roosts]{update_roosts()}}, \code{\link[=python_dist]{python_dist()}}
+\code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_stats]{python_focal_stats()}}, \code{\link[=update_covertype]{update_covertype()}},
+\code{\link[=update_pwater]{update_pwater()}}, \code{\link[=update_roosts]{update_roosts()}}, \code{\link[=python_dist]{python_dist()}}
 }
