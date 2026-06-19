@@ -25,7 +25,7 @@ The DeltaMultipleBenefits package provides tools for estimating the net impacts 
 The metrics currently supported by this package are grouped into several categories of potential benefits: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape, regions within the landscape, or individual project areas. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. 
 
 ```{r multiple_benefits, echo=FALSE, out.width = '100%'}
-knitr::include_graphics("man/figures/multiple_benefits_graphic.png")
+knitr::include_graphics("../man/figures/multiple_benefits_graphic.png")
 ```
 
 Importantly, this package is not designed to find an "optimal" solution to maximize benefits and minimize trade-offs, but rather to evaluate and compare realistic proposed alternatives or anticipated future changes. This is because the list of supported metrics is incomplete compared to the many interests, values, and goals held by the Delta community, land managers, organizations, and agencies, so that any optimized solution would be incomplete and potentially misleading. Instead, this package requires users to supply spatial data representing their baseline (current) landscape and alternative scenarios under consideration. Example baseline and scenario landscapes used in the development of this package are publicly available for reuse or modification (see [Supporting Information](articles/supporting_information.html)). 
@@ -275,12 +275,21 @@ To apply the "tima" models to new baseline and scenario landscapes, first use bu
 
 __classify_landcover.SpatRaster:__ The first step is to reclassify each landscape raster to match the predictor groupings required by the "tima" models.
 
-__python_focal_prep:__ The next step separates each landscape raster into separate layers for each distinct predictor, with a default value of `1` everywhere the land cover class is present, and a `0` otherwise. The result can be optionally directly written to a directory located at: `dir/SDM/landscape_name` where `landscape_name` is taken from the name(s) of the input SpatRaster. If the directory does not already exist, it will be created automatically. Here, we just return the results to working memory instead.
+We also need to compile additional predictors from other data sources:
+* `CHAN`, the density of channel lines within each buffer distance, based on the National Hydrography Dataset
+* `PSIZE`, the patch size of the largest block of tidal wetlands that extends into the buffer size
 
-*Note: We will get warning messages here, because our toy example landscape does not include all land cover classes required to fit the "tima" models.*
+
 ```{r tima1, eval = TRUE}
 
 landscapes_tima = classify_landcover(landscapes, SDM = 'tima')
+
+```
+
+__python_focal_prep:__ The next step separates each landscape raster into separate layers for each distinct predictor, with a default value of `1` everywhere the land cover class is present, and a `0` otherwise. The result can be optionally directly written to a directory located at: `dir/SDM/landscape_name` where `landscape_name` is taken from the name(s) of the input SpatRaster. If the directory does not already exist, it will be created automatically. Here, we just return the results to working memory instead.
+
+*Note: We will get warning messages here, because our toy example landscape does not include all land cover classes required to fit the "tima" models.*
+```{r tima2, eval = TRUE}
 
 predictors_tima = python_focal_prep(landscapes_tima, SDM = 'tima', 
                                     fill = FALSE) |> suppressWarnings()
@@ -299,7 +308,7 @@ These calculations can be very slow, depending on the size and resolution of the
 
 Because these calculations are slow, a `regex` argument provides options for re-running this code for only a subset of the predictors in `pathin/SDM/landscape_name`.
 
-```{r tima2, eval = FALSE}
+```{r tima3, eval = FALSE}
 python_focal_stats(SDM = 'tima', 
                    landscape_names = c('baseline', 'scenario'),
                    pathin = 'SDM_landcover2',
@@ -319,17 +328,22 @@ covertype_tima = update_covertype(landscapes_tima, SDM = "tima")
 terra::plot(covertype_tima)
 ```
 
-### 4.1.2 Generate model predictions
 
-__fit_SDM:__ Use the predictors created in the previous step for each landscape to fit the distribution models for each of the 7 "tima" species. The `modlist` should refer to an R object containing a list of the tidal marsh distribution models. See [Supporting Information](articles/supporting_information.html) to download these models. The levels of the categorical predictor `LANDCOVER` must be specified in the call to `fit_SDM`, and in the correct order.
 
-```{r tima3, eval = FALSE}
+### 4.1.3 Generate model predictions
+
+__fit_SDM:__ Use the predictors created in the previous step for each landscape to fit the distribution models for each of the 7 "tima" species. The `modlist` should refer to an R object containing a list of the tidal marsh distribution models. See [Supporting Information](articles/supporting_information.html) to download these models. The levels of the categorical predictor `LANDCOVER` must be specified in the call to `fit_SDM`, and in the correct order. 
+
+Open water was considered to be an unsuitable land cover class *a priori*, and so we can specify `unsuitable = 90` (the land cover class value for open water); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Alternatively, the predictors can all be masked by an open water layer before running `fit_SDM()`.
+
+```{r tima4, eval = FALSE}
 fit_SDM(pathin = 'SDM_predictors', 
         SDM = 'tima',
         landscape_name = 'baseline',
         modlist = BRT_tidal_wetlands,
         factors = list(list('LANDCOVER' = c('WETLAND', 'RIPARIAN', 'WATER', 'AGGRPAS'))),
         type = 'response',
+        unsuitable = 90,
         dir = 'SDM_results')
 
 fit_SDM(pathin = 'SDM_predictors', 
@@ -345,7 +359,7 @@ fit_SDM(pathin = 'SDM_predictors',
 
 __transform_SDM:__ The model-predicted results can be converted into binary presence-absence predictions using threshold statistics derived from the `dismo::threshold` function. Here, we use the statistic `equal_sens_spec`, which is the value at which specificity (the probability of correctly predicting species absence) is equal to sensitivity (the probability of correctly predicting species presence), but other statistics can be selected (see `?dismo::threshold`).
 
-```{r tima4, eval = FALSE}
+```{r tima5, eval = FALSE}
 transform_SDM(pathin = 'SDM_results',
               SDM = 'tima', landscape_name = 'baseline',
               modlist = BRT_tidal_wetlands,
@@ -396,8 +410,8 @@ predictors_rip = python_focal_prep(landscapes_rip, SDM = 'riparian',
 terra::plot(predictors_rip$baseline)
 
 # Optional (can be slow)
-python_focal_prep(landscapes_rip$baseline, SDM = 'riparian',
-                  dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
+# python_focal_prep(landscapes_rip$baseline, SDM = 'riparian',
+#                   dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
 # >> when run inside vignette, output will write to vignettes/SDM_landcover
 ```
 
