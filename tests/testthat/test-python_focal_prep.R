@@ -5,7 +5,7 @@ test_that('pixel values are correctly applied', {
   r <- terra::rast(matrix(sample(codenums, size = 1000, replace = TRUE),
                           ncol = 100, nrow = 100))
   r2 = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win', verbose = FALSE))
-  area = python_focal_prep(r2, SDM = 'waterbird_win', pixel_value = 0.09)
+  area = suppressWarnings(python_focal_prep(r2, SDM = 'waterbird_win', pixel_value = 0.09))
   expect_true(all(unique(terra::values(area[[1]]) %in% c(0.00, 0.09, NaN))))
 })
 
@@ -16,7 +16,7 @@ test_that('warnings given', {
                           ncol = 100, nrow = 100))
   r2 = terra::subst(r, from = 15, to = NA) # remove all riparian
   test_wat = suppressWarnings(classify_landcover(r2, SDM = 'waterbird_fall', verbose = F))
-  python_focal_prep(test_wat, SDM = 'waterbird_fall') |> expect_warning()
+  expect_warning(python_focal_prep(test_wat, SDM = 'waterbird_fall'))
 })
 
 # MASKING--------------
@@ -27,20 +27,25 @@ codenums = DeltaMultipleBenefits::key$CODE_NUM
 r <- terra::rast(matrix(sample(codenums, size = 10000, replace = TRUE),
                         ncol = 100, nrow = 100))
 r2 = suppressWarnings(classify_landcover(r, SDM = 'waterbird_win', verbose = FALSE))
+names(r2) = 'baseline'
 w = r2
 levels(w) = NULL
 terra::coltab(w) = NULL
 terra::values(w) <- sample(c(0,1), size = 10000, replace = TRUE) # simulate surface water data
+names(w) = 'pwater'
 
 test_that('two suffixes must be provided to avoid an error', {
-  python_focal_prep(r2, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w) |>
-    expect_error()
+  expect_error(
+    expect_warning(python_focal_prep(r2, SDM = 'waterbird_fall', pixel_value = 0.09, mask = w)))
 })
 
 test_that('masking works as expected', {
+  suffix = c('_area', '_pfld')
   pfld = suppressWarnings(python_focal_prep(r2, SDM = 'waterbird_fall', pixel_value = 0.09,
-                      mask = w, suffix = c('_area', '_pfld')))
-  expect_true(terra::nlyr(pfld) == length(terra::freq(r2)$value)*2)
+                      subset = w, suffix = suffix))
+  expect_true(length(pfld) == length(suffix))
+  expect_true(terra::nlyr(pfld$presence$baseline) == nrow(terra::freq(r2)))
+  expect_true(terra::nlyr(pfld$presence_mask$baseline) == nrow(terra::freq(r2)))
 })
 
 
