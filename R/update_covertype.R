@@ -35,6 +35,7 @@
 update_covertype = function(x, SDM, mask = NULL, dir = NULL,
                             overwrite = FALSE, ...) {
 
+
   if (!is.null(mask)) {
     if (is(mask, 'character')) {
       mask = terra::rast(mask)
@@ -54,8 +55,8 @@ update_covertype = function(x, SDM, mask = NULL, dir = NULL,
     newlevels = list(
       data.frame(value = c(1:4),
                  label = c('Alfalfa', 'Irrigated pasture', 'Rice', 'Wetland')))
-    levels(covertype) <- rep(newlevels, nlyr(covertype))
-    names(covertype) = rep('covertype', nlyr(covertype))
+    levels(covertype) <- rep(newlevels, terra::nlyr(covertype))
+    names(covertype) = rep('covertype', terra::nlyr(covertype))
 
   } else if (SDM == 'waterbird_win') {
     covertype = terra::classify(
@@ -67,8 +68,8 @@ update_covertype = function(x, SDM, mask = NULL, dir = NULL,
     newlevels = list(
       data.frame(value = c(1:6),
                  label = c('Alfalfa', 'Corn', 'Irrigated pasture', 'Rice', 'Wetland', 'Winter wheat')))
-    levels(covertype) <- rep(newlevels, nlyr(covertype))
-    names(covertype) = rep('covertype', nlyr(covertype))
+    levels(covertype) <- rep(newlevels, terra::nlyr(covertype))
+    names(covertype) = rep('covertype', terra::nlyr(covertype))
 
   } else if (SDM == 'tima') {
     covertype = terra::classify(
@@ -81,12 +82,12 @@ update_covertype = function(x, SDM, mask = NULL, dir = NULL,
     newlevels = list(
       data.frame(value = c(1:4),
                  label = c('WETLAND', 'RIPARIAN', 'WATER', 'AGGRPAS')))
-    levels(covertype) <- rep(newlevels, nlyr(covertype))
-    names(covertype) = rep('LANDCOVER', nlyr(covertype))
+    levels(covertype) <- rep(newlevels, terra::nlyr(covertype))
+    names(covertype) = rep('LANDCOVER', terra::nlyr(covertype))
 
   }
 
-  if (!is.null(pathout)) {
+  if (!is.null(dir)) {
     purrr::map(names(x),
                function(landscape_name) {
                  create_directory(file.path(dir, SDM, landscape_name))
