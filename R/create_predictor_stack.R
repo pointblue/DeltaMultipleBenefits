@@ -45,7 +45,7 @@ create_predictor_stack = function(x, SDM, fill = TRUE) {
   # add larger grouping predictors necessary for riparian and tima SDMs:
   if (SDM == 'riparian') {
     pred <- DeltaMultipleBenefits::predictors_riparian |>
-      dplyr::select(-.data$NOTES, -.data$COLOR)
+      dplyr::select(-'NOTES', -'COLOR')
     # drop group vars already represented as unspecified wetland and riparian
 
     if ('WETLAND' %in% names(presence)) {
@@ -72,7 +72,7 @@ create_predictor_stack = function(x, SDM, fill = TRUE) {
 
   } else if (SDM == 'tima') {
     pred <- DeltaMultipleBenefits::predictors_tima |>
-      dplyr::select(-.data$COLOR)
+      dplyr::select(-'COLOR')
 
     if ('NWET' %in% names(presence)) {
       presence = terra::subset(presence, subset = 'NWET', negate = TRUE)
@@ -119,10 +119,10 @@ create_predictor_stack = function(x, SDM, fill = TRUE) {
 
   } else if (SDM == 'waterbird_fall') {
     pred <- DeltaMultipleBenefits::predictors_waterbird_fall |>
-      dplyr::select(-.data$COLOR)
+      dplyr::select(-'COLOR')
   } else if (SDM == 'waterbird_win') {
     pred <- DeltaMultipleBenefits::predictors_waterbird_win |>
-      dplyr::select(-.data$COLOR)
+      dplyr::select(-'COLOR')
   }
 
   # check that all unique predictors are accounted for and add rasters of all

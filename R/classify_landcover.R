@@ -67,7 +67,7 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
         add_riparian_predictors() |>
         add_waterbird_predictors() |>
         add_tima_predictors() |>
-        dplyr::select(-.data$CLASS, -.data$TIDAL)
+        dplyr::select(-'CLASS', -'TIDAL')
     }
   } else {
     stop('only LSPT is currently supported')
@@ -123,7 +123,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
 
   if (SDM == 'riparian') {
     pred <- DeltaMultipleBenefits::predictors_riparian |>
-      dplyr::select(-.data$NOTES)
+      dplyr::select(-'NOTES')
   } else if (SDM == 'waterbird_fall') {
     pred <- DeltaMultipleBenefits::predictors_waterbird_fall
   } else if (SDM == 'waterbird_win') {
@@ -171,7 +171,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
     others = NA)
 
   newlevels = list(
-    crosswalk |> dplyr::select(.data$PREDICTOR_NUM, .data$PREDICTOR_NAME) |>
+    crosswalk |> dplyr::select('PREDICTOR_NUM', 'PREDICTOR_NAME') |>
       dplyr::distinct() |> dplyr::arrange(.data$PREDICTOR_NUM) |> tidyr::drop_na() |>
       as.data.frame()
     )
@@ -179,7 +179,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
 
   if (coltab) {
     newcolors = list(
-      pred |> dplyr::select(.data$PREDICTOR_NUM, .data$COLOR) |>
+      pred |> dplyr::select('PREDICTOR_NUM', 'COLOR') |>
         dplyr::distinct() |> dplyr::arrange(.data$PREDICTOR_NUM) |>
         tidyr::drop_na() |> as.data.frame()
     )
@@ -655,7 +655,7 @@ add_code_names = function(x) {
       TRUE ~ CLASS)
   ) |>
     dplyr::left_join(
-      DeltaMultipleBenefits::key |> dplyr::select(.data$CODE_NAME, .data$CODE_NUM),
+      DeltaMultipleBenefits::key |> dplyr::select('CODE_NAME', 'CODE_NUM'),
       by = dplyr::join_by(.data$CODE_NAME))
   return(res)
 }
