@@ -17,6 +17,6 @@ test_that('warnings given', {
   # remove all riparian
   r2 = terra::subst(r, from = 15, to = NA)
   test_wat = suppressWarnings(classify_landcover(r2, SDM = 'waterbird_fall', verbose = F))
-  create_predictor_stack(test_wat, SDM = 'waterbird_fall') |> expect_warning()
+  expect_warning(create_predictor_stack(test_wat, SDM = 'waterbird_fall'))
 })
 
