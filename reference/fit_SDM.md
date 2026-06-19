@@ -17,8 +17,9 @@ fit_SDM(
   factors = NULL,
   landscape = NULL,
   unsuitable = NULL,
-  pathout,
-  overwrite = FALSE
+  dir,
+  overwrite = FALSE,
+  ...
 )
 ```
 
@@ -28,8 +29,7 @@ fit_SDM(
 
   Character strings defining the filepath (`pathin/SDM/landscape_name`)
   containing new predictor rasters to include in the model, such as
-  those created from running
-  [`python_focal_finalize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_finalize.md)
+  those created from running `python_focal_finalize()`
 
 - modlist:
 
@@ -59,9 +59,9 @@ fit_SDM(
   classifications that should be considered unsuitable *a priori*. If
   not `NULL`, `landscape` must also be provided.
 
-- pathout:
+- dir:
 
-  Character string defining the filepath (`pathout/SDM/landscape_name`)
+  Character string defining the filepath (`dir/SDM/landscape_name`)
   where output rasters should be written
 
 - overwrite:
@@ -69,10 +69,10 @@ fit_SDM(
   Logical; passed to
   [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
 
-## Value
+- ...:
 
-Nothing returned to R environment. Writes rasters to `pathout` for each
-model in `modlist`
+  additional arguments passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
 
 ## Details
 
@@ -80,10 +80,9 @@ This function is designed to fit multiple distribution models to the
 same set of predictors describing a given landscape. New predictors must
 first be created and named to match the predictors included in the
 original models, e.g. using
-[`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md),
-[`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md),
+[`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
 and
-[`python_focal_finalize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_finalize.md).
+[`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md).
 
 `constants` are passed to
 [`terra::predict()`](https://rspatial.github.io/terra/reference/predict.html)
@@ -110,8 +109,7 @@ predictions.
 ## See also
 
 [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md),
-[`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md),
-[`python_focal_finalize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_finalize.md),
+[`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md),
 [`update_covertype()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_covertype.md),
 [`update_pwater()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_pwater.md),
 [`update_roosts()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_roosts.md),

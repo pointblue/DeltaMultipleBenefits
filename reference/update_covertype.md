@@ -1,35 +1,20 @@
 # Update waterbird and tidal marsh bird predictors: covertype and LANDCOVER
 
-Helper function for updating covertype and LANDCOVER predictors for the
-waterbird and tidal marsh bird distribution models, respectively.
+Helper function for updating `covertype` and `LANDCOVER` predictors for
+the waterbird ("waterbird_fall", "waterbird_win") and tidal marsh
+("tima") distribution models, respectively.
 
 ## Usage
 
 ``` r
-update_covertype(
-  landscape,
-  key,
-  SDM,
-  mask = NULL,
-  pathout,
-  landscape_name,
-  overwrite = FALSE
-)
+update_covertype(x, SDM, mask = NULL, dir = NULL, overwrite = FALSE, ...)
 ```
 
 ## Arguments
 
-- landscape:
+- x:
 
-  SpatRaster created by
-  [`terra::rast()`](https://rspatial.github.io/terra/reference/rast.html)
-
-- key:
-
-  tibble, dataframe, or character string defining a filepath passed to
-  [`readr::read_csv()`](https://readr.tidyverse.org/reference/read_delim.html),
-  used to interpret the raster values in `landscape` to land cover class
-  names; see Details
+  SpatRaster
 
 - SDM:
 
@@ -38,35 +23,44 @@ update_covertype(
 
 - mask:
 
-  Optional filepath to a raster that should be used to mask the output,
-  e.g. a study area boundary
+  Optional SpatRaster or string representing filepath to a raster that
+  should be used to mask the output, e.g. a study area boundary
 
-- pathout, landscape_name:
+- dir:
 
-  Character strings defining the filepath (`pathout/SDM/landscape_name`)
-  where output rasters should be written
+  Optional string representing directory passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html),
+  as (`dir/SDM/landscape_name`). See Details.
 
 - overwrite:
 
-  Logical; passed to
-  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html);
-  default `FALSE`
+  logical. If `TRUE`, output is overwritten
+
+- ...:
+
+  additional arguments passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
 
 ## Value
 
-Nothing; all files written to `pathout`
+SpatRaster with the same number of layers as the input `x`, names
+required by the selected `SDM`.
 
 ## Details
 
-Classifies the `landscape` rasters according to the land cover classes
-that were originally surveyed, which are the only classes for which
-predictions should be generated from the waterbird distribution models.
-For `"waterbird_fall"` or `"waterbird_win"` SDMs, generates file
-`covertype.tif` and for `"tima"` SDMs, generates file `LANDCOVER.tif`.
-Output is written to `pathout/SDM/scenario_name/`.
+Classifies land cover rasters to generate categorical predictors
+required by the "waterbird_fall", "waterbird_win", and "tima" models.
+The input raster `x` should already represent land cover predictors
+required by the selected `SDM`, i.e. output from
+[`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md).
+A `mask` raster can optionally be provided, either as a SpatRaster or a
+filepath to a raster, to first mask the input raster(s) `x`. Output can
+be optionally written to `dir/SDM/landscape_name` where `landscape_name`
+is taken from the names of the input raster(s) `x`.
 
 ## See also
 
+[`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md);
 [`update_pwater()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_pwater.md);
 [`update_roosts()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_roosts.md)
 

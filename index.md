@@ -86,16 +86,15 @@ including:
 
 ## Funding Statement
 
-These data were originally developed as part of the project *Trade-offs
-and Co-benefits of Landscape Change on Bird Communities and Ecosystem
-Services in the Sacramento–San Joaquin River Delta*, funded by
-Proposition 1 Delta Water Quality and Ecosystem Restoration Program,
-Grant Agreement Number – Q1996022, administered by the California
-Department of Fish and Wildlife.
+- 2019-2023: *Trade-offs and Co-benefits of Landscape Change on Bird
+  Communities and Ecosystem Services in the Sacramento–San Joaquin River
+  Delta* (Grant Agreement Number Q1996022), funded by Proposition 1
+  Delta Water Quality and Ecosystem Restoration Program, administered by
+  the California Department of Fish and Wildlife.
 
-A second phase of development is currently underway, *Trade-offs and
-Co-benefits of Landscape Change in the Sacramento-San Joaquin River
-Delta: Phase II Tidal Wetlands and Restoration*, funded by the Water
-Quality, Supply, and Infrastructure Improvement Act of 2014 (Proposition
-1, CWC § 79707), grant agreement number Q2296017, administered by the
-California Department of Fish and Wildlife.
+- 2022-2026: *Trade-offs and Co-benefits of Landscape Change in the
+  Sacramento-San Joaquin River Delta: Phase II Tidal Wetlands and
+  Restoration* (Grant Agreement Number Q2296017), funded by the Water
+  Quality, Supply, and Infrastructure Improvement Act of 2014
+  (Proposition 1, CWC § 79707), administered by the California
+  Department of Fish and Wildlife.

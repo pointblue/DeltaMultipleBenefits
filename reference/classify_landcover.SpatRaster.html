@@ -80,6 +80,10 @@ distribution models (SDM).</p>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>SpatRaster with the same number of layers as the input <code>x</code></p>
+    </div>
+    <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Calls on internal datasets to crosswalk from land cover classes listed in the
 <a href="key.html">key</a> to the predictors expected by the selected SDM group. The input raster
@@ -104,7 +108,7 @@ subclasses; the input raster may need to be reclassified before proceeding.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>,<span class="fl">19</span>,<span class="fl">71</span>,<span class="fl">72</span>,<span class="fl">90</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>         ncol <span class="op">=</span> <span class="fl">10</span>, nrow <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="classify_landcover.html">classify_landcover</a></span><span class="op">(</span><span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in coltab(r) &lt;- as.data.frame(dplyr::distinct(tidyr::drop_na(dplyr::select(pred,     "PREDICTOR_NUM", "COLOR")))):</span> could not find function "coltab&lt;-"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AG RICE IDLE GRASSPAS URBAN RIPARIAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB WETLAND PERM BARREN WOODLAND&amp;SCRUB</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

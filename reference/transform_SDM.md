@@ -15,7 +15,7 @@ transform_SDM(
   regex = ".tif$",
   modlist,
   stat,
-  pathout,
+  dir,
   overwrite = FALSE
 )
 ```
@@ -45,20 +45,15 @@ transform_SDM(
   [`dismo::threshold()`](https://rdrr.io/pkg/dismo/man/threshold.html)
   for options
 
-- pathout:
+- dir:
 
   Filepath for the directory where results rasters should be written
-  (`pathout/SDM/landscape_name`)
+  (`dir/SDM/landscape_name`)
 
 - overwrite:
 
   Logical; passed to
   [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
-
-## Value
-
-Nothing returned to R environment. Writes rasters to
-`pathout/SDM/landscape_name` for each model in `modlist`
 
 ## See also
 

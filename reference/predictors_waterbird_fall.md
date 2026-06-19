@@ -43,6 +43,6 @@ Dybala et al. 2023 (https://doi.org/10.15447/sfews.2023v21iss3art4)
 Land cover classes or subclasses with `NA` values in `PREDICTOR_NAME`
 and `PREDICTOR_NUM` are excluded from these models.
 
-This data set is primarily for use in the `reclassify_landcover()`
-function. See `classify_LSPT()` for an alternative approach to classify
-the original land cover polygons.
+This data set is primarily for use in the
+[`classify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.md)
+function.

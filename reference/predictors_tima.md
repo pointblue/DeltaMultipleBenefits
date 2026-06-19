@@ -4,7 +4,8 @@ Predictor names and how they crosswalk to the major land cover classes
 and subclasses listed in the vegetation `key`. Land cover classes or
 subclasses with `NA` values in `PREDICTOR_NAME` and `PREDICTOR_NUM` are
 excluded from these models. This data set is primarily for use in the
-`reclassify_landcover()` function.
+[`classify_landcover()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.md)
+function.
 
 ## Usage
 

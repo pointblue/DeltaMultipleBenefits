@@ -47,7 +47,7 @@ rasters representing the required predictors.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_predictor_stack</span><span class="op">(</span><span class="va">x</span>, <span class="va">SDM</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_predictor_stack</span><span class="op">(</span><span class="va">x</span>, <span class="va">SDM</span>, fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,19 +55,23 @@ rasters representing the required predictors.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>SpatRaster</p></dd>
+<dd><p>SpatRaster; can only have 1 layer</p></dd>
 
 
 <dt id="arg-sdm">SDM<a class="anchor" aria-label="anchor" href="#arg-sdm"></a></dt>
 <dd><p>The name of intended species distribution model: <code>"riparian"</code>,
 <code>"waterbird_fall"</code>, <code>"waterbird_win"</code>, or <code>"tima"</code></p></dd>
 
+
+<dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
+<dd><p>logical; see Details</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>SpatRaster with separate layers for each land cover class included as
-a predictor in the selected SDM representing the presence (1) and absence
-(0)</p>
+    <p>SpatRaster with separate layers for each land cover class included
+as a predictor in the selected SDM representing the presence (1) and
+absence (0)</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -78,11 +82,12 @@ broader grouping variables as required for the selected SDM. The input raster
 should already be classified according to the land cover classifications
 expected by the selected SDM. See <code><a href="classify_landcover.SpatRaster.html">classify_landcover.SpatRaster()</a></code>.</p>
 <p>A warning is given if land cover classes expected by the model are absent
-from the landscape, and rasters with all zero values are created to represent
-them. However, the input raster should be carefully reviewed to ensure they
-are truly absent and have not bee excluded from the landscape
-unintentionally. If needed, the resulting layers can be replaced manually
-before proceeding with <code><a href="python_focal_run.html">python_focal_run()</a></code>.</p>
+from the landscape. If fill = TRUE (the defualt), the function will create
+rasters with all zero values for each missing land cover class. However, the
+input raster should be carefully reviewed to ensure they are truly absent and
+have not been excluded from the landscape unintentionally. If needed, the
+resulting layers can be replaced manually before proceeding with
+<code><a href="python_focal_run.html">python_focal_run()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -95,6 +100,7 @@ before proceeding with <code><a href="python_focal_run.html">python_focal_run()<
 <span class="r-in"><span>         ncol <span class="op">=</span> <span class="fl">10</span>, nrow <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">r</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">create_predictor_stack</span><span class="op">(</span><span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ORCHVIN AG RICE IDLE GRASSPAS URBAN POFR QULO SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&amp;SCRUB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Because fill = TRUE, creating missing rasters with all zero values, butconfirm they are truly absent from the landscape.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

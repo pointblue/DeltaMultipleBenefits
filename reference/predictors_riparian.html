@@ -4,12 +4,12 @@ subclasses listed in the vegetation key. Land cover classes with a 1 in
 the RIPARIAN or WETLAND fields indicate they should be included in
 additional predictors representing the proportion cover of those broader
 vegetation classes. This data set is primarily for use in the
-reclassify_landcover() function."><meta property="og:description" content="Predictor names and how they crosswalk to the major land cover classes and
+classify_landcover() function."><meta property="og:description" content="Predictor names and how they crosswalk to the major land cover classes and
 subclasses listed in the vegetation key. Land cover classes with a 1 in
 the RIPARIAN or WETLAND fields indicate they should be included in
 additional predictors representing the proportion cover of those broader
 vegetation classes. This data set is primarily for use in the
-reclassify_landcover() function."><meta property="og:image" content="https://pointblue.github.io/DeltaMultipleBenefits/logo.png"></head><body>
+classify_landcover() function."><meta property="og:image" content="https://pointblue.github.io/DeltaMultipleBenefits/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -54,7 +54,7 @@ subclasses listed in the vegetation <code>key</code>. Land cover classes with a 
 the <code>RIPARIAN</code> or <code>WETLAND</code> fields indicate they should be included in
 additional predictors representing the proportion cover of those broader
 vegetation classes. This data set is primarily for use in the
-<code>reclassify_landcover()</code> function.</p>
+<code><a href="classify_landcover.html">classify_landcover()</a></code> function.</p>
     </div>
 
     <div class="section level2">
@@ -104,11 +104,14 @@ vegetation classes. This data set is primarily for use in the
 were ultimately excluded from model predictions and can be safely ignored
 (i.e. the <code>WOODLAND&amp;SCRUB</code> class), as well as notes on more specific
 vegetation types from the original source classifications that were excluded
-from the predictor when these models were first developed. Therefore, use of
-this key to crosswalk land cover data to the predictors for these models
-cannot be fully consistent with the original classification scheme used to
-develop these models. See <code>classify_LSPT()</code> for an alternative approach to
-classify the original land cover polygons.</p>
+from the predictor when these models were first developed.</p>
+<p>Caution: For riparian landbird SDMs, use of <code><a href="classify_landcover.SpatRaster.html">classify_landcover.SpatRaster()</a></code>
+on a raster developed from the primary land cover classifications produced by
+<code><a href="classify_landcover.sf.html">classify_landcover.sf()</a></code> cannot be completely consistent with the original
+classification scheme used to develop these models because of the minor
+exceptions detailed in the <code>NOTES</code> field. We recommend instead creating a
+raster directly based on the <code>PREDICTORS_RIPARIAN</code> field produced by
+<code><a href="classify_landcover.sf.html">classify_landcover.sf()</a></code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

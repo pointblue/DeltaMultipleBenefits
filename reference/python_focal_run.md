@@ -1,8 +1,7 @@
 # Run focal statistics via Python
 
-Wrapper function to call a python script for calculating focal
-statistics on landscape rasters. On first call this function imports the
-arcpy module and Spatial Analyst extensions then sources the Python
+Internal function that checks for the availability of Python, imports
+the arcpy module and Spatial Analyst extensions, then sources the Python
 script "focal_stats.py".
 
 ## Usage
@@ -14,9 +13,12 @@ python_focal_run(
   SDM,
   regex = NULL,
   scale,
-  fun = "SUM",
-  pathout,
-  python = NULL
+  suffix,
+  fun = "MEAN",
+  dir,
+  python = NULL,
+  overwrite = TRUE,
+  mask = NULL
 )
 ```
 
@@ -25,7 +27,7 @@ python_focal_run(
 - pathin, SDM, landscape_name:
 
   Character strings defining the filepath (`pathin/SDM/landscape_name`)
-  containing input rasters to be processed, such as those created from
+  containing input rasters to be processed, such as those written from
   running
   [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
 
@@ -41,17 +43,26 @@ python_focal_run(
 
 - fun:
 
-  Function to summarize focal statistics: `'SUM'` or `'MEAN'`
+  Function to summarize focal statistics: `'MEAN'` or `'SUM'`
 
-- pathout:
+- dir:
 
-  Filepath for the directory where output rasters should be written
+  Filepath for the directory where output rasters should be written (as
+  `dir/SDM/landscape_name/scale`)
 
 - python:
 
   Optional filepath to the preferred version of arcpy, passed to
   [`reticulate::use_python`](https://rstudio.github.io/reticulate/reference/use_python.html).
   See details.
+
+- overwrite:
+
+  logical; allow Python to overwrite output?
+
+- mask:
+
+  currently experimental
 
 ## Value
 
@@ -60,31 +71,26 @@ land cover class.
 
 ## Details
 
-This function calls the `focal_stats.py` script to summarize cell values
-for the input raster within a buffer distance defined by `scale`.
-Summary functions may include `'SUM'` or `'MEAN'`. The default of
-`fun = SUM'` is intended to be called only after first running
-[`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md),
-which prepares rasters representing the presence/absence of individual
-land cover classes, as defined by each set of species distribution
-models, and allows 'SUM' to effectively count the number of pixels of
-each land cover class within a given distance. This function can also be
-used with `fun = 'MEAN'` to estimate the mean probability of open water
-for a given land cover class within a given distance (i.e. \_pfld
-predictors for waterbird models). See vignette.
+This function is primarily for internal use by
+[`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md)
+to calculate focal statistics for each land cover predictor, passing the
+appropriate moving window sizes and summary functions required by each
+species distribution model. For each unique directory of land cover
+predictors, this function calls the `focal_stats.py` script which reads
+in all rasters in the directory (unless the `regex` argument is used)
+and then summarizes cell values for each input raster within a buffer
+distance defined by `scale`. Optionally, the results can be masked after
+calculating focal statistics, such as to limit results to a study area.
 
-*Important:* This function requires the availability of arcpy and
-Spatial Analyst extensions. Use the `python` argument to specify the
-local pathway to arcpy, particularly if other versions of Python are
-installed. For example: 'C:/Program
-Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that
-the python argument is applied only on the first use within each
-session, and must be repeated in each session.
+Summary functions may include `'SUM'` or `'MEAN'`. Note that the MEAN of
+binary land cover presence data is equivalent to the proportion cover of
+each land cover class within the buffer distance while the SUM
+represents the count of pixels within the buffer distance.
 
 ## See also
 
 [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md),
-[`python_focal_finalize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_finalize.md)
+[`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md)
 
 ## Examples
 

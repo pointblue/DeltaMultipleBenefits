@@ -52,7 +52,7 @@ of known crane roosts.</p>
 <span>  unsuitable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span><span class="op">:</span><span class="fl">19</span>, <span class="fl">60</span>, <span class="fl">70</span><span class="op">:</span><span class="fl">79</span>, <span class="fl">100</span><span class="op">:</span><span class="fl">120</span><span class="op">)</span>,</span>
 <span>  proportion <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  <span class="va">roosts</span>,</span>
-<span>  <span class="va">pathout</span>,</span>
+<span>  <span class="va">dir</span>,</span>
 <span>  <span class="va">landscape_name</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -86,9 +86,9 @@ giving the filepath to polygons representing the location of traditional
 crane roosts; expects attribute called "Roost_ID"</p></dd>
 
 
-<dt id="arg-pathout-landscape-name">pathout, landscape_name<a class="anchor" aria-label="anchor" href="#arg-pathout-landscape-name"></a></dt>
+<dt id="arg-dir-landscape-name">dir, landscape_name<a class="anchor" aria-label="anchor" href="#arg-dir-landscape-name"></a></dt>
 <dd><p>Character strings defining the filepath
-(<code>pathout/landscape_name</code>) where updated roost location rasters should be
+(<code>dir/landscape_name</code>) where updated roost location rasters should be
 written</p></dd>
 
 
@@ -96,10 +96,6 @@ written</p></dd>
 <dd><p>Logical; passed to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code>; default <code>FALSE</code></p></dd>
 
 </dl></div>
-    <div class="section level2">
-    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Nothing; all files written to <code>pathout/landscape_name</code></p>
-    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>For landscapes that represent a projected change from baseline

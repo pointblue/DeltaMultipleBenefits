@@ -11,7 +11,7 @@ script "dist_stats.py".
 python_dist(
   pathin,
   landscape_name,
-  pathout,
+  dir,
   SDM,
   filename = "droost_km.tif",
   scale = NULL,
@@ -31,10 +31,10 @@ python_dist(
   or
   [`update_roosts()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_roosts.md)
 
-- pathout, SDM:
+- dir, SDM:
 
   Additional character strings defining the filepath
-  (`pathout/SDM/landscape_name`) where output raster should be written
+  (`dir/SDM/landscape_name`) where output raster should be written
 
 - filename:
 

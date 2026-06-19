@@ -34,6 +34,10 @@ classify_landcover(x, SDM, coltab = TRUE, verbose = TRUE, ...)
 
   Unused
 
+## Value
+
+SpatRaster with the same number of layers as the input `x`
+
 ## Details
 
 Calls on internal datasets to crosswalk from land cover classes listed
@@ -72,5 +76,5 @@ before proceeding.
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
          ncol = 10, nrow = 10))
 r <- suppressWarnings(classify_landcover(r, SDM = 'riparian'))
-#> Error in coltab(r) <- as.data.frame(dplyr::distinct(tidyr::drop_na(dplyr::select(pred,     "PREDICTOR_NUM", "COLOR")))): could not find function "coltab<-"
+#> AG RICE IDLE GRASSPAS URBAN RIPARIAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB WETLAND PERM BARREN WOODLAND&SCRUB
 ```

@@ -50,38 +50,35 @@ further development.
   metrics and data.
 
 This phase was funded by Proposition 1 Delta Water Quality and Ecosystem
-Restoration Program, Grant Agreement Number – Q1996022, administered by
-the California Department of Fish and Wildlife. All data, models,
-metrics, publications, and reports from Phase 1 are [available for
-download](https://pointblue.github.io/DeltaMultipleBenefits/articles/articles/supporting_information.md).
+Restoration Program, Grant Agreement Number Q1996022, administered by
+the California Department of Fish and Wildlife.
 
 ## Phase 2: 2022-2026
 
 In Phase 2 of this project, *Trade-offs and Co-benefits of Landscape
 Change in the Sacramento-San Joaquin River Delta: Phase II Tidal
-Wetlands and Restoration*, we are extending this framework to include
-Suisun Marsh and address tidal wetland restoration scenarios. The Delta
-Plan has defined targets for increasing the area of natural vegetation
-communities by 2050, including restoring more than 30,000 acres of tidal
-wetland habitat. Meeting this target is expected to support diverse
-populations of native species, improve ecological processes and
-functions, and enhance resilience to climate change, but the actual
-benefits of meeting this target are likely to depend on where and how
-tidal wetlands are restored.
+Wetlands and Restoration*, we extended this framework to include Suisun
+Marsh and add support for tidal wetland bird species and evaluating
+tidal wetland restoration scenarios.
 
-We are leading research to estimate the potential benefits of tidal
-wetland restoration for the Delta’s bird community, by: - collecting new
-bird survey data in tidal wetlands and building new species distribution
-models to represent the habitat value of tidal wetland restoration. -
-working with partners to develop tidal wetland restoration scenarios for
-evaluation. - updating the Delta Multiple Benefits package with these
-new models and data, allowing users to repeat our analyses, adapt them
-to new alternative landscapes and scenarios, and incorporate their own
-metrics and data.
+- We collected new bird survey data in tidal wetlands in strategic
+  locations throughout the Delta and Suisun Marsh in 2023, including by
+  deploying Autonomous Recording Units (ARUs), to increase the
+  availability of survey data in tidal wetlands.
+- We leveraged these new data, together with other survey data collected
+  by Point Blue and partners (2015-2024), to develop new species
+  distribution models for 7 focal species.
+- We developed 6 tidal wetland restoration scenarios and design
+  alternatives and evaluated the net effects of each scenario on
+  suitable habitat for each focal species, as well as other metrics
+  supported by the DeltaMultipleBenefits framework
+- We updated and improved the DeltaMultipleBenefits R package to support
+  the application of these new models to new alternative landscapes and
+  scenarios.
 
-This phase is funded by the Water Quality, Supply, and Infrastructure
-Improvement Act of 2014 (Proposition 1, CWC § 79707), grant agreement
-number Q2296017, administered by the California Department of Fish and
+This phase was funded by the Water Quality, Supply, and Infrastructure
+Improvement Act of 2014 (Proposition 1, CWC § 79707), Grant Agreement
+Number Q2296017, administered by the California Department of Fish and
 Wildlife.
 
 ## Help us Envision the Next Phase

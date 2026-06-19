@@ -11,7 +11,7 @@ update_roosts(
   unsuitable = c(11:19, 60, 70:79, 100:120),
   proportion = 0.2,
   roosts,
-  pathout,
+  dir,
   landscape_name,
   overwrite = FALSE
 )
@@ -45,20 +45,16 @@ update_roosts(
   location of traditional crane roosts; expects attribute called
   "Roost_ID"
 
-- pathout, landscape_name:
+- dir, landscape_name:
 
-  Character strings defining the filepath (`pathout/landscape_name`)
-  where updated roost location rasters should be written
+  Character strings defining the filepath (`dir/landscape_name`) where
+  updated roost location rasters should be written
 
 - overwrite:
 
   Logical; passed to
   [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html);
   default `FALSE`
-
-## Value
-
-Nothing; all files written to `pathout/landscape_name`
 
 ## Details
 

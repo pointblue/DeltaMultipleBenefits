@@ -6,19 +6,23 @@ of rasters representing the required predictors.
 ## Usage
 
 ``` r
-create_predictor_stack(x, SDM)
+create_predictor_stack(x, SDM, fill = TRUE)
 ```
 
 ## Arguments
 
 - x:
 
-  SpatRaster
+  SpatRaster; can only have 1 layer
 
 - SDM:
 
   The name of intended species distribution model: `"riparian"`,
   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
+
+- fill:
+
+  logical; see Details
 
 ## Value
 
@@ -39,11 +43,12 @@ SDM. See
 [`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md).
 
 A warning is given if land cover classes expected by the model are
-absent from the landscape, and rasters with all zero values are created
-to represent them. However, the input raster should be carefully
-reviewed to ensure they are truly absent and have not bee excluded from
-the landscape unintentionally. If needed, the resulting layers can be
-replaced manually before proceeding with
+absent from the landscape. If fill = TRUE (the defualt), the function
+will create rasters with all zero values for each missing land cover
+class. However, the input raster should be carefully reviewed to ensure
+they are truly absent and have not been excluded from the landscape
+unintentionally. If needed, the resulting layers can be replaced
+manually before proceeding with
 [`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md).
 
 ## See also
@@ -57,4 +62,5 @@ r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
          ncol = 10, nrow = 10))
 r = suppressWarnings(create_predictor_stack(r, SDM = 'riparian'))
 #> ORCHVIN AG RICE IDLE GRASSPAS URBAN POFR QULO SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUB
+#> Because fill = TRUE, creating missing rasters with all zero values, butconfirm they are truly absent from the landscape.
 ```

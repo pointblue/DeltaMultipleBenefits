@@ -51,13 +51,10 @@
 - [`python_dist()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_dist.md)
   : Calculate Euclidean distance via Python
 
-- [`python_focal_finalize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_finalize.md)
-  : Final processing of focal stats for SDMs
-
 - [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
   : Prepare landscape rasters for focal statistics via Python
 
-- [`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md)
+- [`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md)
   : Run focal statistics via Python
 
 - [`roosts_original`](https://pointblue.github.io/DeltaMultipleBenefits/reference/roosts_original.md)

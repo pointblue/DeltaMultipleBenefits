@@ -50,12 +50,13 @@ generate inputs for use with species distribution models.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">python_focal_prep</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">SDM</span>,</span>
-<span>  pathout <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  landscape_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  suffix <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  mask <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pixel_value <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -64,7 +65,7 @@ generate inputs for use with species distribution models.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>SpatRaster</p></dd>
+<dd><p>SpatRaster with layer names corresponding to <code>landscape_name</code></p></dd>
 
 
 <dt id="arg-sdm">SDM<a class="anchor" aria-label="anchor" href="#arg-sdm"></a></dt>
@@ -73,10 +74,8 @@ will be reclassified: <code>"riparian"</code>, <code>"waterbird_fall"</code>, <c
 or <code>"tima"</code></p></dd>
 
 
-<dt id="arg-pathout-landscape-name">pathout, landscape_name<a class="anchor" aria-label="anchor" href="#arg-pathout-landscape-name"></a></dt>
-<dd><p>Optional character strings defining the
-filepath (<code>pathout/SDM/landscape_name</code>) where output rasters should be
-written</p></dd>
+<dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
+<dd><p>logical; see Details</p></dd>
 
 
 <dt id="arg-suffix">suffix<a class="anchor" aria-label="anchor" href="#arg-suffix"></a></dt>
@@ -84,23 +83,33 @@ written</p></dd>
 (optional unless <code>mask</code> is not <code>NULL</code>); see Details.</p></dd>
 
 
-<dt id="arg-mask">mask<a class="anchor" aria-label="anchor" href="#arg-mask"></a></dt>
-<dd><p>Optional SpatRaster; see Details</p></dd>
-
-
 <dt id="arg-pixel-value">pixel_value<a class="anchor" aria-label="anchor" href="#arg-pixel-value"></a></dt>
-<dd><p>Numeric value to replace cell values with (optional);
-default <code>NULL</code></p></dd>
+<dd><p>Optional numeric value to use in place of 1 where land
+covers are present; default <code>NULL</code></p></dd>
+
+
+<dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
+<dd><p>Optional SpatRaster or string representing filepath to a
+raster. See Details.</p></dd>
+
+
+<dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
+<dd><p>Optional string representing directory passed to
+<code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code>, as (<code>dir/SDM/landscape_name</code>). See Details.</p></dd>
 
 
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p>Logical; passed to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code>; default <code>FALSE</code></p></dd>
+<dd><p>logical. If <code>TRUE</code>, output is overwritten</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>additional arguments passed to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>SpatRaster, though primarily used to write layers to file for use
-with <code><a href="python_focal_run.html">python_focal_run()</a></code></p>
+with <code><a href="python_focal_stats.html">python_focal_stats()</a></code></p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -108,23 +117,46 @@ with <code><a href="python_focal_run.html">python_focal_run()</a></code></p>
 land cover raster into separate layers representing the presence (1) or
 absence (0) of each land cover class for use in calculating focal statistics.
 See documentation of that function for information about Warning messages.</p>
-<p>Optionally, a custom <code>suffix</code> can be appended to the layer name and cell
-values representing land cover presence (1) can be replaced with a different
-<code>pixel_value</code> (e.g., the area of each pixel) as needed before writing the
-layers to <code>pathout/SDM/landscape_name</code>.</p>
-<p>By providing a <code>mask</code>, this function can also use the land cover presence
-layers as a mask to extract the values of another layer (e.g., surface water
-data). To distinguish land cover presence from the values extracted from
-another layer, <code>suffix</code> is required to have two values. See examples.</p>
+<p>If <code>suffix</code> is provided, it is appended to the layer name. If <code>pixel_value</code>
+is provided, values representing land cover presence (1) are replaced with
+this value (e.g., the area of each pixel).</p>
+<p>If <code>subset</code> is provided, either as a SpatRaster or a filepath to a raster,
+the <code>subset</code> layer is masked by the presence of each land cover layer, e.g.
+to extract from surface water data the extent of surface water within each
+land cover class. In this case, both the land cover presence data and the
+subset data are returned; to distinguish between these results, <code>suffix</code> is
+required to have two values. The first is appended to the land cover presence
+data and the second is appended to the subset data. See examples.</p>
+<p>All output can be optionally written to <code>dir/SDM/landscape_name</code> where
+<code>landscape_name</code> is taken from the names of the input raster(s) <code>x</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="python_focal_run.html">python_focal_run()</a></code>, <code><a href="python_focal_finalize.html">python_focal_finalize()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="python_focal_stats.html">python_focal_stats()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">codenums</span> <span class="op">=</span> <span class="fu">DeltaMultipleBenefits</span><span class="fu">::</span><span class="va"><a href="key.html">key</a></span><span class="op">$</span><span class="va">CODE_NUM</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">codenums</span>, size <span class="op">=</span> <span class="fl">1000</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">100</span>, nrow <span class="op">=</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">watwin</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="classify_landcover.html">classify_landcover</a></span><span class="op">(</span><span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">watwin_pred</span> <span class="op">=</span> <span class="fu">python_focal_prep</span><span class="op">(</span><span class="va">watwin</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># return the area of the pixel where each land cover class is present</span></span></span>
+<span class="r-in"><span><span class="co"># (useful for summing over moving windows)</span></span></span>
+<span class="r-in"><span><span class="va">watwin_area</span> <span class="op">=</span> <span class="fu">python_focal_prep</span><span class="op">(</span><span class="va">watwin</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># mask another raster (e.g., surface water data) by the presence of each</span></span></span>
+<span class="r-in"><span><span class="co"># land cover class:</span></span></span>
+<span class="r-in"><span><span class="va">w</span> <span class="op">=</span> <span class="va">watwin</span> <span class="co"># simulate surface water data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="op">=</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/colors.html" class="external-link">coltab</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="op">=</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">10000</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask = w)</span></span></span>
+<span class="r-in"><span><span class="co">#returns error because two suffixes need to be provided</span></span></span>
+<span class="r-in"><span><span class="va">pfld</span> <span class="op">=</span> <span class="fu">python_focal_prep</span><span class="op">(</span><span class="va">watwin</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span>, mask <span class="op">=</span> <span class="va">w</span>,</span></span>
+<span class="r-in"><span>                         suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'_area'</span>, <span class="st">'_pfld'</span><span class="op">)</span><span class="op">)</span> <span class="co"># works</span></span></span>
+</code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
