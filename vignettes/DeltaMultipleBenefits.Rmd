@@ -109,7 +109,7 @@ ggplot2::ggplot(new_shp) +
 Next, convert the polygons to a raster format with the desired projection, extent, and resolution. We'll first create a raster template from the polygon layer with a small number of columns and rows (and thus coarse resolution) just for demonstration purposes. However, to ensure alignment with other rasters in your analysis, it usually works best to use an existing raster as a template. Next, transfer the land cover code values to the template to create a new landscape raster that we'll treat as our "baseline" landscape. Finally, to help with plotting, we'll assign labels and default color codings to each value.
 
 
-```{r classify_poly3, eval = FALSE}
+```{r classify_poly3, eval = TRUE}
 
 template = terra::rast(ncols = 1000, nrows = 1000, 
                        extent = sf::st_bbox(new_shp))
@@ -132,7 +132,7 @@ terra::plot(baseline)
 
 If the landscape to be analyzed is in a raster format already, the existing land cover values encoded should be similarly translated to the supported values in the existing land cover classification scheme. As an example, we'll use `baseline` raster we created above, and create a new version from it to serve as our new `scenario` of landscape change. 
 
-```{r classify_raster, eval = FALSE}
+```{r classify_raster, eval = TRUE}
 # basic example habitat restoration scenario: all wheat (22) and corn (26) 
 # pixels are converted to Fremont cottonwood riparian forest (71)
 scenario <- terra::classify(
@@ -289,7 +289,7 @@ terra::plot(predictors_tima$baseline)
 # >> when run inside vignette, output will write to vignettes/SDM_landcover
 ```
 
-__python_focal_stats:__ The third step is to generate focal statistics for each of the separate land cover rasters generated in the previous step. Focal statistics perform a given operation on all cells within a given distance of the focal cell, and repeated for every cell in the raster. For the "tima" models, this function will calculate the mean value for the presence of every land cover class within each landscape to be analyzed, within moving windows on each of two spatial scales (50m and 2km). All input layers are read from `pathin/SDM/landscape_name`, processed, and then written out to `pathout/SDM/landscape_name/scale`. 
+__python_focal_stats:__ The third step is to generate focal statistics for each of the separate land cover rasters generated in the previous step. Focal statistics perform a given operation on all cells within a given distance of the focal cell, and repeated for every cell in the raster. For the "tima" models, this function will calculate the mean value for the presence of every land cover class within each landscape to be analyzed, within moving windows on each of two spatial scales (50m and 2km). All input layers are read from `pathin/SDM/landscape_name`, processed, and then written out to `dir/SDM/landscape_name/scale`. 
 
 These calculations can be very slow, depending on the size and resolution of the rasters. While they could be run entirely in R, it is much faster to use Python and write directly to disk rather than store in working memory. Therefore, this function currently requires Python to be installed on your system and specifically `arcpy` with the Spatial Analyst extension. The first time this function is run in each session, internal helper functions will check that `arcpy` is installed and try to load it, but to ensure the correct version of Python can be found, you may need to specify the correct filepath. See example below.
 
@@ -326,7 +326,7 @@ fit_SDM(pathin = 'SDM_predictors',
         modlist = BRT_tidal_wetlands,
         factors = list(list('LANDCOVER' = c('WETLAND', 'RIPARIAN', 'WATER', 'AGGRPAS'))),
         type = 'response',
-        pathout = 'SDM_results')
+        dir = 'SDM_results')
 
 fit_SDM(pathin = 'SDM_predictors', 
         SDM = 'tima',
@@ -334,7 +334,7 @@ fit_SDM(pathin = 'SDM_predictors',
         modlist = BRT_tidal_wetlands,
         factors = list(list('LANDCOVER' = c('WETLAND', 'RIPARIAN', 'WATER', 'AGGRPAS'))),
         type = 'response',
-        pathout = 'SDM_results')
+        dir = 'SDM_results')
 ```
 
 *Note: The models will not run if all required predictors are not provided.* The toy example landscape data provided here does not include all required predictors. 
@@ -346,13 +346,13 @@ transform_SDM(pathin = 'SDM_results',
               SDM = 'tima', landscape_name = 'baseline',
               modlist = BRT_tidal_wetlands,
               stat = 'equal_sens_spec',
-              pathout = 'SDM_results_threshold')
+              dir = 'SDM_results_threshold')
 
 transform_SDM(pathin = 'SDM_results',
               SDM = 'tima', landscape_name = 'scenario',
               modlist = BRT_tidal_wetlands,
               stat = 'equal_sens_spec',
-              pathout = 'SDM_results_threshold')
+              dir = 'SDM_results_threshold')
 ```
 
 ## 4.2 Riparian landbird models ("riparian")
@@ -445,7 +445,7 @@ transform_SDM(pathin = 'SDM_results',
               SDM = 'riparian', landscape_name = 'baseline',
               modlist = BRT_riparian_wetlands[[c('NUWO', 'ATFL', 'BHGR', 'LAZB', 'SPTO', 'YEWA')]],
               stat = 'equal_sens_spec',
-              pathout = 'SDM_results_threshold')
+              dir = 'SDM_results_threshold')
 
 # scenario landscape:
 fit_SDM(pathin = 'SDM_predictors', 
@@ -461,7 +461,7 @@ transform_SDM(pathin = 'SDM_results',
               SDM = 'tima', landscape_name = 'scenario',
               modlist = BRT_riparian_wetlands[[c('NUWO', 'ATFL', 'BHGR', 'LAZB', 'SPTO', 'YEWA')]],
               stat = 'equal_sens_spec',
-              pathout = 'SDM_results_threshold')
+              dir = 'SDM_results_threshold')
 ```
 
 ## 4.3 Waterbird models ("waterbird_fall" and "waterbird_win")
@@ -484,11 +484,11 @@ pwater_base_win = terra::rast(
 
 update_pwater(waterdat = pwater_base_fall, SDM = 'waterbird_fall',
               landscape_name = 'scenario',
-              pathout = 'SDM_predictors', overwrite = TRUE,
+              dir = 'SDM_predictors', overwrite = TRUE,
               baseline_landscape = landscapes$baseline, floor = FALSE)
 update_pwater(waterdat = pwater_base_win, SDM = 'waterbird_win',
               landscape_name = 'scenario',
-              pathout = 'SDM_predictors', overwrite = TRUE,
+              dir = 'SDM_predictors', overwrite = TRUE,
               baseline_landscape = landscapes$baseline, floor = FALSE)
 
 # waterbird_fall
@@ -514,13 +514,13 @@ update_roosts(
   unsuitable = c(11:19, 60, 70:79, 100:120),
   proportion = 0.2,
   roosts = terra::vect(roosts_original),
-  pathout = 'SDM_predictors/crane_roosts',
+  dir = 'SDM_predictors/crane_roosts',
   overwrite = TRUE)
 
 python_dist(
   pathin = 'SDM_predictors/crane_roosts',
   landscape_name = 'scenario',
-  pathout = 'SDM_predictors',
+  dir = 'SDM_predictors',
   SDM = 'waterbird_fall',
   filename = 'droost_km.tif',
   scale = 'km')
@@ -536,7 +536,7 @@ __classify_landcover.SpatRaster:__ Reclassify each landscape raster to match the
 
 __python_focal_prep:__ Following the classification step, the next step is again to prep for running focal statistics, as above. This time, cells where each land cover class is present will be filled with a value corresponding to the area of each pixel, and each land cover layer will also be used as a mask for the corresponding updated `pwater` data, resulting in a second layer for each land cover class filled with values corresponding to their probability of being flooded. Thus, two layers are created for each land cover class, and we provide two custom `suffix` values to distinguish them when the files are written to `dir/SDM/landscape_name`.
 
-```{r waterbird1, eval = TRUE}
+```{r waterbird1, eval = FALSE}
 
 landscapes_watfall = classify_landcover(landscapes, SDM = 'waterbird_fall') |> 
   suppressWarnings()
@@ -563,7 +563,7 @@ predictors_watfall_scenario = python_focal_prep(
 
 __python_focal_stats:__ As above, the next step is to generate focal statistics for each of the separate land cover rasters. 
 
-```{r riparian3, eval = FALSE}
+```{r waterbird2, eval = FALSE}
 python_focal_stats(SDM = 'waterbird_fall', 
                    landscape_names = c('baseline', 'scenario'),
                    pathin = 'SDM_landcover2',
@@ -599,7 +599,7 @@ Also similar to the riparian models, the waterbird models included `offset`, a p
 
 __transform_SDM:__ Finally, as above, the model-predicted results can be converted into binary presence-absence predictions using threshold statistics.
 
-```{r waterbird4, eval = FALSE}
+```{r waterbird3, eval = FALSE}
 # fall: cranes, geese
 purrr::map(names(landscapes),
            ~fit_SDM(
@@ -654,7 +654,7 @@ purrr::map(names(landscapes),
 
 __transform_SDM:__ Again, as with riparian landbirds, convert the continuous probabilities of waterbird group presence predicted in the previous step to binary predictions of presence or absence.
 
-```{r waterbird5, eval = FALSE}
+```{r waterbird4, eval = FALSE}
 purrr::map(names(landscapes),
            ~transform_SDM(
              pathin = 'SDM_results',
@@ -662,7 +662,7 @@ purrr::map(names(landscapes),
              landscape_name = .x,
              modlist = BRT_riparian[1],
              stat = 'equal_sens_spec',
-             pathout = 'SDM_results_threshold'))
+             dir = 'SDM_results_threshold'))
 
 purrr::map(names(landscapes),
            ~transform_SDM(
@@ -671,7 +671,7 @@ purrr::map(names(landscapes),
              landscape_name = .x,
              modlist = BRT_riparian[1],
              stat = 'equal_sens_spec',
-             pathout = 'SDM_results_threshold'))
+             dir = 'SDM_results_threshold'))
 ```
   
 
