@@ -59,7 +59,7 @@
 sum_metrics = function(metricdat, areadat) {
 
   # split areadat by scenario
-  areadat = split(areadat |> dplyr::select(-scenario),
+  areadat = split(areadat |> dplyr::select(-.data$scenario),
                   areadat$scenario)
 
   # for each scenario, join full list of available metrics
@@ -77,7 +77,7 @@ sum_metrics = function(metricdat, areadat) {
   # calculate total scores
   dat_sum = dat_join |>
     dplyr::mutate(
-      area = tidyr::replace_na(area, replace = 0), # if missing from areadat, fill with zero
+      area = tidyr::replace_na(.data$area, replace = 0), # if missing from areadat, fill with zero
       # retain mean value for Annual Wages for now, otherwise multiply by area
       # for total score
       SCORE_TOTAL = dplyr::if_else(.data$METRIC == 'Annual Wages',

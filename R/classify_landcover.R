@@ -172,7 +172,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
 
   newlevels = list(
     crosswalk |> dplyr::select(.data$PREDICTOR_NUM, .data$PREDICTOR_NAME) |>
-      dplyr::distinct() |> dplyr::arrange(PREDICTOR_NUM) |> tidyr::drop_na() |>
+      dplyr::distinct() |> dplyr::arrange(.data$PREDICTOR_NUM) |> tidyr::drop_na() |>
       as.data.frame()
     )
   levels(r) <- rep(newlevels, terra::nlyr(r))
@@ -180,8 +180,8 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
   if (coltab) {
     newcolors = list(
       pred |> dplyr::select(.data$PREDICTOR_NUM, .data$COLOR) |>
-        dplyr::distinct() |> dplyr::arrange(PREDICTOR_NUM) |> tidyr::drop_na() |>
-        as.data.frame()
+        dplyr::distinct() |> dplyr::arrange(.data$PREDICTOR_NUM) |>
+        tidyr::drop_na() |> as.data.frame()
     )
     terra::coltab(r) <- rep(newcolors, terra::nlyr(r))
   }

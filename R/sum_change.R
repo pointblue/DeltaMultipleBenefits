@@ -52,7 +52,7 @@
 sum_change = function(dat, k = 2) {
   dat = dplyr::rename_with(dat, ~gsub('area|SCORE_TOTAL', 'value', .x))
 
-  scenariodat = dplyr::filter(dat, scenario != 'baseline') |>
+  scenariodat = dplyr::filter(dat, .data$scenario != 'baseline') |>
     dplyr::rename_with(~gsub('value', 'SCENARIO_VALUE', .x)) |>
     dplyr::rename_with(~gsub('VALUE_SE', 'SE', .x))
   scenariodat = split(
