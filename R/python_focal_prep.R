@@ -109,10 +109,9 @@ python_focal_prep = function(x, SDM, fill = TRUE, suffix = NULL,
 
   # optional: add suffix
   if (!is.null(suffix)) {
-    presence = purrr::map(
-      presence,
-      function(x) {names(x) = paste0(names(x), suffix[1])}
-    )
+    for (i in c(1:length(presence))) {
+      names(presence[[i]]) <- paste0(names(presence[[i]]), suffix[1])
+    }
   }
 
   if (!is.null(dir) & !is.null(landscape_names)) {
