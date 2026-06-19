@@ -24,6 +24,10 @@ The DeltaMultipleBenefits package provides tools for estimating the net impacts 
 
 The metrics currently supported by this package are grouped into several categories of potential benefits: Agricultural Livelihoods, Water Quality, Climate Change Resilience, and Biodiversity Support. Each category is represented by multiple individual metrics that can be summarized over the entire landscape, regions within the landscape, or individual project areas. By comparing metrics estimated from proposed scenarios of landscape change to metrics estimated for a baseline landscape representing current conditions, the expected net change in each metric can be estimated. 
 
+```{r multiple_benefits, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("man/figures/multiple_benefits_graphic.png")
+```
+
 Importantly, this package is not designed to find an "optimal" solution to maximize benefits and minimize trade-offs, but rather to evaluate and compare realistic proposed alternatives or anticipated future changes. This is because the list of supported metrics is incomplete compared to the many interests, values, and goals held by the Delta community, land managers, organizations, and agencies, so that any optimized solution would be incomplete and potentially misleading. Instead, this package requires users to supply spatial data representing their baseline (current) landscape and alternative scenarios under consideration. Example baseline and scenario landscapes used in the development of this package are publicly available for reuse or modification (see [Supporting Information](articles/supporting_information.html)). 
 
 This vignette serves as a tutorial outlining the major steps of analyzing alternative landscapes and comparing them to each other, including:  
