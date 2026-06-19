@@ -71,8 +71,7 @@ python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
   #                    overwrite = overwrite)
   # handle mask - currently experimental
   if (!is.null(mask)) {
-    if(class(mask) == 'SpatRaster') {
-      print('mask is a SpatRaster')
+    if (is(mask, 'SpatRaster')) {
       tmp <- tempfile(fileext = ".tif")
       print(tmp)
       terra::writeRaster(mask, tmp)
@@ -81,7 +80,6 @@ python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
                          buffer = scale, fun = fun, suffix = suffix, regex = regex,
                          overwrite = overwrite, mask_raster = "mask_layer")
     } else {
-      print('mask is a character string')
       mask_layer <- arcpy$Raster(mask)
       env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
                          buffer = scale, fun = fun, suffix = suffix, regex = regex,
