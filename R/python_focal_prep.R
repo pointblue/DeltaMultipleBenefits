@@ -40,8 +40,8 @@
 #' @param ... additional arguments passed to [terra::writeRaster()]
 #'
 #' @returns SpatRaster, though primarily used to write layers to file for use
-#'   with [python_focal_run()]
-#' @seealso [python_focal_run()], [python_focal_finalize()]
+#'   with [python_focal_stats()]
+#' @seealso [python_focal_stats()]
 #' @export
 #'
 #' @examples

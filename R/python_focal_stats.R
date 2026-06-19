@@ -9,7 +9,7 @@
 #'   [classify_landcover.SpatRaster()] and [python_focal_prep()], and writing
 #'   the resulting rasters representing land cover predictors to
 #'   `pathin/SDM/landscape_names`. For each raster in these directories, this
-#'   function calls [python_focal_run()] to calculate focal statistics required
+#'   function calls inernal functions to calculate focal statistics required
 #'   for each species distribution model, on the appropriate spatial scales and
 #'   with the required summary statistics. The `regex` argument provides options
 #'   for processing only a subset of the rasters in the directory. If
@@ -39,7 +39,7 @@
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
 #'   each land cover class.
-#' @seealso [python_focal_prep()], [python_focal_finalize()]
+#' @seealso [python_focal_prep()], [fit_SDM()]
 #' @export
 #'
 #' @examples

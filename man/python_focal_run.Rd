@@ -71,6 +71,6 @@ the count of pixels within the buffer distance.
 # See vignette
 }
 \seealso{
-\code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
+\code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_stats]{python_focal_stats()}}
 }
 \keyword{internal}

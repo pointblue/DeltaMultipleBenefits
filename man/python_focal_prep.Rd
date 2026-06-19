@@ -43,7 +43,7 @@ raster. See Details.}
 }
 \value{
 SpatRaster, though primarily used to write layers to file for use
-with \code{\link[=python_focal_run]{python_focal_run()}}
+with \code{\link[=python_focal_stats]{python_focal_stats()}}
 }
 \description{
 Prepare for running focal statistics on a landscape raster via Python, to
@@ -92,5 +92,5 @@ pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask
                          suffix = c('_area', '_pfld')) # works
 }
 \seealso{
-\code{\link[=python_focal_run]{python_focal_run()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
+\code{\link[=python_focal_stats]{python_focal_stats()}}
 }

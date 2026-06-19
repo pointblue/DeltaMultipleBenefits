@@ -48,7 +48,7 @@ This function is designed to be called after running
 \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}} and \code{\link[=python_focal_prep]{python_focal_prep()}}, and writing
 the resulting rasters representing land cover predictors to
 \code{pathin/SDM/landscape_names}. For each raster in these directories, this
-function calls \code{\link[=python_focal_run]{python_focal_run()}} to calculate focal statistics required
+function calls inernal functions to calculate focal statistics required
 for each species distribution model, on the appropriate spatial scales and
 with the required summary statistics. The \code{regex} argument provides options
 for processing only a subset of the rasters in the directory. If
@@ -67,5 +67,5 @@ default will look here: \verb{C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgis
 # See vignette
 }
 \seealso{
-\code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=python_focal_finalize]{python_focal_finalize()}}
+\code{\link[=python_focal_prep]{python_focal_prep()}}, \code{\link[=fit_SDM]{fit_SDM()}}
 }
