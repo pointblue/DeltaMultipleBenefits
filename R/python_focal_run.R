@@ -11,7 +11,9 @@
 #'   directory of land cover predictors, this function calls the
 #'   `focal_stats.py` script which reads in all rasters in the directory (unless
 #'   the `regex` argument is used) and then summarizes cell values for each
-#'   input raster within a buffer distance defined by `scale`.
+#'   input raster within a buffer distance defined by `scale`. Optionally, the
+#'   results can be masked after calculating focal statistics, such as to limit
+#'   results to a study area.
 #'
 #'   Summary functions may include `'SUM'` or `'MEAN'`. Note that the MEAN of
 #'   binary land cover presence data is equivalent to the proportion cover of
@@ -30,6 +32,8 @@
 #'   (as `dir/SDM/landscape_name/scale`)
 #' @param python Optional filepath to the preferred version of arcpy, passed to
 #'   `reticulate::use_python`. See details.
+#' @param overwrite logical; allow Python to overwrite output?
+#' @param mask currently experimental
 #'
 #' @return Nothing returned to R environment. Writes rasters to `pathout` for
 #'   each land cover class.
@@ -40,7 +44,8 @@
 #' # See vignette
 
 python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
-                            scale, suffix, fun = 'MEAN', dir, python = NULL) {
+                            scale, suffix, fun = 'MEAN', dir, python = NULL,
+                            overwrite = TRUE, mask = NULL) {
 
   # import arcpy if not already
   if (is.null(.py_state$arcpy)) {
@@ -59,9 +64,34 @@ python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
   fullpathout = file.path(dir, SDM, landscape_name)
   create_directory(fullpathout)
 
+
   # run focal_stats.py
-  env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
-                  buffer = scale, fun = fun, suffix = suffix, regex = regex)
+  # env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
+  #                    buffer = scale, fun = fun, suffix = suffix, regex = regex,
+  #                    overwrite = overwrite)
+  # handle mask - currently experimental
+  if (!is.null(mask)) {
+    if(class(mask) == 'SpatRaster') {
+      print('mask is a SpatRaster')
+      tmp <- tempfile(fileext = ".tif")
+      print(tmp)
+      terra::writeRaster(mask, tmp)
+      .py_state$arcpy$MakeRasterLayer_management(tmp, "mask_layer")
+      env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
+                         buffer = scale, fun = fun, suffix = suffix, regex = regex,
+                         overwrite = overwrite, mask_raster = "mask_layer")
+    } else {
+      print('mask is a character string')
+      mask_layer <- arcpy$Raster(mask)
+      env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
+                         buffer = scale, fun = fun, suffix = suffix, regex = regex,
+                         overwrite = overwrite, mask_raster = "mask_layer")
+    }
+  } else {
+    env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
+                       buffer = scale, fun = fun, suffix = suffix, regex = regex,
+                       overwrite = overwrite)
+  }
 
 }
 

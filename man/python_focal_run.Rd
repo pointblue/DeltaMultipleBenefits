@@ -13,7 +13,9 @@ python_focal_run(
   suffix,
   fun = "MEAN",
   dir,
-  python = NULL
+  python = NULL,
+  overwrite = TRUE,
+  mask = NULL
 )
 }
 \arguments{
@@ -34,6 +36,10 @@ stats are calculated}
 
 \item{python}{Optional filepath to the preferred version of arcpy, passed to
 \code{reticulate::use_python}. See details.}
+
+\item{overwrite}{logical; allow Python to overwrite output?}
+
+\item{mask}{currently experimental}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
@@ -52,7 +58,9 @@ functions required by each species distribution model. For each unique
 directory of land cover predictors, this function calls the
 \code{focal_stats.py} script which reads in all rasters in the directory (unless
 the \code{regex} argument is used) and then summarizes cell values for each
-input raster within a buffer distance defined by \code{scale}.
+input raster within a buffer distance defined by \code{scale}. Optionally, the
+results can be masked after calculating focal statistics, such as to limit
+results to a study area.
 
 Summary functions may include \code{'SUM'} or \code{'MEAN'}. Note that the MEAN of
 binary land cover presence data is equivalent to the proportion cover of

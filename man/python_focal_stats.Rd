@@ -10,7 +10,9 @@ python_focal_stats(
   dir,
   landscape_names,
   regex = NULL,
-  python = NULL
+  python = NULL,
+  overwrite = TRUE,
+  mask = NULL
 )
 }
 \arguments{
@@ -26,6 +28,10 @@ rasters in \code{pathin/SDM/landscape_name}}
 
 \item{python}{Optional filepath to the preferred version of arcpy, passed to
 \code{reticulate::use_python}. See details.}
+
+\item{overwrite}{logical; allow Python to overwrite existing output?}
+
+\item{mask}{currently experimental}
 }
 \value{
 Nothing returned to R environment. Writes rasters to \code{pathout} for
@@ -45,10 +51,10 @@ the resulting rasters representing land cover predictors to
 function calls \code{\link[=python_focal_run]{python_focal_run()}} to calculate focal statistics required
 for each species distribution model, on the appropriate spatial scales and
 with the required summary statistics. The \code{regex} argument provides options
-for processing only a subset of the rasters in the directory. If focal
-statistics have already been created and need to be re-run, previous
-versions need to be manually deleted or else the output \code{dir} changed;
-there is currently no option to overwrite.
+for processing only a subset of the rasters in the directory. If
+\code{overwrite=TRUE} (the default), previously-created focal statistics will be
+overwritten. If \code{mask} provides a filepath to a raster, the results will be
+masked by this file before writing to file.
 
 These calculations can be very slow, depending on the size and resolution
 of the rasters, and relies on the availability of \code{arcpy} and Spatial
