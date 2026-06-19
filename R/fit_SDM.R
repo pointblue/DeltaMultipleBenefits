@@ -52,11 +52,8 @@
 #' @param overwrite Logical; passed to [terra::writeRaster()]
 #' @param ... additional arguments passed to [terra::writeRaster()]
 #'
-#' @return Nothing returned to R environment. Writes rasters to `pathout` for
-#'   each model in `modlist`
-#' @seealso [python_focal_prep()], [python_focal_run()],
-#'   [python_focal_finalize()], [update_covertype()], [update_pwater()],
-#'   [update_roosts()], [python_dist()]
+#' @seealso [python_focal_prep()], [python_focal_stats()], [update_covertype()],
+#'  [update_pwater()], [update_roosts()], [python_dist()]
 #' @importFrom gbm predict.gbm
 #' @importFrom purrr map
 #' @export
@@ -76,7 +73,7 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
     warning('Landscape provided but unsuitable cover types not specified')
   }
 
-  create_directory(file.path(pathout, SDM, landscape_name))
+  create_directory(file.path(dir, SDM, landscape_name))
 
   # scenario-independent predictors (in pathin) and scenario-specific predictors
   predictors = c(list.files(file.path(pathin, SDM), pattern = '.tif$', full.names = TRUE),
@@ -100,7 +97,7 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
                  type = 'response',
                  const = constants,
                  factors = factors,
-                 filename = paste0(file.path(pathout, SDM, landscape_name), '/',
+                 filename = paste0(file.path(dir, SDM, landscape_name), '/',
                                    .x, '.tif'),
                  overwrite = overwrite,
                  wopt = list(names = .x)
@@ -129,7 +126,7 @@ fit_SDM = function(pathin, SDM, landscape_name, modlist, constants = NULL,
                  terra::cover(
                    x = mask,
                    y = .,
-                   filename = paste0(file.path(pathout, SDM, landscape_name), '/',
+                   filename = paste0(file.path(dir, SDM, landscape_name), '/',
                                      .x, '.tif'),
                    overwrite = overwrite,
                    wopt = list(names = .x),
