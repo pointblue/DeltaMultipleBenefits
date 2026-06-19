@@ -25,6 +25,8 @@ scenarios of landscape change to metrics estimated for a baseline
 landscape representing current conditions, the expected net change in
 each metric can be estimated.
 
+![](../reference/figures/multiple_benefits_graphic.png)
+
 Importantly, this package is not designed to find an “optimal” solution
 to maximize benefits and minimize trade-offs, but rather to evaluate and
 compare realistic proposed alternatives or anticipated future changes.
@@ -494,6 +496,21 @@ first use built-in functions to prepare the landscape rasters.
 landscape raster to match the predictor groupings required by the “tima”
 models.
 
+We also need to compile additional predictors from other data sources:
+\* `CHAN`, the density of channel lines within each buffer distance,
+based on the National Hydrography Dataset \* `PSIZE`, the patch size of
+the largest block of tidal wetlands that extends into the buffer size
+
+``` r
+
+
+landscapes_tima = classify_landcover(landscapes, SDM = 'tima')
+#> RICE URBN NA SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN NWET SALTPICK EMER MEAD LEPI ALKA TWET
+#> Warning in classify_landcover.SpatRaster(landscapes, SDM = "tima"): Extreme
+#> Caution Advised. Land cover classes are missing from the input raster but are
+#> expected by the selected SDM. Check input raster for errors.
+```
+
 **python_focal_prep:** The next step separates each landscape raster
 into separate layers for each distinct predictor, with a default value
 of `1` everywhere the land cover class is present, and a `0` otherwise.
@@ -510,12 +527,6 @@ landscape does not include all land cover classes required to fit the
 ``` r
 
 
-landscapes_tima = classify_landcover(landscapes, SDM = 'tima')
-#> RICE URBN NA SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN NWET SALTPICK EMER MEAD LEPI ALKA TWET
-#> Warning in classify_landcover.SpatRaster(landscapes, SDM = "tima"): Extreme
-#> Caution Advised. Land cover classes are missing from the input raster but are
-#> expected by the selected SDM. Check input raster for errors.
-
 predictors_tima = python_focal_prep(landscapes_tima, SDM = 'tima', 
                                     fill = FALSE) |> suppressWarnings()
 #> RICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKARICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKA
@@ -523,7 +534,7 @@ predictors_tima = python_focal_prep(landscapes_tima, SDM = 'tima',
 terra::plot(predictors_tima$baseline)
 ```
 
-![](DeltaMultipleBenefits_files/figure-html/tima1-1.png)
+![](DeltaMultipleBenefits_files/figure-html/tima2-1.png)
 
 ``` r
 
@@ -588,7 +599,7 @@ covertype_tima = update_covertype(landscapes_tima, SDM = "tima")
 terra::plot(covertype_tima)
 ```
 
-#### 4.1.2 Generate model predictions
+#### 4.1.3 Generate model predictions
 
 **fit_SDM:** Use the predictors created in the previous step for each
 landscape to fit the distribution models for each of the 7 “tima”
@@ -599,6 +610,15 @@ to download these models. The levels of the categorical predictor
 `LANDCOVER` must be specified in the call to `fit_SDM`, and in the
 correct order.
 
+Open water was considered to be an unsuitable land cover class *a
+priori*, and so we can specify `unsuitable = 90` (the land cover class
+value for open water); this will create a mask from the provided
+`landscape` with 0 values wherever the land cover class equals the
+values provided in `unsuitable` and NA elsewhere, used to cover the
+predicted values from the model. Alternatively, the predictors can all
+be masked by an open water layer before running
+[`fit_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/fit_SDM.md).
+
 ``` r
 
 fit_SDM(pathin = 'SDM_predictors', 
@@ -607,6 +627,7 @@ fit_SDM(pathin = 'SDM_predictors',
         modlist = BRT_tidal_wetlands,
         factors = list(list('LANDCOVER' = c('WETLAND', 'RIPARIAN', 'WATER', 'AGGRPAS'))),
         type = 'response',
+        unsuitable = 90,
         dir = 'SDM_results')
 
 fit_SDM(pathin = 'SDM_predictors', 
@@ -720,23 +741,8 @@ terra::plot(predictors_rip$baseline)
 
 
 # Optional (can be slow)
-python_focal_prep(landscapes_rip$baseline, SDM = 'riparian',
-                  dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
-#> RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUB
-#> Warning in create_predictor_stack(x = x[[.x]], SDM = SDM, fill = fill): Extreme
-#> Caution Advised. Land cover classes are missing from the input raster but are
-#> expected by the selected SDM. Check input raster for errors.
-#> Creating directory: SDM_landcover2/riparian/baseline
-#> $baseline
-#> class       : SpatRaster
-#> size        : 1000, 1000, 8  (nrow, ncol, nlyr)
-#> resolution  : 62.05834, 56.5612  (x, y)
-#> extent      : 1.685498e+07, 1.691704e+07, -8737839, -8681278  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / UTM zone 10N (EPSG:26910)
-#> source(s)   : memory
-#> names       : ORCHVIN, AG, GRASSPAS, POFR, QULO, INTROSCRUB, ...
-#> min values  :       0,  0,        0,    0,    0,          0, ...
-#> max values  :       1,  1,        1,    1,    1,          1, ...
+# python_focal_prep(landscapes_rip$baseline, SDM = 'riparian',
+#                   dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
 # >> when run inside vignette, output will write to vignettes/SDM_landcover
 ```
 
