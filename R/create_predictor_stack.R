@@ -46,6 +46,15 @@ create_predictor_stack = function(x, SDM, fill = TRUE) {
   if (SDM == 'riparian') {
     pred <- DeltaMultipleBenefits::predictors_riparian |>
       dplyr::select(-.data$NOTES, -.data$COLOR)
+    # drop group vars already represented as unspecified wetland and riparian
+
+    if ('WETLAND' %in% names(presence)) {
+      presence = terra::subset(presence, subset = 'WETLAND', negate = TRUE)
+    }
+    if ('RIPARIAN' %in% names(presence)) {
+      presence = terra::subset(presence, subset = 'RIPARIAN', negate = TRUE)
+    }
+
     groupvars = c(
       terra::classify(x,
                       rcl = pred |> dplyr::filter(.data[['RIPARIAN']] == 1) |>
@@ -64,6 +73,22 @@ create_predictor_stack = function(x, SDM, fill = TRUE) {
   } else if (SDM == 'tima') {
     pred <- DeltaMultipleBenefits::predictors_tima |>
       dplyr::select(-.data$COLOR)
+
+    if ('NWET' %in% names(presence)) {
+      presence = terra::subset(presence, subset = 'NWET', negate = TRUE)
+    }
+    if ('TWET' %in% names(presence)) {
+      presence = terra::subset(presence, subset = 'TWET', negate = TRUE)
+    }
+    if ('WETL' %in% names(presence)) {
+      presence = terra::subset(presence, subset = 'WETL', negate = TRUE)
+    }
+    if ('RFOR' %in% names(presence)) {
+      presence = terra::subset(presence, subset = 'RFOR', negate = TRUE)
+    }
+    if ('RSCR' %in% names(presence)) {
+      presence = terra::subset(presence, subset = 'RSCR', negate = TRUE)
+    }
     groupvars = c(
       terra::classify(x,
                       rcl = pred |> dplyr::filter(.data[['NWET']] == 1) |>
