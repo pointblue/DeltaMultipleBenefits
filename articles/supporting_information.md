@@ -29,10 +29,10 @@ Delta.* Point Blue Conservation Science, Petaluma, CA.
 
 ## Data sets
 
-[![](https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg)](https://doi.org/10.5281/zenodo.7504874)
+[![](https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg)](https://doi.org/10.5281/zenodo.7504873)
 Metrics Data for Quantifying Multidimensional Impacts of Landscape
-Change in California’s Sacramento–San Joaquin Delta. DOI:
-[10.5281/zenodo.7504874](https://doi.org/10.5281/zenodo.7504874) *(also
+Change in California’s Sacramento–San Joaquin Delta (version 2). DOI:
+[10.5281/zenodo.7504873](https://doi.org/10.5281/zenodo.7504873) *(also
 included in the `DeltaMultipleBenefits` package)*
 
 [![](https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/arrow-up-right-from-square.svg)](https://doi.org/10.5281/zenodo.7531945)
