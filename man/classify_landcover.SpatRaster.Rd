@@ -14,7 +14,8 @@
 
 \item{coltab}{logical; if TRUE add default color palette}
 
-\item{verbose}{logical; if TRUE then print details associated with warning messages}
+\item{verbose}{logical; if TRUE then print details associated with warning
+messages}
 
 \item{...}{Unused}
 }
@@ -27,19 +28,19 @@ according to the classifications used by a specific set of species
 distribution models (SDM).
 }
 \details{
-Calls on internal datasets to crosswalk from land cover classes listed in the
-\link{key} to the predictors expected by the selected SDM group. The input raster
-should already be encoded with the land cover classes listed in the \link{key}. To
-help with creating such a raster, see \code{\link[=classify_landcover.sf]{classify_landcover.sf()}} to map land
-cover polygons to the land cover classes in the \link{key}.
+This function is called by \code{\link[=create_predictor_stack]{create_predictor_stack()}} and is not generally
+intended to be called directly. It calls on internal datasets to crosswalk
+from land cover classes listed in the \link{key} to the predictors expected by the
+selected SDM group. The input raster should already be encoded with the land
+cover classes listed in the \link{key}. To help with creating such a raster, see
+\code{\link[=classify_landcover.sf]{classify_landcover.sf()}} to map land cover polygons to the land cover
+classes in the \link{key}.
 
 A warning is given if there are land cover classes present in the landscape
-that do not map to any of the predictors for the selected SDM group, or if
-there are land cover classes missing from the landscape that are expected by
-the selected SDM group. These warnings may represent significant problems for
-fitting SDMs and should be carefully reviewed.  In either case, it is
-recommended to review the corresponding internal datasets
-(\link{predictors_riparian}, \link{predictors_waterbird_fall},
+that do not map to any of the predictors for the selected SDM group. This
+warnings may represent significant problems for fitting SDMs and should be
+carefully reviewed. It is recommended to review the corresponding internal
+datasets (\link{predictors_riparian}, \link{predictors_waterbird_fall},
 \link{predictors_waterbird_win}, or \link{predictors_tima}) for the list of expected
 predictors and how they map to land cover classes in the \link{key}. Check whether
 the selected SDM group expects more specific land cover classes or

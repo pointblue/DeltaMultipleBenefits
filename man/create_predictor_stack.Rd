@@ -29,15 +29,18 @@ called directly. Segregates a landscape raster into separate layers
 representing each land cover class. Also calls on internal datsets to create
 broader grouping variables as required for the selected SDM. The input raster
 should already be classified according to the land cover classifications
-expected by the selected SDM. See \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}.
+expected by the selected SDM.
 
-A warning is given if land cover classes expected by the model are absent
-from the landscape. If fill = TRUE (the defualt), the function will create
-rasters with all zero values for each missing land cover class. However, the
-input raster should be carefully reviewed to ensure they are truly absent and
-have not been excluded from the landscape unintentionally. If needed, the
-resulting layers can be replaced manually before proceeding with
-\code{\link[=python_focal_run]{python_focal_run()}}.
+A warning is given if there are land cover classes present in the landscape
+that do not map to any of the predictors for the selected SDM group (see
+\code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}), and separate warning is given if land
+cover classes expected by the model are absent from the landscape. In the
+latter case, if \code{fill = TRUE} (the default), the function will create
+additional layers with all zero values for each missing land cover class.
+However, the input landscape should be carefully reviewed to ensure they are
+truly absent and have not been excluded from the landscape unintentionally.
+If needed, the resulting layers can be replaced manually before proceeding
+with \code{\link[=python_focal_run]{python_focal_run()}}.
 }
 \examples{
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),

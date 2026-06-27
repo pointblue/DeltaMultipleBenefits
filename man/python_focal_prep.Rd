@@ -23,7 +23,7 @@ python_focal_prep(
 will be reclassified: \code{"riparian"}, \code{"waterbird_fall"}, \code{"waterbird_win"},
 or \code{"tima"}}
 
-\item{fill}{logical; see Details}
+\item{fill}{logical; passed to \code{\link[=create_predictor_stack]{create_predictor_stack()}}}
 
 \item{suffix}{Character string; custom suffix appended to layer names
 (optional unless \code{mask} is not \code{NULL}); see Details.}
@@ -52,8 +52,12 @@ generate inputs for use with species distribution models.
 \details{
 This is a wrapper function that calls \code{\link[=create_predictor_stack]{create_predictor_stack()}} to split a
 land cover raster into separate layers representing the presence (1) or
-absence (0) of each land cover class for use in calculating focal statistics.
-See documentation of that function for information about Warning messages.
+absence (0) of each required land cover class predictor for use in
+calculating focal statistics. The input raster should already be encoded with
+the land cover classes listed in the \link{key}. To help with creating such a
+raster, see \code{\link[=classify_landcover.sf]{classify_landcover.sf()}} to map land cover polygons to the land
+cover classes in the \link{key}. See documentation of \code{\link[=create_predictor_stack]{create_predictor_stack()}}
+and \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}} for information about Warning messages.
 
 If \code{suffix} is provided, it is appended to the layer name. If \code{pixel_value}
 is provided, values representing land cover presence (1) are replaced with
