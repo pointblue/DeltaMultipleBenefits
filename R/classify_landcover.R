@@ -81,19 +81,19 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
 #' according to the classifications used by a specific set of species
 #' distribution models (SDM).
 #'
-#' Calls on internal datasets to crosswalk from land cover classes listed in the
-#' [key] to the predictors expected by the selected SDM group. The input raster
-#' should already be encoded with the land cover classes listed in the [key]. To
-#' help with creating such a raster, see [classify_landcover.sf()] to map land
-#' cover polygons to the land cover classes in the [key].
+#' This function is called by [create_predictor_stack()] and is not generally
+#' intended to be called directly. It calls on internal datasets to crosswalk
+#' from land cover classes listed in the [key] to the predictors expected by the
+#' selected SDM group. The input raster should already be encoded with the land
+#' cover classes listed in the [key]. To help with creating such a raster, see
+#' [classify_landcover.sf()] to map land cover polygons to the land cover
+#' classes in the [key].
 #'
 #' A warning is given if there are land cover classes present in the landscape
-#' that do not map to any of the predictors for the selected SDM group, or if
-#' there are land cover classes missing from the landscape that are expected by
-#' the selected SDM group. These warnings may represent significant problems for
-#' fitting SDMs and should be carefully reviewed.  In either case, it is
-#' recommended to review the corresponding internal datasets
-#' ([predictors_riparian], [predictors_waterbird_fall],
+#' that do not map to any of the predictors for the selected SDM group. This
+#' warnings may represent significant problems for fitting SDMs and should be
+#' carefully reviewed. It is recommended to review the corresponding internal
+#' datasets ([predictors_riparian], [predictors_waterbird_fall],
 #' [predictors_waterbird_win], or [predictors_tima]) for the list of expected
 #' predictors and how they map to land cover classes in the [key]. Check whether
 #' the selected SDM group expects more specific land cover classes or
@@ -103,7 +103,8 @@ classify_landcover.sf <- function(x, source = 'LSPT', ...) {
 #' @param SDM The name of intended species distribution model: `"riparian"`,
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
 #' @param coltab logical; if TRUE add default color palette
-#' @param verbose logical; if TRUE then print details associated with warning messages
+#' @param verbose logical; if TRUE then print details associated with warning
+#'   messages
 #' @param ... Unused
 #' @method classify_landcover SpatRaster
 #' @returns SpatRaster with the same number of layers as the input `x`
@@ -132,7 +133,6 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
     pred <- DeltaMultipleBenefits::predictors_tima
   }
 
-  # main set of classifications:
   crosswalk = dplyr::full_join(landscape_vars, pred, by = c('value' = 'CODE_NUM'))
 
   # check for excluded land covers: (present in landscape but excluded from model)
@@ -163,6 +163,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
 
   }
 
+  # main set of classifications:
   r = terra::classify(
     x,
     rcl = crosswalk |>
@@ -175,7 +176,9 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
       dplyr::distinct() |> dplyr::arrange(.data$PREDICTOR_NUM) |> tidyr::drop_na() |>
       as.data.frame()
     )
-  levels(r) <- rep(newlevels, terra::nlyr(r))
+  r_levels = r
+  levels(r_levels) <- rep(newlevels, terra::nlyr(r))
+  names(r_levels) = names(r)
 
   if (coltab) {
     newcolors = list(
@@ -183,25 +186,25 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
         dplyr::distinct() |> dplyr::arrange(.data$PREDICTOR_NUM) |>
         tidyr::drop_na() |> as.data.frame()
     )
-    terra::coltab(r) <- rep(newcolors, terra::nlyr(r))
+    terra::coltab(r_levels) <- rep(newcolors, terra::nlyr(r))
   }
-  names(r) = names(x)
+  r = r_levels
 
-  # check that all required predictors are accounted for
-  pred_unique = unique(pred$PREDICTOR_NAME)
-  included = terra::freq(r, bylayer = TRUE)$value
-  if (!all(pred_unique %in% included)) {
-    missing = pred_unique[!pred_unique %in% included]
-    if (verbose) {
-      cat(missing)
-    }
-    warning(
-      strwrap(
-        prefix = " ", initial = "",
-        "Extreme Caution Advised. Land cover classes are missing from the
-        input raster but are expected by the selected SDM. Check input raster
-        for errors."))
-  }
+  # # check that all required predictors are accounted for
+  # pred_unique = unique(pred$PREDICTOR_NAME)
+  # included = terra::freq(r, bylayer = TRUE)$value
+  # if (!all(pred_unique %in% included)) {
+  #   missing = pred_unique[!pred_unique %in% included]
+  #   if (verbose) {
+  #     cat(missing)
+  #   }
+  #   warning(
+  #     strwrap(
+  #       prefix = " ", initial = "",
+  #       "Extreme Caution Advised. Land cover classes are missing from the
+  #       input raster but are expected by the selected SDM. Check input raster
+  #       for errors."))
+  # }
   return(r)
 }
 
