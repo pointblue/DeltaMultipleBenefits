@@ -273,33 +273,27 @@ The models developed in Phase 2 include 7 tidal wetland focal species: 3 secreti
 
 To apply the "tima" models to new baseline and scenario landscapes, first use built-in functions to prepare the landscape rasters.
 
-__classify_landcover.SpatRaster:__ The first step is to reclassify each landscape raster to match the predictor groupings required by the "tima" models.
+__python_focal_prep:__ The first step is to prepare the landscape rasters for calculating focal stats by reclassifying them to match the predictor groupings required by the "tima" models and separating them into layers representing each distinct predictor, with a default value of `1` everywhere the land cover class is present, and a `0` otherwise. The result can be optionally directly written to a directory located at: `dir/SDM/landscape_name` where `landscape_name` is taken from the name(s) of the input SpatRaster. If the directory does not already exist, it will be created automatically. Here, we just return the results to working memory instead.
 
-We also need to compile additional predictors from other data sources:
-* `CHAN`, the density of channel lines within each buffer distance, based on the National Hydrography Dataset
-* `PSIZE`, the patch size of the largest block of tidal wetlands that extends into the buffer size
+__estimate_tima_patchsize:__ From the results, we'll also estimate the size of contiguous patches of tidal wetland vegetation.
 
+*Note: We will get warning messages here, because our toy example landscape does not include all land cover classes required to fit the "tima" models.*
 
-```{r tima1, eval = TRUE}
+```{r tima_prep, eval = TRUE}
 
-landscapes_tima = classify_landcover(landscapes, SDM = 'tima')
+predictors_tima = python_focal_prep(landscapes, SDM = 'tima', 
+                                    fill = FALSE) |> suppressWarnings()
+
+psize = estimate_tima_patchsize(predictors_tima)
+
+terra::plot(c(predictors_tima$baseline$TWET, psize$baseline))
 
 ```
 
-__python_focal_prep:__ The next step separates each landscape raster into separate layers for each distinct predictor, with a default value of `1` everywhere the land cover class is present, and a `0` otherwise. The result can be optionally directly written to a directory located at: `dir/SDM/landscape_name` where `landscape_name` is taken from the name(s) of the input SpatRaster. If the directory does not already exist, it will be created automatically. Here, we just return the results to working memory instead.
+We also need to compile water channel data, based on the National Hydrography Dataset, to facilitate estimating the density (proportion cover) of channel lines within each buffer distance
 
-*Note: We will get warning messages here, because our toy example landscape does not include all land cover classes required to fit the "tima" models.*
-```{r tima2, eval = TRUE}
+```{r tima_chan, eval = FALSE}
 
-predictors_tima = python_focal_prep(landscapes_tima, SDM = 'tima', 
-                                    fill = FALSE) |> suppressWarnings()
-
-terra::plot(predictors_tima$baseline)
-
-# Optional (slow)
-# python_focal_prep(landscapes_tima, SDM = 'tima', 
-#                   dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
-# >> when run inside vignette, output will write to vignettes/SDM_landcover
 ```
 
 __python_focal_stats:__ The third step is to generate focal statistics for each of the separate land cover rasters generated in the previous step. Focal statistics perform a given operation on all cells within a given distance of the focal cell, and repeated for every cell in the raster. For the "tima" models, this function will calculate the mean value for the presence of every land cover class within each landscape to be analyzed, within moving windows on each of two spatial scales (50m and 2km). All input layers are read from `pathin/SDM/landscape_name`, processed, and then written out to `dir/SDM/landscape_name/scale`. 
@@ -308,7 +302,7 @@ These calculations can be very slow, depending on the size and resolution of the
 
 Because these calculations are slow, a `regex` argument provides options for re-running this code for only a subset of the predictors in `pathin/SDM/landscape_name`.
 
-```{r tima3, eval = FALSE}
+```{r tima_focal, eval = FALSE}
 python_focal_stats(SDM = 'tima', 
                    landscape_names = c('baseline', 'scenario'),
                    pathin = 'SDM_landcover2',
@@ -328,15 +322,13 @@ covertype_tima = update_covertype(landscapes_tima, SDM = "tima")
 terra::plot(covertype_tima)
 ```
 
-
-
-### 4.1.3 Generate model predictions
+### 4.1.2 Generate model predictions
 
 __fit_SDM:__ Use the predictors created in the previous step for each landscape to fit the distribution models for each of the 7 "tima" species. The `modlist` should refer to an R object containing a list of the tidal marsh distribution models. See [Supporting Information](articles/supporting_information.html) to download these models. The levels of the categorical predictor `LANDCOVER` must be specified in the call to `fit_SDM`, and in the correct order. 
 
 Open water was considered to be an unsuitable land cover class *a priori*, and so we can specify `unsuitable = 90` (the land cover class value for open water); this will create a mask from the provided `landscape` with 0 values wherever the land cover class equals the values provided in `unsuitable` and NA elsewhere, used to cover the predicted values from the model. Alternatively, the predictors can all be masked by an open water layer before running `fit_SDM()`.
 
-```{r tima4, eval = FALSE}
+```{r tima_fit, eval = FALSE}
 fit_SDM(pathin = 'SDM_predictors', 
         SDM = 'tima',
         landscape_name = 'baseline',
@@ -359,7 +351,7 @@ fit_SDM(pathin = 'SDM_predictors',
 
 __transform_SDM:__ The model-predicted results can be converted into binary presence-absence predictions using threshold statistics derived from the `dismo::threshold` function. Here, we use the statistic `equal_sens_spec`, which is the value at which specificity (the probability of correctly predicting species absence) is equal to sensitivity (the probability of correctly predicting species presence), but other statistics can be selected (see `?dismo::threshold`).
 
-```{r tima5, eval = FALSE}
+```{r tima_transform, eval = FALSE}
 transform_SDM(pathin = 'SDM_results',
               SDM = 'tima', landscape_name = 'baseline',
               modlist = BRT_tidal_wetlands,
