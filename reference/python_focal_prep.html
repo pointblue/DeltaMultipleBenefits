@@ -75,7 +75,7 @@ or <code>"tima"</code></p></dd>
 
 
 <dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
-<dd><p>logical; see Details</p></dd>
+<dd><p>logical; passed to <code><a href="create_predictor_stack.html">create_predictor_stack()</a></code></p></dd>
 
 
 <dt id="arg-suffix">suffix<a class="anchor" aria-label="anchor" href="#arg-suffix"></a></dt>
@@ -115,8 +115,12 @@ with <code><a href="python_focal_stats.html">python_focal_stats()</a></code></p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This is a wrapper function that calls <code><a href="create_predictor_stack.html">create_predictor_stack()</a></code> to split a
 land cover raster into separate layers representing the presence (1) or
-absence (0) of each land cover class for use in calculating focal statistics.
-See documentation of that function for information about Warning messages.</p>
+absence (0) of each required land cover class predictor for use in
+calculating focal statistics. The input raster should already be encoded with
+the land cover classes listed in the <a href="key.html">key</a>. To help with creating such a
+raster, see <code><a href="classify_landcover.sf.html">classify_landcover.sf()</a></code> to map land cover polygons to the land
+cover classes in the <a href="key.html">key</a>. See documentation of <code><a href="create_predictor_stack.html">create_predictor_stack()</a></code>
+and <code><a href="classify_landcover.SpatRaster.html">classify_landcover.SpatRaster()</a></code> for information about Warning messages.</p>
 <p>If <code>suffix</code> is provided, it is appended to the layer name. If <code>pixel_value</code>
 is provided, values representing land cover presence (1) are replaced with
 this value (e.g., the area of each pixel).</p>
@@ -141,10 +145,44 @@ data and the second is appended to the subset data. See examples.</p>
 <span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">codenums</span>, size <span class="op">=</span> <span class="fl">1000</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">100</span>, nrow <span class="op">=</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">watwin</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="classify_landcover.html">classify_landcover</a></span><span class="op">(</span><span class="va">r</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">watwin_pred</span> <span class="op">=</span> <span class="fu">python_focal_prep</span><span class="op">(</span><span class="va">watwin</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Extreme Caution Advised. Land cover classes representing a substantial proportion of the landscape are not represented by any of the predictors fot the selected SDM. Check input raster for errors.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    CODE_NAME count        prop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt;   120 0.012820513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt;    60 0.006410256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt;   120 0.012820513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt;   110 0.011752137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt;   100 0.010683761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       &lt;NA&gt;   190 0.020299145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       &lt;NA&gt;  2930 0.313034188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       &lt;NA&gt;   510 0.054487179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       &lt;NA&gt;   170 0.018162393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      &lt;NA&gt;   470 0.050213675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11      &lt;NA&gt;   220 0.023504274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      &lt;NA&gt;   500 0.053418803</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      &lt;NA&gt;   110 0.011752137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14      &lt;NA&gt;   400 0.042735043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15      &lt;NA&gt;   270 0.028846154</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># return the area of the pixel where each land cover class is present</span></span></span>
 <span class="r-in"><span><span class="co"># (useful for summing over moving windows)</span></span></span>
 <span class="r-in"><span><span class="va">watwin_area</span> <span class="op">=</span> <span class="fu">python_focal_prep</span><span class="op">(</span><span class="va">watwin</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Extreme Caution Advised. Land cover classes representing a substantial proportion of the landscape are not represented by any of the predictors fot the selected SDM. Check input raster for errors.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    CODE_NAME count        prop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt;   120 0.012820513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt;    60 0.006410256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt;   120 0.012820513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt;   110 0.011752137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt;   100 0.010683761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       &lt;NA&gt;   190 0.020299145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       &lt;NA&gt;  2930 0.313034188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       &lt;NA&gt;   510 0.054487179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       &lt;NA&gt;   170 0.018162393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      &lt;NA&gt;   470 0.050213675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11      &lt;NA&gt;   220 0.023504274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      &lt;NA&gt;   500 0.053418803</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      &lt;NA&gt;   110 0.011752137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14      &lt;NA&gt;   400 0.042735043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15      &lt;NA&gt;   270 0.028846154</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># mask another raster (e.g., surface water data) by the presence of each</span></span></span>
 <span class="r-in"><span><span class="co"># land cover class:</span></span></span>
@@ -156,6 +194,23 @@ data and the second is appended to the subset data. See examples.</p>
 <span class="r-in"><span><span class="co">#returns error because two suffixes need to be provided</span></span></span>
 <span class="r-in"><span><span class="va">pfld</span> <span class="op">=</span> <span class="fu">python_focal_prep</span><span class="op">(</span><span class="va">watwin</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>, pixel_value <span class="op">=</span> <span class="fl">0.09</span>, mask <span class="op">=</span> <span class="va">w</span>,</span></span>
 <span class="r-in"><span>                         suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'_area'</span>, <span class="st">'_pfld'</span><span class="op">)</span><span class="op">)</span> <span class="co"># works</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Extreme Caution Advised. Land cover classes representing a substantial proportion of the landscape are not represented by any of the predictors fot the selected SDM. Check input raster for errors.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    CODE_NAME count        prop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt;   120 0.012820513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt;    60 0.006410256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt;   120 0.012820513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt;   110 0.011752137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt;   100 0.010683761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       &lt;NA&gt;   190 0.020299145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       &lt;NA&gt;  2930 0.313034188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       &lt;NA&gt;   510 0.054487179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       &lt;NA&gt;   170 0.018162393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      &lt;NA&gt;   470 0.050213675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11      &lt;NA&gt;   220 0.023504274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      &lt;NA&gt;   500 0.053418803</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      &lt;NA&gt;   110 0.011752137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14      &lt;NA&gt;   400 0.042735043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15      &lt;NA&gt;   270 0.028846154</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

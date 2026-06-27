@@ -21,6 +21,9 @@
 - [`create_predictor_stack()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_predictor_stack.md)
   : Create raster stack representing SDM predictors
 
+- [`estimate_tima_patchsize()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/estimate_tima_patchsize.md)
+  : Estimate tidal marsh patch size
+
 - [`fit_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/fit_SDM.md)
   : Apply species distribution models to new landscapes.
 

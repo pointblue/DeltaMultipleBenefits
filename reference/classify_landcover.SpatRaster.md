@@ -40,8 +40,10 @@ SpatRaster with the same number of layers as the input `x`
 
 ## Details
 
-Calls on internal datasets to crosswalk from land cover classes listed
-in the
+This function is called by
+[`create_predictor_stack()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_predictor_stack.md)
+and is not generally intended to be called directly. It calls on
+internal datasets to crosswalk from land cover classes listed in the
 [key](https://pointblue.github.io/DeltaMultipleBenefits/reference/key.md)
 to the predictors expected by the selected SDM group. The input raster
 should already be encoded with the land cover classes listed in the
@@ -53,11 +55,9 @@ to map land cover polygons to the land cover classes in the
 
 A warning is given if there are land cover classes present in the
 landscape that do not map to any of the predictors for the selected SDM
-group, or if there are land cover classes missing from the landscape
-that are expected by the selected SDM group. These warnings may
-represent significant problems for fitting SDMs and should be carefully
-reviewed. In either case, it is recommended to review the corresponding
-internal datasets
+group. This warnings may represent significant problems for fitting SDMs
+and should be carefully reviewed. It is recommended to review the
+corresponding internal datasets
 ([predictors_riparian](https://pointblue.github.io/DeltaMultipleBenefits/reference/predictors_riparian.md),
 [predictors_waterbird_fall](https://pointblue.github.io/DeltaMultipleBenefits/reference/predictors_waterbird_fall.md),
 [predictors_waterbird_win](https://pointblue.github.io/DeltaMultipleBenefits/reference/predictors_waterbird_win.md),
@@ -76,5 +76,4 @@ before proceeding.
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
          ncol = 10, nrow = 10))
 r <- suppressWarnings(classify_landcover(r, SDM = 'riparian'))
-#> AG RICE IDLE GRASSPAS URBAN RIPARIAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB WETLAND PERM BARREN WOODLAND&SCRUB
 ```

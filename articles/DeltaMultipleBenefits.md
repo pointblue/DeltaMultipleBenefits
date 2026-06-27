@@ -492,33 +492,19 @@ Yellowthroat, Marsh Wren, Song Sparrow, and Yellow-breasted Chat).
 To apply the “tima” models to new baseline and scenario landscapes,
 first use built-in functions to prepare the landscape rasters.
 
-**classify_landcover.SpatRaster:** The first step is to reclassify each
-landscape raster to match the predictor groupings required by the “tima”
-models.
-
-We also need to compile additional predictors from other data sources:
-\* `CHAN`, the density of channel lines within each buffer distance,
-based on the National Hydrography Dataset \* `PSIZE`, the patch size of
-the largest block of tidal wetlands that extends into the buffer size
-
-``` r
-
-
-landscapes_tima = classify_landcover(landscapes, SDM = 'tima')
-#> RICE URBN NA SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN NWET SALTPICK EMER MEAD LEPI ALKA TWET
-#> Warning in classify_landcover.SpatRaster(landscapes, SDM = "tima"): Extreme
-#> Caution Advised. Land cover classes are missing from the input raster but are
-#> expected by the selected SDM. Check input raster for errors.
-```
-
-**python_focal_prep:** The next step separates each landscape raster
-into separate layers for each distinct predictor, with a default value
+**python_focal_prep:** The first step is to prepare the landscape
+rasters for calculating focal stats by reclassifying them to match the
+predictor groupings required by the “tima” models and separating them
+into layers representing each distinct predictor, with a default value
 of `1` everywhere the land cover class is present, and a `0` otherwise.
 The result can be optionally directly written to a directory located at:
 `dir/SDM/landscape_name` where `landscape_name` is taken from the
 name(s) of the input SpatRaster. If the directory does not already
 exist, it will be created automatically. Here, we just return the
 results to working memory instead.
+
+**estimate_tima_patchsize:** From the results, we’ll also estimate the
+size of contiguous patches of tidal wetland vegetation.
 
 *Note: We will get warning messages here, because our toy example
 landscape does not include all land cover classes required to fit the
@@ -527,23 +513,20 @@ landscape does not include all land cover classes required to fit the
 ``` r
 
 
-predictors_tima = python_focal_prep(landscapes_tima, SDM = 'tima', 
+predictors_tima = python_focal_prep(landscapes, SDM = 'tima', 
                                     fill = FALSE) |> suppressWarnings()
-#> RICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKARICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKA
+#> PNAG AGGRPAS RICE URBN POFR QUER SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN TULE PHRA SALTPICK EMER MEAD LEPI ALKAPNAG AGGRPAS RICE URBN POFR QUER SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN TULE PHRA SALTPICK EMER MEAD LEPI ALKA
 
-terra::plot(predictors_tima$baseline)
+psize = estimate_tima_patchsize(predictors_tima)
+
+terra::plot(c(predictors_tima$baseline$TWET, psize$baseline))
 ```
 
-![](DeltaMultipleBenefits_files/figure-html/tima2-1.png)
+![](DeltaMultipleBenefits_files/figure-html/tima_prep-1.png)
 
-``` r
-
-
-# Optional (slow)
-# python_focal_prep(landscapes_tima, SDM = 'tima', 
-#                   dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
-# >> when run inside vignette, output will write to vignettes/SDM_landcover
-```
+We also need to compile water channel data, based on the National
+Hydrography Dataset, to facilitate estimating the density (proportion
+cover) of channel lines within each buffer distance
 
 **python_focal_stats:** The third step is to generate focal statistics
 for each of the separate land cover rasters generated in the previous
@@ -599,7 +582,7 @@ covertype_tima = update_covertype(landscapes_tima, SDM = "tima")
 terra::plot(covertype_tima)
 ```
 
-#### 4.1.3 Generate model predictions
+#### 4.1.2 Generate model predictions
 
 **fit_SDM:** Use the predictors created in the previous step for each
 landscape to fit the distribution models for each of the 7 “tima”
@@ -722,10 +705,6 @@ is again to prep for running focal statistics, as above.
 
 
 landscapes_rip = classify_landcover(landscapes, SDM = 'riparian')
-#> RICE IDLE URBAN RIPARIAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUB
-#> Warning in classify_landcover.SpatRaster(landscapes, SDM = "riparian"): Extreme
-#> Caution Advised. Land cover classes are missing from the input raster but are
-#> expected by the selected SDM. Check input raster for errors.
 
 predictors_rip = python_focal_prep(landscapes_rip, SDM = 'riparian', 
                                    fill = FALSE) |> 
