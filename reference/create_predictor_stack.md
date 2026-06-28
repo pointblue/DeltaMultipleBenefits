@@ -65,6 +65,6 @@ with
 r <- terra::rast(matrix(sample(c(11,19,71,72,90), size = 100, replace = TRUE),
          ncol = 10, nrow = 10))
 r = suppressWarnings(create_predictor_stack(r, SDM = 'riparian'))
-#> ORCHVIN AG RICE IDLE GRASSPAS URBAN POFR QULO SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUB
+#> AG RICE IDLE GRASSPAS URBAN SALIX MIXEDFOREST INTROSCRUB SALIXSHRUB MIXEDSHRUB PERM BARREN WOODLAND&SCRUB
 #> Because fill = TRUE, creating missing rasters with all zero values, butconfirm they are truly absent from the landscape.
 ```

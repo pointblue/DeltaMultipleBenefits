@@ -40,8 +40,10 @@ SpatRaster with the same number of layers as the input `x`
 
 ## Details
 
-This function is called by
+This function is called by both
 [`create_predictor_stack()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_predictor_stack.md)
+and
+[`update_covertype()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_covertype.md)
 and is not generally intended to be called directly. It calls on
 internal datasets to crosswalk from land cover classes listed in the
 [key](https://pointblue.github.io/DeltaMultipleBenefits/reference/key.md)

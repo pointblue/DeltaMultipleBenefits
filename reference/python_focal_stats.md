@@ -61,15 +61,13 @@ land cover class.
 ## Details
 
 This function is designed to be called after running
-[`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md)
-and
 [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md),
 and writing the resulting rasters representing land cover predictors to
 `pathin/SDM/landscape_names`. For each raster in these directories, this
-function calls inernal functions to calculate focal statistics required
-for each species distribution model, on the appropriate spatial scales
-and with the required summary statistics. The `regex` argument provides
-options for processing only a subset of the rasters in the directory. If
+function calculates focal statistics required for each species
+distribution model, on the appropriate spatial scales and with the
+required summary statistics. The `regex` argument provides options for
+processing only a subset of the rasters in the directory. If
 `overwrite=TRUE` (the default), previously-created focal statistics will
 be overwritten. If `mask` provides a filepath to a raster, the results
 will be masked by this file before writing to file.

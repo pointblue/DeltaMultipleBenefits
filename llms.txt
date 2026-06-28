@@ -161,6 +161,9 @@ including:
 - [`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md)
   : Run focal statistics via Python
 
+- [`rasterize_stream_channels()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/rasterize_stream_channels.md)
+  : Rasterize stream channels
+
 - [`roosts_original`](https://pointblue.github.io/DeltaMultipleBenefits/reference/roosts_original.md)
   : Traditional nighttime crane roost locations
 

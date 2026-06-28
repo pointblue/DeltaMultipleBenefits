@@ -86,13 +86,13 @@ messages</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function is called by <code><a href="create_predictor_stack.html">create_predictor_stack()</a></code> and is not generally
-intended to be called directly. It calls on internal datasets to crosswalk
-from land cover classes listed in the <a href="key.html">key</a> to the predictors expected by the
-selected SDM group. The input raster should already be encoded with the land
-cover classes listed in the <a href="key.html">key</a>. To help with creating such a raster, see
-<code><a href="classify_landcover.sf.html">classify_landcover.sf()</a></code> to map land cover polygons to the land cover
-classes in the <a href="key.html">key</a>.</p>
+    <p>This function is called by both <code><a href="create_predictor_stack.html">create_predictor_stack()</a></code> and
+<code><a href="update_covertype.html">update_covertype()</a></code> and is not generally intended to be called directly. It
+calls on internal datasets to crosswalk from land cover classes listed in the
+<a href="key.html">key</a> to the predictors expected by the selected SDM group. The input raster
+should already be encoded with the land cover classes listed in the <a href="key.html">key</a>. To
+help with creating such a raster, see <code><a href="classify_landcover.sf.html">classify_landcover.sf()</a></code> to map land
+cover polygons to the land cover classes in the <a href="key.html">key</a>.</p>
 <p>A warning is given if there are land cover classes present in the landscape
 that do not map to any of the predictors for the selected SDM group. This
 warnings may represent significant problems for fitting SDMs and should be

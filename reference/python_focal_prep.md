@@ -134,6 +134,9 @@ watwin_pred = python_focal_prep(watwin, SDM = 'waterbird_win')
 #> 13      <NA>   110 0.011752137
 #> 14      <NA>   400 0.042735043
 #> 15      <NA>   270 0.028846154
+#> ww grain corn field row rice fal alf ip dryp dev woodw wet duwet water barren for
+#> Warning: Extreme Caution Advised. Land cover classes are missing from the input raster but are expected by the selected SDM. Check input raster for errors.
+#> Because fill = TRUE, creating missing rasters with all zero values, butconfirm they are truly absent from the landscape.
 
 # return the area of the pixel where each land cover class is present
 # (useful for summing over moving windows)
@@ -155,6 +158,9 @@ watwin_area = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.0
 #> 13      <NA>   110 0.011752137
 #> 14      <NA>   400 0.042735043
 #> 15      <NA>   270 0.028846154
+#> ww grain corn field row rice fal alf ip dryp dev woodw wet duwet water barren for
+#> Warning: Extreme Caution Advised. Land cover classes are missing from the input raster but are expected by the selected SDM. Check input raster for errors.
+#> Because fill = TRUE, creating missing rasters with all zero values, butconfirm they are truly absent from the landscape.
 
 # mask another raster (e.g., surface water data) by the presence of each
 # land cover class:
@@ -183,4 +189,7 @@ pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask
 #> 13      <NA>   110 0.011752137
 #> 14      <NA>   400 0.042735043
 #> 15      <NA>   270 0.028846154
+#> ww grain corn field row rice fal alf ip dryp dev woodw wet duwet water barren for
+#> Warning: Extreme Caution Advised. Land cover classes are missing from the input raster but are expected by the selected SDM. Check input raster for errors.
+#> Because fill = TRUE, creating missing rasters with all zero values, butconfirm they are truly absent from the landscape.
 ```

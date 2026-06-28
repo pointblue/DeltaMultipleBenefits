@@ -83,8 +83,5 @@ tima_pred = python_focal_prep(r, SDM = 'tima')
 #> 3 WETLAND_MANAGED_PERENNIAL   110 0.011
 #> 4  WETLAND_MANAGED_SEASONAL   130 0.013
 #> 5             WETLAND_OTHER   150 0.015
-#> PNAG AGGRPAS RICE URBN POFR QUER SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN TULE PHRA SALTPICK EMER MEAD LEPI ALKA
-#> Warning: Extreme Caution Advised. Land cover classes are missing from the input raster but are expected by the selected SDM. Check input raster for errors.
-#> Because fill = TRUE, creating missing rasters with all zero values, butconfirm they are truly absent from the landscape.
 tima_psize = estimate_tima_patchsize(tima_pred)
 ```
