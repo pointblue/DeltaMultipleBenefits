@@ -45,13 +45,12 @@ the Python script "focal_stats.py".
 }
 \details{
 This function is designed to be called after running
-\code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}} and \code{\link[=python_focal_prep]{python_focal_prep()}}, and writing
-the resulting rasters representing land cover predictors to
-\code{pathin/SDM/landscape_names}. For each raster in these directories, this
-function calls inernal functions to calculate focal statistics required
-for each species distribution model, on the appropriate spatial scales and
-with the required summary statistics. The \code{regex} argument provides options
-for processing only a subset of the rasters in the directory. If
+\code{\link[=python_focal_prep]{python_focal_prep()}}, and writing the resulting rasters representing land
+cover predictors to \code{pathin/SDM/landscape_names}. For each raster in these
+directories, this function calculates focal statistics required for each
+species distribution model, on the appropriate spatial scales and with the
+required summary statistics. The \code{regex} argument provides options for
+processing only a subset of the rasters in the directory. If
 \code{overwrite=TRUE} (the default), previously-created focal statistics will be
 overwritten. If \code{mask} provides a filepath to a raster, the results will be
 masked by this file before writing to file.

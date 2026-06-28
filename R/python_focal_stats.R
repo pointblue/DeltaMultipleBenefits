@@ -6,13 +6,12 @@
 #' the Python script "focal_stats.py".
 #'
 #' @details This function is designed to be called after running
-#'   [classify_landcover.SpatRaster()] and [python_focal_prep()], and writing
-#'   the resulting rasters representing land cover predictors to
-#'   `pathin/SDM/landscape_names`. For each raster in these directories, this
-#'   function calls inernal functions to calculate focal statistics required
-#'   for each species distribution model, on the appropriate spatial scales and
-#'   with the required summary statistics. The `regex` argument provides options
-#'   for processing only a subset of the rasters in the directory. If
+#'   [python_focal_prep()], and writing the resulting rasters representing land
+#'   cover predictors to `pathin/SDM/landscape_names`. For each raster in these
+#'   directories, this function calculates focal statistics required for each
+#'   species distribution model, on the appropriate spatial scales and with the
+#'   required summary statistics. The `regex` argument provides options for
+#'   processing only a subset of the rasters in the directory. If
 #'   `overwrite=TRUE` (the default), previously-created focal statistics will be
 #'   overwritten. If `mask` provides a filepath to a raster, the results will be
 #'   masked by this file before writing to file.
@@ -54,23 +53,43 @@ python_focal_stats = function(SDM, pathin, dir, landscape_names,
                             scale = c('100', '2000')) |>
       dplyr::mutate(suffix = scale)
 
-    purrr::pmap(df,
-                function(landscape_name, scale, suffix, ...) {
-                  python_focal_run(
-                    pathin = pathin,
-                    landscape_name = landscape_name,
-                    SDM = SDM,
-                    regex = regex,
-                    scale = scale,
-                    suffix = suffix,
-                    fun = 'MEAN',
-                    dir = dir,
-                    python = python,
-                    overwrite = overwrite,
-                    mask = mask)})
+    if (!is.null(regex)) {
+      if (regex == 'PSIZE.tif') {
+        purrr::pmap(df,
+                    function(landscape_name, scale, suffix, ...) {
+                      python_focal_run(
+                        pathin = pathin,
+                        landscape_name = landscape_name,
+                        SDM = SDM,
+                        regex = regex,
+                        scale = scale,
+                        suffix = suffix,
+                        fun = 'MAXIMUM',
+                        dir = dir,
+                        python = python,
+                        overwrite = overwrite,
+                        mask = mask)})
+      }
+    } else {
+      purrr::pmap(df,
+                  function(landscape_name, scale, suffix, ...) {
+                    python_focal_run(
+                      pathin = pathin,
+                      landscape_name = landscape_name,
+                      SDM = SDM,
+                      regex = regex,
+                      scale = scale,
+                      suffix = suffix,
+                      fun = 'MEAN',
+                      dir = dir,
+                      python = python,
+                      overwrite = overwrite,
+                      mask = mask)})
+    }
+
 
   } else if (SDM == 'riparian') {
-    # automatically choose the correct scales and function and put the purrr in here
+    # automatically choose the correct scales and put the purrr in here
     df = tidyr::expand_grid(landscape_name = landscape_names,
                             scale = c('50', '2000')) |>
       dplyr::mutate(suffix = paste0('_', scale))
@@ -96,7 +115,14 @@ python_focal_stats = function(SDM, pathin, dir, landscape_names,
                      scale = c('2000', '5000', '10000')) |>
       dplyr::mutate(suffix = paste0('_', as.numeric(scale)/1000, 'k'))
 
-    regex1 = ifelse(!is.null(regex), paste0(regex, '_area.tif'), '*_area.tif')
+    if (!is.null(regex)) {
+      regex1 = paste0(regex, '_area.tif')
+      regex2 = paste0(regex, '_pfld.tif')
+    } else {
+      regex1 = '*_area.tif'
+      regex2 = '*_pfld.tif'
+    }
+
     purrr::pmap(df,
                 function(landscape_name, scale, suffix, ...) {
                   python_focal_run(
@@ -112,13 +138,7 @@ python_focal_stats = function(SDM, pathin, dir, landscape_names,
                     overwrite = overwrite,
                     mask = mask)})
 
-    df2 = tidyr::expand_grid(landscape_name = landscape_names,
-                     scale = c('2000', '5000', '10000'),
-                     SDM = SDM) |>
-      dplyr::mutate(suffix = paste0('_', as.numeric(scale)/1000, 'k'))
-
-    regex2 = ifelse(!is.null(regex), paste0(regex, '_pfld.tif'), '*_pfld.tif')
-    purrr::pmap(df2,
+    purrr::pmap(df,
                 function(landscape_name, scale, suffix, ...) {
                   python_focal_run(
                     pathin = pathin,
@@ -138,13 +158,20 @@ python_focal_stats = function(SDM, pathin, dir, landscape_names,
                      scale = c('5000', '10000')) |>
       dplyr::mutate(suffix = paste0('_', as.numeric(scale)/1000, 'k'))
 
+    if (!is.null(regex)) {
+      regex1 = paste0(regex, '_area.tif')
+      regex2 = paste0(regex, '_pfld.tif')
+    } else {
+      regex1 = '*_area.tif'
+      regex2 = '*_pfld.tif'
+    }
     purrr::pmap(df,
                 function(landscape_name, scale, suffix, ...) {
                   python_focal_run(
                     pathin = pathin,
                     landscape_name = landscape_name,
                     SDM = SDM,
-                    regex = '*_area.tif',
+                    regex = regex1,
                     scale = scale,
                     suffix = suffix,
                     fun = 'SUM',
@@ -153,18 +180,13 @@ python_focal_stats = function(SDM, pathin, dir, landscape_names,
                     overwrite = overwrite,
                     mask = mask)})
 
-    df2 = tidyr::expand_grid(landscape_name = landscape_names,
-                      scale = c('5000', '10000'),
-                      SDM = SDM) |>
-      dplyr::mutate(suffix = paste0('_', as.numeric(scale)/1000, 'k'))
-
-    purrr::pmap(df2,
+    purrr::pmap(df,
                 function(landscape_name, scale, suffix, ...) {
                   python_focal_run(
                     pathin = pathin,
                     landscape_name = landscape_name,
                     SDM = SDM,
-                    regex = '*_pfld.tif',
+                    regex = regex2,
                     scale = scale,
                     suffix = suffix,
                     fun = 'MEAN',
