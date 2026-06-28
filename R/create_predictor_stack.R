@@ -7,23 +7,28 @@
 #' called directly. Segregates a landscape raster into separate layers
 #' representing each land cover class. Also calls on internal datsets to create
 #' broader grouping variables as required for the selected SDM. The input raster
-#' should already be classified according to the land cover classifications
-#' expected by the selected SDM.
+#' should already be encoded with the land cover classes listed in the [key].
 #'
-#' A warning is given if there are land cover classes present in the landscape
-#' that do not map to any of the predictors for the selected SDM group (see
-#' [classify_landcover.SpatRaster()]), and separate warning is given if land
-#' cover classes expected by the model are absent from the landscape. In the
-#' latter case, if `fill = TRUE` (the default), the function will create
-#' additional layers with all zero values for each missing land cover class.
-#' However, the input landscape should be carefully reviewed to ensure they are
-#' truly absent and have not been excluded from the landscape unintentionally.
-#' If needed, the resulting layers can be replaced manually before proceeding
-#' with [python_focal_run()].
+#' If `classified = FALSE` (the default), this function calls
+#' [classify_landcover.SpatRaster()] to reclassify the input raster according to
+#' the land cover classifications expected by the selected SDM. (See
+#' documentation from that function for information on warning messages.) If
+#' `classified = TRUE`, it will be assumed to already be classified correctly,
+#' which may be of particular use for the 'riparian' models. See Vignette for
+#' details.
+#'
+#' A warning is given if land cover classes expected by the model are absent
+#' from the provided landscape. In that case, if `fill = TRUE` (the default),
+#' additional layers will be created with all zero values for each missing land
+#' cover class. However, the input landscape should be carefully reviewed to
+#' ensure they are truly absent and have not been excluded from the landscape
+#' unintentionally. If needed, the resulting layers can be replaced manually
+#' before proceeding with [python_focal_run()].
 #'
 #' @param x SpatRaster; can only have 1 layer
 #' @param SDM The name of intended species distribution model: `"riparian"`,
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
+#' @param classified logical; see Details
 #' @param fill logical; see Details
 #'
 #' @returns SpatRaster with separate layers for each land cover class included
@@ -39,10 +44,14 @@
 #' r = suppressWarnings(create_predictor_stack(r, SDM = 'riparian'))
 
 
-create_predictor_stack = function(x, SDM, fill = TRUE) {
+create_predictor_stack = function(x, SDM, classified = FALSE, fill = TRUE) {
 
   # handle main land cover classifications & segregate into layers
-  x_classified = classify_landcover(x, SDM = SDM)
+  if (classified) {
+    x_classified = x
+  } else {
+    x_classified = classify_landcover(x, SDM = SDM)
+  }
   layernames = terra::freq(x_classified)$value
   presence = terra::segregate(x_classified, other = 0) |>
     stats::setNames(layernames)

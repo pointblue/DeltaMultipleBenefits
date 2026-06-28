@@ -31,6 +31,7 @@
 #' @param SDM The name of intended species distribution model, for which `x`
 #'   will be reclassified: `"riparian"`, `"waterbird_fall"`, `"waterbird_win"`,
 #'   or `"tima"`
+#' @param classified logical; passed to [create_predictor_stack()]
 #' @param fill logical; passed to [create_predictor_stack()]
 #' @param suffix Character string; custom suffix appended to layer names
 #'   (optional unless `mask` is not `NULL`); see Details.
@@ -69,9 +70,9 @@
 #' pfld = python_focal_prep(watwin, SDM = 'waterbird_win', pixel_value = 0.09, mask = w,
 #'                          suffix = c('_area', '_pfld')) # works
 
-python_focal_prep = function(x, SDM, fill = TRUE, suffix = NULL,
-                             pixel_value = NULL, subset = NULL, dir = NULL,
-                             overwrite = FALSE, ...) {
+python_focal_prep = function(x, SDM, classified = FALSE, fill = TRUE,
+                             suffix = NULL, pixel_value = NULL, subset = NULL,
+                             dir = NULL, overwrite = FALSE, ...) {
 
   if (!is.null(subset) & is.null(suffix)) {
     stop('Provide two suffix values to distinguish unmasked and masked results (e.g., _area and _pfld)')

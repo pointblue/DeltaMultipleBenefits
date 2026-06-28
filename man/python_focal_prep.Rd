@@ -7,6 +7,7 @@
 python_focal_prep(
   x,
   SDM,
+  classified = FALSE,
   fill = TRUE,
   suffix = NULL,
   pixel_value = NULL,
@@ -22,6 +23,8 @@ python_focal_prep(
 \item{SDM}{The name of intended species distribution model, for which \code{x}
 will be reclassified: \code{"riparian"}, \code{"waterbird_fall"}, \code{"waterbird_win"},
 or \code{"tima"}}
+
+\item{classified}{logical; passed to \code{\link[=create_predictor_stack]{create_predictor_stack()}}}
 
 \item{fill}{logical; passed to \code{\link[=create_predictor_stack]{create_predictor_stack()}}}
 
