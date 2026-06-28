@@ -45,9 +45,12 @@ update_covertype = function(x, SDM, mask = NULL, dir = NULL,
     x = terra::mask(x, mask)
   }
 
+  x_classified = classify_landcover(x, SDM = SDM)
+
   if (SDM == 'waterbird_fall') {
+
     covertype = terra::classify(
-      x,
+      x_classified,
       rcl = data.frame(from = c(17, 4, 3, 8),
                        becomes = c(1, 2, 3, 4)) |>
         as.matrix(),
@@ -60,7 +63,7 @@ update_covertype = function(x, SDM, mask = NULL, dir = NULL,
 
   } else if (SDM == 'waterbird_win') {
     covertype = terra::classify(
-      x,
+      x_classified,
       rcl = data.frame(from = c(17, 2, 4, 3, 8, 5),
                        becomes = c(1, 2, 3, 4, 5, 6)) |>
         as.matrix(),
@@ -73,7 +76,7 @@ update_covertype = function(x, SDM, mask = NULL, dir = NULL,
 
   } else if (SDM == 'tima') {
     covertype = terra::classify(
-      x,
+      x_classified,
       rcl = data.frame(from = c(80, 89, 190, 70, 170, 90, 20, 40),
                        to = c(83, 89, 220, 77, 187, 92, 28, 56),
                        becomes = c(1, 1, 1, 2, 2, 3, 4, 4)) |>
@@ -88,14 +91,15 @@ update_covertype = function(x, SDM, mask = NULL, dir = NULL,
   }
 
   if (!is.null(dir)) {
-    purrr::map(names(x),
-               function(landscape_name) {
-                 create_directory(file.path(dir, SDM, landscape_name))
+    purrr::map(c(1:length(names(x))),
+               function(i) {
+                 create_directory(file.path(dir, SDM, names(x)[i]))
                  terra::writeRaster(covertype,
-                                    file.path(dir, SDM, landscape_name,
-                                              paste0(names(covertype),'.tif')),
+                                    file.path(dir, SDM, names(x)[i],
+                                              paste0(names(covertype)[i],'.tif')),
                                     overwrite = overwrite, ...)
                })
   }
+
   return(covertype)
 }
