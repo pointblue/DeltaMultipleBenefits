@@ -43,8 +43,9 @@ create_predictor_stack = function(x, SDM, fill = TRUE) {
 
   # handle main land cover classifications & segregate into layers
   x_classified = classify_landcover(x, SDM = SDM)
-  layernames = terra::freq(x)$value
-  presence = terra::segregate(x, other = 0) |> stats::setNames(layernames)
+  layernames = terra::freq(x_classified)$value
+  presence = terra::segregate(x_classified, other = 0) |>
+    stats::setNames(layernames)
 
   # add larger grouping predictors necessary for riparian and tima SDMs:
   if (SDM == 'riparian') {
