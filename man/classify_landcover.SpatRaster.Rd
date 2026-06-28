@@ -28,13 +28,13 @@ according to the classifications used by a specific set of species
 distribution models (SDM).
 }
 \details{
-This function is called by \code{\link[=create_predictor_stack]{create_predictor_stack()}} and is not generally
-intended to be called directly. It calls on internal datasets to crosswalk
-from land cover classes listed in the \link{key} to the predictors expected by the
-selected SDM group. The input raster should already be encoded with the land
-cover classes listed in the \link{key}. To help with creating such a raster, see
-\code{\link[=classify_landcover.sf]{classify_landcover.sf()}} to map land cover polygons to the land cover
-classes in the \link{key}.
+This function is called by both \code{\link[=create_predictor_stack]{create_predictor_stack()}} and
+\code{\link[=update_covertype]{update_covertype()}} and is not generally intended to be called directly. It
+calls on internal datasets to crosswalk from land cover classes listed in the
+\link{key} to the predictors expected by the selected SDM group. The input raster
+should already be encoded with the land cover classes listed in the \link{key}. To
+help with creating such a raster, see \code{\link[=classify_landcover.sf]{classify_landcover.sf()}} to map land
+cover polygons to the land cover classes in the \link{key}.
 
 A warning is given if there are land cover classes present in the landscape
 that do not map to any of the predictors for the selected SDM group. This
