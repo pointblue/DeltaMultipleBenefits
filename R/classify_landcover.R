@@ -186,9 +186,9 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
         dplyr::distinct() |> dplyr::arrange(.data$PREDICTOR_NUM) |>
         tidyr::drop_na() |> as.data.frame()
     )
-    terra::coltab(r_levels) <- rep(newcolors, terra::nlyr(r))
+    terra::coltab(r_levels) <- rep(newcolors, terra::nlyr(r_levels))
   }
-  r = r_levels
+
 
   # # check that all required predictors are accounted for
   # pred_unique = unique(pred$PREDICTOR_NAME)
@@ -205,7 +205,7 @@ classify_landcover.SpatRaster <- function(x, SDM, coltab = TRUE, verbose = TRUE,
   #       input raster but are expected by the selected SDM. Check input raster
   #       for errors."))
   # }
-  return(r)
+  return(r_levels)
 }
 
 map_habitat_simple = function(x) {
