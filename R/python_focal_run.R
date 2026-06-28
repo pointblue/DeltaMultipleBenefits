@@ -15,10 +15,10 @@
 #'   results can be masked after calculating focal statistics, such as to limit
 #'   results to a study area.
 #'
-#'   Summary functions may include `'SUM'` or `'MEAN'`. Note that the MEAN of
-#'   binary land cover presence data is equivalent to the proportion cover of
-#'   each land cover class within the buffer distance while the SUM represents
-#'   the count of pixels within the buffer distance.
+#'   Summary functions may include `'SUM'`, `'MEAN'`, or `'MAXIMUM'`. Note that
+#'   the MEAN of binary land cover presence data is equivalent to the proportion
+#'   cover of each land cover class within the buffer distance while the SUM
+#'   represents the count of pixels within the buffer distance.
 #'
 #' @param pathin,SDM,landscape_name Character strings defining the filepath
 #'   (`pathin/SDM/landscape_name`) containing input rasters to be processed,

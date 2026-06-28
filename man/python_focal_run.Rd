@@ -62,10 +62,10 @@ input raster within a buffer distance defined by \code{scale}. Optionally, the
 results can be masked after calculating focal statistics, such as to limit
 results to a study area.
 
-Summary functions may include \code{'SUM'} or \code{'MEAN'}. Note that the MEAN of
-binary land cover presence data is equivalent to the proportion cover of
-each land cover class within the buffer distance while the SUM represents
-the count of pixels within the buffer distance.
+Summary functions may include \code{'SUM'}, \code{'MEAN'}, or \code{'MAXIMUM'}. Note that
+the MEAN of binary land cover presence data is equivalent to the proportion
+cover of each land cover class within the buffer distance while the SUM
+represents the count of pixels within the buffer distance.
 }
 \examples{
 # See vignette
