@@ -273,7 +273,7 @@ The models developed in Phase 2 include 7 tidal wetland focal species: 3 secreti
 
 To apply the "tima" models to new baseline and scenario landscapes, first use built-in functions to prepare the landscape rasters.
 
-__python_focal_prep:__ The first step is to prepare the landscape rasters for calculating focal stats by reclassifying them to match the predictor groupings required by the "tima" models and separating them into layers representing each distinct predictor, with a default value of `1` everywhere the land cover class is present, and a `0` otherwise. The result can be optionally directly written to a directory located at: `dir/SDM/landscape_name` where `landscape_name` is taken from the name(s) of the input SpatRaster. If the directory does not already exist, it will be created automatically. Here, we just return the results to working memory instead.
+__python_focal_prep:__ The first step is to prepare the landscape rasters for calculating focal stats by reclassifying them to match the predictor groupings required by the "tima" models and separating them into layers representing each distinct predictor, with a default value of `1` everywhere the land cover class is present, and a `0` otherwise. The result can be optionally directly written to a directory located at: `dir/SDM/landscape_name` where `landscape_name` is taken from the name(s) of the input SpatRaster. If the directory does not already exist, it will be created automatically.
 
 __estimate_tima_patchsize:__ From the results, we'll also estimate the size of contiguous patches of tidal wetland vegetation.
 
@@ -281,44 +281,48 @@ __estimate_tima_patchsize:__ From the results, we'll also estimate the size of c
 
 ```{r tima_prep, eval = TRUE}
 
-predictors_tima = python_focal_prep(landscapes, SDM = 'tima', 
+predictors_tima = python_focal_prep(landscapes, SDM = 'tima', dir = 'example',
                                     fill = FALSE) |> suppressWarnings()
 
-psize = estimate_tima_patchsize(predictors_tima)
+psize = estimate_tima_patchsize(predictors_tima, dir = 'example')
 
-terra::plot(c(predictors_tima$baseline$TWET, psize$baseline))
+terra::plot(c(predictors_tima$baseline$TWET, psize[[1]]))
 
 ```
-
-We also need to compile water channel data, based on the National Hydrography Dataset, to facilitate estimating the density (proportion cover) of channel lines within each buffer distance
+[]
+__rasterize_stream_channels:__ To facilitate estimating the density (proportion cover) of channel lines, we also need to compile water channel data, based on the California Aquatic Resources Inventory (CARI) Streams (lines) data set. These data are freely available for download from [SFEI](https://www.sfei.org/data/california-aquatic-resource-inventory-cari-gis-data) and [CDFW](https://filelib.wildlife.ca.gov/Public/BDB/GIS/BIOS/metadata/DS2836.html). Download these data first, and then either provide the path to the shapefile or file geodatabase, or provide the `sf` object directly. By default, this layer will be considered the "baseline" representation of stream channels. However, it can also be applied to alternative scenarios if stream channel locations will not change by giving a different `landscape_name`, or the result of this function can be manipulated to represent changes to channel locations under alternative scenarios.
 
 ```{r tima_chan, eval = FALSE}
-
+chan = rasterize_stream_channels(
+  x = 'path/to/cari_streams', template = predictors_tima$baseline, 
+  min_length = 1, dir = 'example',
+  landscape_name = 'baseline')
 ```
 
-__python_focal_stats:__ The third step is to generate focal statistics for each of the separate land cover rasters generated in the previous step. Focal statistics perform a given operation on all cells within a given distance of the focal cell, and repeated for every cell in the raster. For the "tima" models, this function will calculate the mean value for the presence of every land cover class within each landscape to be analyzed, within moving windows on each of two spatial scales (50m and 2km). All input layers are read from `pathin/SDM/landscape_name`, processed, and then written out to `dir/SDM/landscape_name/scale`. 
+__python_focal_stats:__ The next step is to generate focal statistics for each of the separate rasters generated in the previous steps that represent land cover predictors, tidal wetland patch size, and stream channel locations. Focal statistics perform a given operation on all cells within a given distance of the focal cell, and repeated for every cell in the raster. 
 
-These calculations can be very slow, depending on the size and resolution of the rasters. While they could be run entirely in R, it is much faster to use Python and write directly to disk rather than store in working memory. Therefore, this function currently requires Python to be installed on your system and specifically `arcpy` with the Spatial Analyst extension. The first time this function is run in each session, internal helper functions will check that `arcpy` is installed and try to load it, but to ensure the correct version of Python can be found, you may need to specify the correct filepath. See example below.
+For the "tima" models, this function will calculate the mean value for the presence of every raster layer in `pathin/SDM/landscape_name` within moving windows on each of two spatial scales (50m and 2km). The function must be run a second time to with `regex = 'PSIZE.tif'` and `overwrite = TRUE` to replace the mean value of the tidal marsh patch size within each spatial scale with the maximum value. All results are written directly to `dir/SDM/landscape_name` and not returned to working memory. 
 
-Because these calculations are slow, a `regex` argument provides options for re-running this code for only a subset of the predictors in `pathin/SDM/landscape_name`.
+These calculations can be very slow, depending on the size and resolution of the rasters. To enhance processing speed, this function currently requires Python to be installed on your system and specifically `arcpy` with the Spatial Analyst extension. The first time this function is run in each session, internal helper functions will check that `arcpy` is installed and try to load it, but to ensure the correct version of Python can be found, you may need to specify the correct filepath.
 
 ```{r tima_focal, eval = FALSE}
 python_focal_stats(SDM = 'tima', 
                    landscape_names = c('baseline', 'scenario'),
-                   pathin = 'SDM_landcover2',
+                   pathin = 'example',
                    dir = 'SDM_predictors')
 
-# #small test of just one landscape and predictor: (will still run both scales)
-# python_focal_stats(SDM = 'tima',
-#                    landscape_names = 'baseline',
-#                    pathin = 'SDM_landcover2',
-#                    dir = 'SDM_predictors', regex = 'PNAG.tif')
+python_focal_stats(SDM = 'tima', 
+                   landscape_names = c('baseline', 'scenario'),
+                   pathin = 'example',
+                   dir = 'SDM_predictors',
+                   regex = 'PSIZE.tif',
+                   overwrite = TRUE)
 ```
 
-__update_covertype:__ Finally, covertype is a categorical predictor reflecting the land cover class in each pixel. The original bird survey data used to develop these models only included a subset of available land cover classes, and these classes had an influence on the probability of species presence: wetland, riparian, water, and a combined group of annual agricultural crops, idle fields, grassland, and ruderal (non-woody) vegetation. This function extracts these landcovers from the input SpatRasters and creates a "LANDCOVER.tif" layer ready to use in the distribution models.
+__update_covertype:__ Finally, covertype is a categorical predictor reflecting the land cover class in each pixel. The original bird survey data used to develop these models only included a subset of available land cover classes, and these classes had an influence on the probability of species presence: wetland, riparian, water, and a combined group of annual agricultural crops, idle fields, grassland, and ruderal (non-woody) vegetation. This function extracts these landcovers from the input SpatRasters and creates a "LANDCOVER.tif" layer ready to use in the distribution models. It can be written to the same output directory as the results from running `python_focal_stats()` above.
 
 ```{r tima_covertype, eval = FALSE}
-covertype_tima = update_covertype(landscapes_tima, SDM = "tima")
+covertype_tima = update_covertype(landscapes, SDM = "tima", dir = 'SDM_predictors')
 terra::plot(covertype_tima)
 ```
 
@@ -344,6 +348,7 @@ fit_SDM(pathin = 'SDM_predictors',
         modlist = BRT_tidal_wetlands,
         factors = list(list('LANDCOVER' = c('WETLAND', 'RIPARIAN', 'WATER', 'AGGRPAS'))),
         type = 'response',
+        unsuitable = 90,
         dir = 'SDM_results')
 ```
 
