@@ -151,9 +151,9 @@ update_pwater = function(waterdat, mask = NULL,
 
   if (!is.null(dir_focal)) {
     # write unmasked version for focal stats
-    create_directory(file.path(dir_focal, 'pwater', landscape_name))
+    create_directory(file.path(dir_focal, SDM, landscape_name))
     terra::writeRaster(pwater_scenario,
-                       file.path(dir_focal, 'pwater', landscape_name, 'pwater.tif'),
+                       file.path(dir_focal, SDM, landscape_name, 'pwater', 'pwater.tif'),
                        wopt = list(names = 'pwater'), overwrite = overwrite)
   }
 
