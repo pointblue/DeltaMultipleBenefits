@@ -13,7 +13,7 @@ def focal_stats(fullpathin, fullpathout, buffer, suffix, fun = 'SUM',
   
   # Get a list of the matching rasters in the workspace
   rasters = arcpy.ListRasters(regex)
-  print("rasters:", rasters)
+  #print("rasters:", rasters)
   if not rasters:
     raise RuntimeError("No rasters found")
   
