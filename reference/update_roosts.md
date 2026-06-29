@@ -7,72 +7,63 @@ locations of known crane roosts.
 
 ``` r
 update_roosts(
-  landscape,
-  unsuitable = c(11:19, 60, 70:79, 100:120),
+  x,
+  unsuitable = c(10:19, 60, 70:79, 100:120, 170:187),
   proportion = 0.2,
   roosts,
-  dir,
-  landscape_name,
-  overwrite = FALSE
+  filename = NULL,
+  ...
 )
 ```
 
 ## Arguments
 
-- landscape:
+- x:
 
-  SpatRaster created by
-  [`terra::rast()`](https://rspatial.github.io/terra/reference/rast.html)
+  SpatRaster
 
 - unsuitable:
 
-  optional vector of numerical values representing the land cover
-  classifications that should be considered incompatible with crane
-  roosts; default values for the original land cover encoding include
-  orchard & vineyard classes (11-19), urban (60), riparian classes
-  (70-79), and woodland & scrub classes (100-120)
+  numerical vector representing the land cover classifications in `x`
+  that are incompatible with crane roosts
 
 - proportion:
 
-  numerical value for the proportion cover by an unsuitable land cover
-  class at which the roost should be considered unsuitable; see Details
+  numerical threshold at which cover by an unsuitable land cover class
+  makes a roost polygon unsuitable; see Details
 
 - roosts:
 
-  SpatVector created by
-  [`terra::vect()`](https://rspatial.github.io/terra/reference/vect.html)
-  or character string giving the filepath to polygons representing the
-  location of traditional crane roosts; expects attribute called
-  "Roost_ID"
+  SpatVector or character string giving the filepath to polygons
+  representing the location of traditional crane roosts
 
-- dir, landscape_name:
+- filename:
 
-  Character strings defining the filepath (`dir/landscape_name`) where
-  updated roost location rasters should be written
+  Optional character string passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
 
-- overwrite:
+- ...:
 
-  Logical; passed to
-  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html);
-  default `FALSE`
+  Additional arguments passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
 
 ## Details
 
 For landscapes that represent a projected change from baseline
-conditions, this function facilitates evaluating historical crane roosts
-to determine whether the land cover overlaying them in `landscape` is
-projected to become unsuitable, based on exceeding a threshold
-`proportion` covered by an unsuitable land cover class. Unsuitable roost
-polygons are removed, and updated roost maps are generated, named as
-`scenario_name` in `pathout`. Use this function prior to using
-[python_dist](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_dist.md)
+conditions, this function facilitates evaluating historical crane roost
+polygons to determine whether the land cover overlaying them in raster
+`x` is now unsuitable, based on exceeding a threshold `proportion`
+covered by an unsuitable land cover class. Unsuitable roost polygons are
+removed and the rest rasterized to match `x`. Use this function prior to
+using
+[`python_dist()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_dist.md)
 to calculate distance to roost and generate updated versions of
 `droost_km.tif` for each scenario.
 
 The default values for `unsuitable` include the original encodings for
-orchard, vineyard, riparian, woodland, scrub, and urban land cover
-classes, and the default threshold value for `proportion` is 0.2.
-Alternate values can be provided as desired.
+orchard and vineyard classes (10-19), urban (60), riparian (70-79,
+170-187), and woodland and scrub (100-120), and the default threshold
+value for `proportion` is 0.2.
 
 ## See also
 

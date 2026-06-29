@@ -15,7 +15,7 @@ create_directory(filepath)
 
 - filepath:
 
-  character string representing a file path
+  character string representing one or more file paths
 
 ## Value
 

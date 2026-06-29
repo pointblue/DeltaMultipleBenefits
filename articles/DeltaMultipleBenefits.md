@@ -855,52 +855,113 @@ as changes in land cover, especially specific crop classes in areas
 where there is a distinct winter crop. Therefore, fitting these models
 requires season-specific baseline and scenario landscapes.
 
-#### 4.3.1 Generate updated landscape data
+#### 4.3.1 Prepare landscape predictors
 
-To apply the “waterbird_fall” and “waterbird_win” models to new baseline
-and scenario landscapes, additional predictors corresponding to land
-cover data must first be generated.
-
-**update_pwater:** The waterbird distribution models included `pwater`,
-a predictor indicating the proportion of each land cover class that was
-flooded during each season. For prediction purposes, this function uses
-historical flooding data to estimate average flooding probability by
-land cover class to assign a value to scenario landscapes with changed
-land cover classes. See [Supporting
+**update_pwater:** To apply the “waterbird_fall” and “waterbird_win”
+models to new baseline and scenario landscapes, first handle changes in
+the probability of surface water. The waterbird distribution models
+included `pwater`, a predictor indicating the probability of surface
+water during each season. It was included both as a direct predictor
+(i.e. at each pixel or survey location) and as the proportion of each
+land cover class surrounding each pixel or survey location that was
+flooded, This function is used to create estimates of pwater for
+portions of the alternative scenario landscapes that have changed land
+cover class, and therefore may have changed in the probability of
+surface water. The new predicted value for `pwater` assigned to these
+areas is based on rasters representing baseline land cover classes and
+corresponding baseline historical flooding averages during the relevant
+season to calculate the average historical flooding probability by land
+cover class. See [Supporting
 Information](https://pointblue.github.io/DeltaMultipleBenefits/articles/articles/supporting_information.md)
 to download the original historical flooding data used in developing
 these models; substantial changes in land cover or flooding patterns may
 require updating to more current flooding data. Here, for illustration
-purposes, we randomly generate an example baseline `pwater` and then use
-the function to create an updated `pwater` layer for our example
-scenario.
+purposes, we randomly generate an example baseline `pwater` for each
+season and then use the function to create an updated `pwater` layer for
+our example scenario.
 
 ``` r
 
 pwater_base_fall = terra::rast(
   landscapes$baseline,
   vals = runif(terra::ncell(landscapes$baseline), min = 0, max = 1))
+pwater_scenario_fall = update_pwater(
+  waterdat = pwater_base_fall, SDM = 'waterbird_fall',
+  landscape_name = 'scenario',
+  mask = landscapes$baseline,
+  dir_focal = 'example', dir_final = 'SDM_predictors', 
+  baseline_landscape = landscapes$baseline, 
+  scenario_landscape = landscapes$scenario,
+  floor = FALSE,
+  overwrite = TRUE)
+pwater_fall = c(pwater_base_fall, pwater_scenario_fall)
+names(pwater_fall) = c('baseline', 'scenario')
+
+# repeat for winter
 pwater_base_win = terra::rast(
   landscapes$baseline,
   vals = runif(terra::ncell(landscapes$baseline), min = 0, max = 1))
-
-update_pwater(waterdat = pwater_base_fall, SDM = 'waterbird_fall',
-              landscape_name = 'scenario',
-              mask = landscapes$baseline,
-              dir_focal = 'example', dir_final = 'SDM_predictors', 
-              baseline_landscape = landscapes$baseline, 
-              scenario_landscape = landscapes$scenario,
-              floor = FALSE,
-              overwrite = TRUE)
-update_pwater(waterdat = pwater_base_win, SDM = 'waterbird_win',
-              landscape_name = 'scenario',
-              mask = landscapes$baseline,
-              dir_focal = 'example', dir_final = 'SDM_predictors', 
-              baseline_landscape = landscapes$baseline, 
-              scenario_landscape = landscapes$scenario,
-              floor = FALSE,
-              overwrite = TRUE)
+pwater_scenario_win = update_pwater(
+  waterdat = pwater_base_win, SDM = 'waterbird_win',
+  landscape_name = 'scenario',
+  mask = landscapes$baseline,
+  dir_focal = 'example', dir_final = 'SDM_predictors', 
+  baseline_landscape = landscapes$baseline, 
+  scenario_landscape = landscapes$scenario,
+  floor = FALSE,
+  overwrite = TRUE)
+pwater_win = c(pwater_base_win, pwater_scenario_win)
+names(pwater_win) = c('baseline', 'scenario')
 ```
+
+**python_focal_prep:** Now use built-in functions to prepare the
+remaining landscape rasters, as above, this time incorporating the
+updated `pwater` estimates. By providing a `pixel_value`, cells where
+each land cover class is present will be filled with a value
+corresponding to the area of each pixel (for use in summing the total
+area of each land cover class with focal statistics). In addition, by
+providing the `pwater` data as a `subset`, the `pwater` layer will be
+masked by each land cover class, resulting in a second set of layers
+filled with values corresponding to their probability of being flooded.
+Because two layers are created to represent each land cover class, two
+custom `suffix` values must be provided to distinguish them when the
+files are written to `dir/SDM/landscape_name`.
+
+*Note: If we had changes in crop class between the fall and winter
+seasons, we would need to generate a winter version of the `landscapes`
+data to analyze.*
+
+``` r
+
+
+predictors_watfall = python_focal_prep(
+  landscapes, SDM = 'waterbird_fall', dir = 'example', fill = FALSE,
+  subset = pwater_fall, pixel_value = 0.09, suffix = c('_area', '_pfld')) |> 
+  suppressWarnings()
+
+predictors_watwin = python_focal_prep(
+  landscapes, SDM = 'waterbird_win', dir = 'example', fill = FALSE,
+  subset = pwater_win, pixel_value = 0.09, suffix = c('_area', '_pfld')) |> 
+  suppressWarnings()
+```
+
+**python_focal_stats:** As above, the next step is to generate focal
+statistics for each of the separate land cover rasters.
+
+``` r
+
+python_focal_stats(SDM = 'waterbird_fall', 
+                   landscape_names = c('baseline', 'scenario'),
+                   pathin = 'example',
+                   dir = 'SDM_predictors')
+
+python_focal_stats(SDM = 'waterbird_win', 
+                   landscape_names = c('scenario', 'scenario'),
+                   pathin = 'example',
+                   dir = 'SDM_predictors')
+```
+
+#### 4.3.2 Prepare additional predictors
 
 **update_roosts & python_dist:** In addition to changes in the
 probability of open water on the landscape, land cover changes may also
@@ -934,88 +995,16 @@ data(roosts_original)
 
 update_roosts(
   landscape = landscapes$scenario,
-  landscape_name = 'scenario',
-  unsuitable = c(11:19, 60, 70:79, 100:120),
-  proportion = 0.2,
   roosts = terra::vect(roosts_original),
-  dir = 'SDM_predictors/crane_roosts',
-  overwrite = TRUE)
+  filename = 'example/roosts/roosts.tif')
 
-python_dist(
-  pathin = 'SDM_predictors/crane_roosts',
-  landscape_name = 'scenario',
+droost = python_dist(
+  x = roosts,
+  scale = 'km',
   dir = 'SDM_predictors',
-  SDM = 'waterbird_fall',
-  filename = 'droost_km.tif',
-  scale = 'km')
-```
-
-#### 4.3.2 Prepare landscape predictors
-
-Once the previous steps are completed, now built-in functions can be
-used to prepare the landscape rasters.
-
-**classify_landcover.SpatRaster:** Reclassify each landscape raster to
-match the predictor groupings required by waterbird models.
-
-*Note: If we had changes in crop class between the fall and winter
-seasons, we would need to generate a winter version of the `landscapes`
-data to analyze.*
-
-**python_focal_prep:** Following the classification step, the next step
-is again to prep for running focal statistics, as above. This time,
-cells where each land cover class is present will be filled with a value
-corresponding to the area of each pixel, and each land cover layer will
-also be used as a mask for the corresponding updated `pwater` data,
-resulting in a second layer for each land cover class filled with values
-corresponding to their probability of being flooded. Thus, two layers
-are created for each land cover class, and we provide two custom
-`suffix` values to distinguish them when the files are written to
-`dir/SDM/landscape_name`.
-
-``` r
-
-
-landscapes_watfall = classify_landcover(landscapes, SDM = 'waterbird_fall') |> 
-  suppressWarnings()
-landscapes_watwin = classify_landcover(landscapes, SDM = 'waterbird_win') |> 
-  suppressWarnings()
-
-predictors_watfall_base = python_focal_prep(
-    landscapes_watfall$baseline, SDM = 'waterbird_fall', fill = FALSE,
-    subset = pwater_base_fall, pixel_value = 0.09, suffix = c('_area', '_pfld')) |> 
-    suppressWarnings()
-predictors_watfall_scenario = python_focal_prep(
-    landscapes_watfall$scenario, SDM = 'waterbird_fall', fill = FALSE,
-    subset = pwater_scenario_fall, pixel_value = 0.09, suffix = c('_area', '_pfld')) |> 
-    suppressWarnings()
-# >> repeat for winter
-
-# Optional (slow)
-# python_focal_prep(landscapes_watfall$baseline, SDM = 'waterbird_fall',
-#                   subset = pwater_base_fall, pixel_value = 0.09, 
-#                   suffix = c('_area', '_pfld'),
-#                   dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
-# >> when run inside vignette, output will write to vignettes/SDM_landcover
-```
-
-**python_focal_stats:** As above, the next step is to generate focal
-statistics for each of the separate land cover rasters.
-
-``` r
-
-python_focal_stats(SDM = 'waterbird_fall', 
-                   landscape_names = c('baseline', 'scenario'),
-                   pathin = 'SDM_landcover2',
-                   dir = 'SDM_predictors')
-
-#small test of just one landscape and predictor: (will still run all 3 scales
-#for both _area and _pfld)
-python_focal_stats(SDM = 'waterbird_fall',
-                   landscape_names = 'baseline',
-                   pathin = 'SDM_landcover2',
-                   dir = 'SDM_predictors', regex = 'wet')
-# >> in this the regex is pasted to _area.tif and _pfld.tif
+  SDM = c('waterbird_fall', 'waterbird_win'), # can write to more than one location
+  landscape_name = 'scenario',
+  filename = 'droost_km.tif')
 ```
 
 **update_covertype:** Like the “tima” models, these models include a
@@ -1023,10 +1012,12 @@ categorical cover type predictor
 
 ``` r
 
-covertype_watfall = update_covertype(landscapes_watfall, SDM = "waterbird_fall")
+covertype_watfall = update_covertype(landscapes, SDM = "waterbird_fall",
+                                     dir = 'SDM_predictors')
 terra::plot(covertype_watfall)
 
-covertype_watwin = update_covertype(landscapes_watwin, SDM = "waterbird_win")
+covertype_watwin = update_covertype(landscapes, SDM = "waterbird_win", 
+                                    dir = 'SDM_predictors')
 terra::plot(covertype_watwin)
 ```
 
@@ -1036,14 +1027,12 @@ terra::plot(covertype_watwin)
 is to fit the distribution models for each of the 5 fall waterbird
 groups and6 winter waterbird groups. As above, see [Supporting
 Information](https://pointblue.github.io/DeltaMultipleBenefits/articles/articles/supporting_information.md)
-to download these models. And as for “tima” models, the levels of the
-categorical predictor `covertype` must be specified in the call to
+to download these models. Similar to the “tima” models, the levels of
+the categorical predictor `covertype` must be specified in the call to
 `fit_SDM`, and in the correct order; note that the factor levels change
-between fall and winter seasons.
-
-As for the “riparian” models, in the original analysis perennial crops,
-urban, and barren land covers were considered to be unsuitable land
-cover classes *a priori*, and so we can specify
+between fall and winter seasons. In the original analysis perennial
+crops, urban, and barren land covers were considered to be unsuitable
+land cover classes *a priori*, and so we can specify
 `unsuitable = c(10:19, 60, 130)` (the corresponding land cover class
 values).
 

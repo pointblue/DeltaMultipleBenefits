@@ -9,38 +9,23 @@ script "dist_stats.py".
 
 ``` r
 python_dist(
-  pathin,
-  landscape_name,
-  dir,
-  SDM,
-  filename = "droost_km.tif",
+  x,
   scale = NULL,
   mask = NULL,
-  overwrite = FALSE,
-  python = NULL
+  python = NULL,
+  dir = NULL,
+  SDM = NULL,
+  landscape_name = NULL,
+  filename = "droost_km.tif",
+  ...
 )
 ```
 
 ## Arguments
 
-- pathin, landscape_name:
+- x:
 
-  Character strings defining the filepath (`pathin/landscape_name`)
-  where input rasters are located, such as those created from running
-  [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
-  or
-  [`update_roosts()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/update_roosts.md)
-
-- dir, SDM:
-
-  Additional character strings defining the filepath
-  (`dir/SDM/landscape_name`) where output raster should be written
-
-- filename:
-
-  name of the output raster, including file extension; default is
-  'droost_km.tif', the name of the predictor required by the waterbird
-  models
+  Filepath or SpatRaster to be processed
 
 - scale:
 
@@ -52,46 +37,59 @@ python_dist(
   raster that should be used to mask the output, e.g. a study area
   boundary
 
-- overwrite:
-
-  Logical; passed to
-  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html);
-  does not apply to the intermediate step of writing `droost_raw.tif`
-
 - python:
 
   Optional filepath to the preferred version of arcpy, passed to
-  [`reticulate::use_python`](https://rstudio.github.io/reticulate/reference/use_python.html).
+  [`reticulate::use_python`](https://rstudio.github.io/reticulate/reference/use_python.html);
   See details.
+
+- dir, SDM, landscape_name:
+
+  Optional; Character strings defining the filepath where output raster
+  should be written (`dir/SDM/landscape_name`)
+
+- filename:
+
+  name of the output raster, including file extension; default is
+  'droost_km.tif', the name of the predictor required by the waterbird
+  models
+
+- ...:
+
+  Additional arguments passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
 
 ## Value
 
-Nothing; all files written to `pathout/SDM/landscape_name`
+SpatRaster
 
 ## Details
 
 This function calls the `dist_stats.py` script to calculate the
 Euclidean distance for all cells in the input raster without a value to
 the nearest cell with a value (e.g., for calculating distance to a crane
-roost or a stream).
+roost or a stream). Optionally, results can be scaled, masked, and
+written to `dir/SDM/landscape_name/filename`.
 
-Raw python results will be written to
-`pathin/landscape_name/droost_raw.tif`, and then optionally scaled
-and/or masked, before writing the final output to
-`pathout/SDM/landscape_name/`. Currently supported scale options
-include: `km` to divide the results by 1000 and return distances in
-kilometers or `sqrt` to take the square root of the results. Note that
-the initial raw output from `dist_stats.py` to
-`pathin/landscape_name/droost_raw.tif` will not overwrite existing
-rasters; old versions must be deleted before re-running.
+Currently supported scale options include: `km` to divide the results by
+1000 and return distances in kilometers or `sqrt` to take the square
+root of the results.
 
-*Important:* This function requires the availability of arcpy and
-Spatial Analyst extensions. Use the `python` argument to specify the
-local pathway to arcpy, particularly if other versions of Python are
-installed. For example: 'C:/Program
-Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that
-the python argument is applied only on the first use within each
-session, and must be repeated in each session.
+The parameters `dir`, `SDM`, `landscape_name`, and `filename` are passed
+to [`file.path()`](https://rdrr.io/r/base/file.path.html) to contstruct
+filenames passed to
+[`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html).
+If multiple values for one of these character strings is provided, the
+output raster will be written to more than one directory, e.g. if needed
+as a predictor for multiple SDMs or landscape names.
+
+This function relies on the availability of `arcpy` and Spatial Analyst
+extensions. An attempt will be made to load these the first time this
+function (or
+[`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md))
+is called in each session, and by default will look here:
+`C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe`;
+use the `python` argument to specify a different pathway.
 
 ## Examples
 

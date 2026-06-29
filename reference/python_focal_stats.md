@@ -55,8 +55,7 @@ python_focal_stats(
 
 ## Value
 
-Nothing returned to R environment. Writes rasters to `pathout` for each
-land cover class.
+None
 
 ## Details
 
@@ -75,8 +74,9 @@ will be masked by this file before writing to file.
 These calculations can be very slow, depending on the size and
 resolution of the rasters, and relies on the availability of `arcpy` and
 Spatial Analyst extensions for faster processing. An attempt will be
-made to load these the first time this function is called in each
-session, and by default will look here:
+made to load these the first time this function (or
+[`python_dist()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_dist.md))
+is called in each session, and by default will look here:
 `C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe`;
 use the `python` argument to specify a different pathway.
 

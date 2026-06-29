@@ -48,13 +48,12 @@ of known crane roosts.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">update_roosts</span><span class="op">(</span></span>
-<span>  <span class="va">landscape</span>,</span>
-<span>  unsuitable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span><span class="op">:</span><span class="fl">19</span>, <span class="fl">60</span>, <span class="fl">70</span><span class="op">:</span><span class="fl">79</span>, <span class="fl">100</span><span class="op">:</span><span class="fl">120</span><span class="op">)</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  unsuitable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span><span class="op">:</span><span class="fl">19</span>, <span class="fl">60</span>, <span class="fl">70</span><span class="op">:</span><span class="fl">79</span>, <span class="fl">100</span><span class="op">:</span><span class="fl">120</span>, <span class="fl">170</span><span class="op">:</span><span class="fl">187</span><span class="op">)</span>,</span>
 <span>  proportion <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  <span class="va">roosts</span>,</span>
-<span>  <span class="va">dir</span>,</span>
-<span>  <span class="va">landscape_name</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  filename <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -62,55 +61,47 @@ of known crane roosts.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-landscape">landscape<a class="anchor" aria-label="anchor" href="#arg-landscape"></a></dt>
-<dd><p>SpatRaster created by <code><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">terra::rast()</a></code></p></dd>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>SpatRaster</p></dd>
 
 
 <dt id="arg-unsuitable">unsuitable<a class="anchor" aria-label="anchor" href="#arg-unsuitable"></a></dt>
-<dd><p>optional vector of numerical values representing the land
-cover classifications that should be considered incompatible with crane
-roosts; default values for the original land cover encoding include orchard
-&amp; vineyard classes (11-19), urban (60), riparian classes (70-79), and
-woodland &amp; scrub classes (100-120)</p></dd>
+<dd><p>numerical vector representing the land cover
+classifications in <code>x</code> that are incompatible with crane roosts</p></dd>
 
 
 <dt id="arg-proportion">proportion<a class="anchor" aria-label="anchor" href="#arg-proportion"></a></dt>
-<dd><p>numerical value for the proportion cover by an unsuitable
-land cover class at which the roost should be considered unsuitable; see
-Details</p></dd>
+<dd><p>numerical threshold at which cover by an unsuitable land
+cover class makes a roost polygon unsuitable; see Details</p></dd>
 
 
 <dt id="arg-roosts">roosts<a class="anchor" aria-label="anchor" href="#arg-roosts"></a></dt>
-<dd><p>SpatVector created by <code><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">terra::vect()</a></code> or character string
-giving the filepath to polygons representing the location of traditional
-crane roosts; expects attribute called "Roost_ID"</p></dd>
+<dd><p>SpatVector or character string giving the filepath to polygons
+representing the location of traditional crane roosts</p></dd>
 
 
-<dt id="arg-dir-landscape-name">dir, landscape_name<a class="anchor" aria-label="anchor" href="#arg-dir-landscape-name"></a></dt>
-<dd><p>Character strings defining the filepath
-(<code>dir/landscape_name</code>) where updated roost location rasters should be
-written</p></dd>
+<dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
+<dd><p>Optional character string passed to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code></p></dd>
 
 
-<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p>Logical; passed to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code>; default <code>FALSE</code></p></dd>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments passed to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>For landscapes that represent a projected change from baseline
-conditions, this function facilitates evaluating historical crane roosts to
-determine whether the land cover overlaying them in <code>landscape</code> is
-projected to become unsuitable, based on exceeding a threshold <code>proportion</code>
-covered by an unsuitable land cover class. Unsuitable roost polygons are
-removed, and updated roost maps are generated, named as <code>scenario_name</code> in
-<code>pathout</code>. Use this function prior to using <a href="python_dist.html">python_dist</a> to calculate
-distance to roost and generate updated versions of <code>droost_km.tif</code> for each
-scenario.</p>
+conditions, this function facilitates evaluating historical crane roost
+polygons to determine whether the land cover overlaying them in raster <code>x</code>
+is now unsuitable, based on exceeding a threshold <code>proportion</code> covered by
+an unsuitable land cover class. Unsuitable roost polygons are removed and
+the rest rasterized to match <code>x</code>. Use this function prior to using
+<code><a href="python_dist.html">python_dist()</a></code> to calculate distance to roost and generate updated
+versions of <code>droost_km.tif</code> for each scenario.</p>
 <p>The default values for <code>unsuitable</code> include the original encodings for
-orchard, vineyard, riparian, woodland, scrub, and urban land cover classes,
-and the default threshold value for <code>proportion</code> is 0.2. Alternate values
-can be provided as desired.</p>
+orchard and vineyard classes (10-19), urban (60), riparian (70-79,
+170-187), and woodland and scrub (100-120), and the default threshold value
+for <code>proportion</code> is 0.2.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

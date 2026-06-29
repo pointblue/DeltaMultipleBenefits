@@ -63,10 +63,6 @@ python_focal_prep(
   [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html),
   as (`dir/SDM/landscape_name`). See Details.
 
-- overwrite:
-
-  logical. If `TRUE`, output is overwritten
-
 - ...:
 
   additional arguments passed to
