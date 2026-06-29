@@ -697,14 +697,19 @@ To apply the “riparian” models to new baseline and scenario landscapes,
 the process is very similar to that for “tima” demonstrated above, with
 a few exceptions.
 
-**classify_landcover:** The first step is again to create the predictor
-groupings required by the “riparian” models, but here it is best to work
-directly with the original LSPT Habitat_types_modern layer, if possible.
-The
+**classify_landcover & python_focal_prep:** The first step is again to
+prepare for focal statistics, including by creating the predictor
+groupings required by the “riparian” models. In this case, it is best to
+work directly with the original LSPT Habitat_types_modern layer, if
+possible. The
 [`classify_landcover.sf()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.sf.md)
 function applied to the LSPT data will return the corresponding
 predictors for the “riparian” models with the greatest accuracy and
-specificity. As an example:
+specificity. Then the call to
+[`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
+can include `classified = TRUE` to bypass the internal call to
+[`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md).
+To demonstrate:
 
 ``` r
 
@@ -718,40 +723,34 @@ scenario_rip <- terra::classify(
                    to = c(71, 71)) |> as.matrix())
 landscapes_rip = c(baseline_rip, scenario_rip)
 names(landscapes_rip) = c('baseline', 'scenario')
+
+predictors_rip = python_focal_prep(landscapes, SDM = 'riparian', dir = 'example',
+                                   fill = FALSE, classified = TRUE) |> suppressWarnings()
 ```
 
 Otherwise,
-[`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md)
-can be used, but may produce some minor differences from the original
-land cover classification scheme used in the development of these
-models.
-
-**python_focal_prep:** Following the classification step, the next step
-is again to prep for running focal statistics, as above.
+[`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
+can still be called directly (with `classified = FALSE`), but the
+internal call to
+[`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md)may
+produce some minor differences from the original land cover
+classification scheme used in the development of these models. Note that
+these layers can be written to the same `dir` as the ‘tima’ models
+above, but they will be kept in a separate subdirectory for the
+‘riparian’ SDMs.
 
 ``` r
 
 
-landscapes_rip = classify_landcover(landscapes, SDM = 'riparian')
-
-predictors_rip = python_focal_prep(landscapes_rip, SDM = 'riparian', 
-                                   fill = FALSE) |> 
-  suppressWarnings()
-#> RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUBAG RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUB
+predictors_rip = python_focal_prep(landscapes, SDM = 'riparian', dir = 'example',
+                                   fill = FALSE) |> suppressWarnings()
+#> RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUBAG RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUBCreating directory: example/riparian/baseline 
+#> Creating directory: example/riparian/scenario
 
 terra::plot(predictors_rip$baseline)
 ```
 
-![](DeltaMultipleBenefits_files/figure-html/riparian2-1.png)
-
-``` r
-
-
-# Optional (can be slow)
-# python_focal_prep(landscapes_rip$baseline, SDM = 'riparian',
-#                   dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)
-# >> when run inside vignette, output will write to vignettes/SDM_landcover
-```
+![](DeltaMultipleBenefits_files/figure-html/rip_prep-1.png)
 
 **python_focal_stats:** As above, the next step is to generate focal
 statistics for each of the separate land cover rasters.
@@ -760,26 +759,21 @@ statistics for each of the separate land cover rasters.
 
 python_focal_stats(SDM = 'riparian', 
                    landscape_names = c('baseline', 'scenario'),
-                   pathin = 'SDM_landcover2',
+                   pathin = 'example',
                    dir = 'SDM_predictors')
-
-#small test of just one landscape and predictor: (will still run both scales)
-# python_focal_stats(SDM = 'riparian',
-#                    landscape_names = 'baseline',
-#                    pathin = 'SDM_landcover2',
-#                    dir = 'SDM_predictors', regex = 'RIPARIAN.tif')
 ```
 
-\###4.2.2 Prepare additional predictors The “riparian” models also
-include several predictors not based on land cover data: \* `area.ha`,
-accounting for variation in survey effort, which should be held constant
-for new predictions; \* `region`, indicating whether the survey was
-conducted in the Sacramento Valley (region = 0) or in the Delta or San
-Joaquin (region = 1) \* `bio_1`, representing annual mean temperature,
-1970-2000 \* `bio_12`, representing total annual precipitation,
-1970-2000 \* `streamdist`, representing the square-root of the distance
-(in m) to the nearest stream or river, based on the National Hydrography
-Dataset
+#### 4.2.2 Prepare additional predictors
+
+The “riparian” models also include several predictors not based on land
+cover data: \* `area.ha`, accounting for variation in survey effort,
+which should be held constant for new predictions; \* `region`,
+indicating whether the survey was conducted in the Sacramento Valley
+(region = 0) or in the Delta or San Joaquin (region = 1) \* `bio_1`,
+representing annual mean temperature, 1970-2000 \* `bio_12`,
+representing total annual precipitation, 1970-2000 \* `streamdist`,
+representing the square-root of the distance (in m) to the nearest
+stream or river, based on the National Hydrography Dataset
 
 To represent `area.ha` in new predictions, we recommend using a constant
 value of 3.14159, referring to the total area (in hectares) within 50m
@@ -823,7 +817,7 @@ fit_SDM(pathin = 'SDM_predictors',
         landscape_name = 'baseline',
         modlist = BRT_riparian_wetlands[[c('NUWO', 'ATFL', 'BHGR', 'LAZB', 'SPTO', 'YEWA')]],
         constants = data.frame(region = 1,
-                                    area.ha = 3.141593),
+                               area.ha = 3.141593),
         unsuitable = 90, #open water
         dir = 'SDM_results')
 
@@ -839,7 +833,7 @@ fit_SDM(pathin = 'SDM_predictors',
         landscape_name = 'scenario',
         modlist = BRT_riparian_wetlands[[c('NUWO', 'ATFL', 'BHGR', 'LAZB', 'SPTO', 'YEWA')]],
         constants = data.frame(region = 1,
-                                    area.ha = 3.141593),
+                               area.ha = 3.141593),
         unsuitable = 90, #open water
         dir = 'SDM_results')
 
@@ -892,18 +886,20 @@ pwater_base_win = terra::rast(
 
 update_pwater(waterdat = pwater_base_fall, SDM = 'waterbird_fall',
               landscape_name = 'scenario',
-              dir = 'SDM_predictors', overwrite = TRUE,
-              baseline_landscape = landscapes$baseline, floor = FALSE)
+              mask = landscapes$baseline,
+              dir_focal = 'example', dir_final = 'SDM_predictors', 
+              baseline_landscape = landscapes$baseline, 
+              scenario_landscape = landscapes$scenario,
+              floor = FALSE,
+              overwrite = TRUE)
 update_pwater(waterdat = pwater_base_win, SDM = 'waterbird_win',
               landscape_name = 'scenario',
-              dir = 'SDM_predictors', overwrite = TRUE,
-              baseline_landscape = landscapes$baseline, floor = FALSE)
-
-# waterbird_fall
-pwater_scenario_fall = list.files('SDM_predictors/waterbird_fall/scenario', 
-                                  'pwater.tif$', full.names = TRUE) |> terra::rast()
-pwater_scenario_win = list.files('SDM_predictors/waterbird_win/scenario', 
-                                  'pwater.tif$', full.names = TRUE) |> terra::rast()
+              mask = landscapes$baseline,
+              dir_focal = 'example', dir_final = 'SDM_predictors', 
+              baseline_landscape = landscapes$baseline, 
+              scenario_landscape = landscapes$scenario,
+              floor = FALSE,
+              overwrite = TRUE)
 ```
 
 **update_roosts & python_dist:** In addition to changes in the

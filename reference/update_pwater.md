@@ -2,7 +2,10 @@
 
 Helper function for updating `pwater` and `pfld` predictors for the
 waterbird distribution models. Generates file `pwater.tif` at locations
-`pathout/pwater/landscape_name` and `pathout/SDM/landscape_name`.
+`dir_focal/pwater/landscape_name` (for use with
+[`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md)
+and `dir_final/SDM/landscape_name` (for use with
+[`fit_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/fit_SDM.md).
 
 ## Usage
 
@@ -10,7 +13,8 @@ waterbird distribution models. Generates file `pwater.tif` at locations
 update_pwater(
   waterdat,
   mask = NULL,
-  pathout,
+  dir_focal = NULL,
+  dir_final = NULL,
   SDM,
   landscape_name,
   overwrite = FALSE,
@@ -35,12 +39,28 @@ update_pwater(
   raster that should be used to mask the output, e.g. a study area
   boundary
 
-- pathout, SDM, landscape_name:
+- dir_focal:
 
-  Character strings defining the filepath (`pathout/SDM/landscape_name`)
-  where output rasters should be written; landscape_name should either
-  correspond to the landscape represented by `waterdat` or the
-  `scenario_landscape`, if given; see Details
+  Optional string representing directory passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html),
+  as (`dir_focal/pwater/landscape_name`). See Details.
+
+- dir_final:
+
+  Optional string representing directory passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html),
+  as (`dir_final/SDM/landscape_name`). See Details.
+
+- SDM:
+
+  The name of intended species distribution model: either
+  `"waterbird_fall"` or `"waterbird_win"`
+
+- landscape_name:
+
+  Character strings defining the filepath where output rasters will be
+  written; should either correspond to the landscape represented by
+  `waterdat` or the `scenario_landscape`, if given; see Details
 
 - overwrite:
 
@@ -60,9 +80,14 @@ update_pwater(
   Logical; if `TRUE`, don't allow new values of pwater to be lower than
   baseline values
 
+- ...:
+
+  Additional arguments passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
+
 ## Value
 
-Nothing; all files written to `pathout`
+SpatRaster
 
 ## Details
 
@@ -71,33 +96,28 @@ water data in two ways: as `pwater`, the expected probability of open
 surface water in each cell of the landscape raster, specific to the
 waterbird season being modeled and perhaps averaged over multiple years,
 and as `pfld` focal statistics which represent the proportion of each
-land cover class within a given distance of each cell that is flooded
-(see
-[`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
-and
-[`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md)).
+land cover class within a given distance of each cell that is flooded.
 Therefore, `pwater` data must be available for every landscape under
 analysis before the `pfld` focal statistics can be generated and
 distribution models fit.
 
 Due to the dual needs for generating `pwater` and `pfld` predictors,
-this function writes results in two places within `pathout`. The first
-will be written to `pathout/pwater/landscape_name`, intended for later
-use with
+this function writes results in two places: The first will be written to
+`dir_focal/pwater/landscape_name`, intended for later use with
 [`python_focal_prep()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_prep.md)
 and generating `pfld` predictors. The second will be written to
-`pathout/SDM/landscape_name`, which is expected to be a directory
+`dir_final/SDM/landscape_name`, which is expected to be a directory
 containing all final predictors for later use with
 [`fit_SDM()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/fit_SDM.md)
 in fitting waterbird models.
 
 In addition, this function has two modes of operation. If
-`scenario_landscape` is not provided, the `waterdat` is assumed to to
+`scenario_landscape` is not provided, the `waterdat` is assumed to
 represent `pwater` data for the `landscape_name`, and is simply renamed
-and copied to both `pathout` locations for use in later steps of
-analysis, optionally masking before `pathout/SDM/landscape_name` is
-written. The `mask` is never applied to the
-`pathout/pwater/landscape_name` output intended for later focal
+and copied to both `dir_focal` and `dir_final` locations for use in
+later steps of analysis, optionally masking before
+`dir_final/SDM/landscape_name` is written. The `mask` is never applied
+to the `pathout/pwater/landscape_name` output intended for later focal
 statistics to avoid errors in processing near the boundaries of the
 study area.
 
@@ -113,8 +133,10 @@ should reflect the name of the scenario.
 
 The original `pwater` baseline data used in the development of these
 models was derived from Point Blue's [Water
-Tracker](https://www.pointblue.org/autowater) and may be downloaded from
-[doi:10.5281/zenodo.7672193](https://doi.org/10.5281/zenodo.7672193).
+Tracker](https://www.pointblue.org/autowater). See [Supporting
+Information](https://pointblue.github.io/DeltaMultipleBenefits/reference/articles/supporting_information.md)
+to download the original historical flooding data used in developing
+these models
 
 ## See also
 

@@ -9,6 +9,7 @@ to generate inputs for use with species distribution models.
 python_focal_prep(
   x,
   SDM,
+  classified = FALSE,
   fill = TRUE,
   suffix = NULL,
   pixel_value = NULL,
@@ -30,6 +31,11 @@ python_focal_prep(
   The name of intended species distribution model, for which `x` will be
   reclassified: `"riparian"`, `"waterbird_fall"`, `"waterbird_win"`, or
   `"tima"`
+
+- classified:
+
+  logical; passed to
+  [`create_predictor_stack()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/create_predictor_stack.md)
 
 - fill:
 

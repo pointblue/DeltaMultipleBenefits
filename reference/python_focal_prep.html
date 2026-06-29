@@ -50,6 +50,7 @@ generate inputs for use with species distribution models.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">python_focal_prep</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">SDM</span>,</span>
+<span>  classified <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fill <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  suffix <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pixel_value <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -72,6 +73,10 @@ generate inputs for use with species distribution models.</p>
 <dd><p>The name of intended species distribution model, for which <code>x</code>
 will be reclassified: <code>"riparian"</code>, <code>"waterbird_fall"</code>, <code>"waterbird_win"</code>,
 or <code>"tima"</code></p></dd>
+
+
+<dt id="arg-classified">classified<a class="anchor" aria-label="anchor" href="#arg-classified"></a></dt>
+<dd><p>logical; passed to <code><a href="create_predictor_stack.html">create_predictor_stack()</a></code></p></dd>
 
 
 <dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>

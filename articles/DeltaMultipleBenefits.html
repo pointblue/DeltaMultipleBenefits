@@ -693,13 +693,17 @@ rest.</p>
 <p>To apply the “riparian” models to new baseline and scenario
 landscapes, the process is very similar to that for “tima” demonstrated
 above, with a few exceptions.</p>
-<p><strong>classify_landcover:</strong> The first step is again to
-create the predictor groupings required by the “riparian” models, but
-here it is best to work directly with the original LSPT
+<p><strong>classify_landcover &amp; python_focal_prep:</strong> The
+first step is again to prepare for focal statistics, including by
+creating the predictor groupings required by the “riparian” models. In
+this case, it is best to work directly with the original LSPT
 Habitat_types_modern layer, if possible. The
 <code><a href="../reference/classify_landcover.sf.html">classify_landcover.sf()</a></code> function applied to the LSPT data
 will return the corresponding predictors for the “riparian” models with
-the greatest accuracy and specificity. As an example:</p>
+the greatest accuracy and specificity. Then the call to
+<code><a href="../reference/python_focal_prep.html">python_focal_prep()</a></code> can include
+<code>classified = TRUE</code> to bypass the internal call to
+<code><a href="../reference/classify_landcover.SpatRaster.html">classify_landcover.SpatRaster()</a></code>. To demonstrate:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lspt</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="st">'path/to/Habitat_types_modern.shp'</span><span class="op">)</span></span>
 <span><span class="va">lc_classified</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_landcover.sf.html">classify_landcover.sf</a></span><span class="op">(</span><span class="va">lspt</span><span class="op">)</span></span>
@@ -710,55 +714,48 @@ the greatest accuracy and specificity. As an example:</p>
 <span>  rcl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">26</span><span class="op">)</span>, </span>
 <span>                   to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">71</span>, <span class="fl">71</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">landscapes_rip</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">baseline_rip</span>, <span class="va">scenario_rip</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">landscapes_rip</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'baseline'</span>, <span class="st">'scenario'</span><span class="op">)</span></span></code></pre></div>
-<p>Otherwise, <code><a href="../reference/classify_landcover.SpatRaster.html">classify_landcover.SpatRaster()</a></code> can be used,
-but may produce some minor differences from the original land cover
-classification scheme used in the development of these models.</p>
-<p><strong>python_focal_prep:</strong> Following the classification
-step, the next step is again to prep for running focal statistics, as
-above.</p>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">landscapes_rip</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'baseline'</span>, <span class="st">'scenario'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">predictors_rip</span> <span class="op">=</span> <span class="fu"><a href="../reference/python_focal_prep.html">python_focal_prep</a></span><span class="op">(</span><span class="va">landscapes</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span>, dir <span class="op">=</span> <span class="st">'example'</span>,</span>
+<span>                                   fill <span class="op">=</span> <span class="cn">FALSE</span>, classified <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Otherwise, <code><a href="../reference/python_focal_prep.html">python_focal_prep()</a></code> can still be called
+directly (with <code>classified = FALSE</code>), but the internal call
+to <code><a href="../reference/classify_landcover.SpatRaster.html">classify_landcover.SpatRaster()</a></code>may produce some minor
+differences from the original land cover classification scheme used in
+the development of these models. Note that these layers can be written
+to the same <code>dir</code> as the ‘tima’ models above, but they will
+be kept in a separate subdirectory for the ‘riparian’ SDMs.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">landscapes_rip</span> <span class="op">=</span> <span class="fu"><a href="../reference/classify_landcover.html">classify_landcover</a></span><span class="op">(</span><span class="va">landscapes</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">predictors_rip</span> <span class="op">=</span> <span class="fu"><a href="../reference/python_focal_prep.html">python_focal_prep</a></span><span class="op">(</span><span class="va">landscapes_rip</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span>, </span>
-<span>                                   fill <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&amp;SCRUBAG RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&amp;SCRUB</span></span>
+<span><span class="va">predictors_rip</span> <span class="op">=</span> <span class="fu"><a href="../reference/python_focal_prep.html">python_focal_prep</a></span><span class="op">(</span><span class="va">landscapes</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span>, dir <span class="op">=</span> <span class="st">'example'</span>,</span>
+<span>                                   fill <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&amp;SCRUBAG RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&amp;SCRUBCreating directory: example/riparian/baseline </span></span>
+<span><span class="co">#&gt; Creating directory: example/riparian/scenario</span></span>
 <span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">predictors_rip</span><span class="op">$</span><span class="va">baseline</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DeltaMultipleBenefits_files/figure-html/riparian2-1.png" class="r-plt" alt="" width="672"></p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Optional (can be slow)</span></span>
-<span><span class="co"># python_focal_prep(landscapes_rip$baseline, SDM = 'riparian',</span></span>
-<span><span class="co">#                   dir = 'SDM_landcover2', fill = FALSE, overwrite = TRUE)</span></span>
-<span><span class="co"># &gt;&gt; when run inside vignette, output will write to vignettes/SDM_landcover</span></span></code></pre></div>
+<p><img src="DeltaMultipleBenefits_files/figure-html/rip_prep-1.png" class="r-plt" alt="" width="672"></p>
 <p><strong>python_focal_stats:</strong> As above, the next step is to
 generate focal statistics for each of the separate land cover
 rasters.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/python_focal_stats.html">python_focal_stats</a></span><span class="op">(</span>SDM <span class="op">=</span> <span class="st">'riparian'</span>, </span>
 <span>                   landscape_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'baseline'</span>, <span class="st">'scenario'</span><span class="op">)</span>,</span>
-<span>                   pathin <span class="op">=</span> <span class="st">'SDM_landcover2'</span>,</span>
-<span>                   dir <span class="op">=</span> <span class="st">'SDM_predictors'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#small test of just one landscape and predictor: (will still run both scales)</span></span>
-<span><span class="co"># python_focal_stats(SDM = 'riparian',</span></span>
-<span><span class="co">#                    landscape_names = 'baseline',</span></span>
-<span><span class="co">#                    pathin = 'SDM_landcover2',</span></span>
-<span><span class="co">#                    dir = 'SDM_predictors', regex = 'RIPARIAN.tif')</span></span></code></pre></div>
-<p>###4.2.2 Prepare additional predictors The “riparian” models also
-include several predictors not based on land cover data: *
-<code>area.ha</code>, accounting for variation in survey effort, which
-should be held constant for new predictions; * <code>region</code>,
-indicating whether the survey was conducted in the Sacramento Valley
-(region = 0) or in the Delta or San Joaquin (region = 1) *
-<code>bio_1</code>, representing annual mean temperature, 1970-2000 *
-<code>bio_12</code>, representing total annual precipitation, 1970-2000
-* <code>streamdist</code>, representing the square-root of the distance
-(in m) to the nearest stream or river, based on the National Hydrography
-Dataset</p>
+<span>                   pathin <span class="op">=</span> <span class="st">'example'</span>,</span>
+<span>                   dir <span class="op">=</span> <span class="st">'SDM_predictors'</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="prepare-additional-predictors">4.2.2 Prepare additional predictors<a class="anchor" aria-label="anchor" href="#prepare-additional-predictors"></a>
+</h4>
+<p>The “riparian” models also include several predictors not based on
+land cover data: * <code>area.ha</code>, accounting for variation in
+survey effort, which should be held constant for new predictions; *
+<code>region</code>, indicating whether the survey was conducted in the
+Sacramento Valley (region = 0) or in the Delta or San Joaquin (region =
+1) * <code>bio_1</code>, representing annual mean temperature, 1970-2000
+* <code>bio_12</code>, representing total annual precipitation,
+1970-2000 * <code>streamdist</code>, representing the square-root of the
+distance (in m) to the nearest stream or river, based on the National
+Hydrography Dataset</p>
 <p>To represent <code>area.ha</code> in new predictions, we recommend
 using a constant value of 3.14159, referring to the total area (in
 hectares) within 50m of a bird survey location, after 4 surveys. For
@@ -790,14 +787,14 @@ values from the model.</p>
 <p><strong>transform_SDM:</strong> Finally, as above, the
 model-predicted results can be converted into binary presence-absence
 predictions using threshold statistics.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># baseline landscape:</span></span>
 <span><span class="fu"><a href="../reference/fit_SDM.html">fit_SDM</a></span><span class="op">(</span>pathin <span class="op">=</span> <span class="st">'SDM_predictors'</span>, </span>
 <span>        SDM <span class="op">=</span> <span class="st">'riparian'</span>,</span>
 <span>        landscape_name <span class="op">=</span> <span class="st">'baseline'</span>,</span>
 <span>        modlist <span class="op">=</span> <span class="va">BRT_riparian_wetlands</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'NUWO'</span>, <span class="st">'ATFL'</span>, <span class="st">'BHGR'</span>, <span class="st">'LAZB'</span>, <span class="st">'SPTO'</span>, <span class="st">'YEWA'</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>        constants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>region <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                                    area.ha <span class="op">=</span> <span class="fl">3.141593</span><span class="op">)</span>,</span>
+<span>                               area.ha <span class="op">=</span> <span class="fl">3.141593</span><span class="op">)</span>,</span>
 <span>        unsuitable <span class="op">=</span> <span class="fl">90</span>, <span class="co">#open water</span></span>
 <span>        dir <span class="op">=</span> <span class="st">'SDM_results'</span><span class="op">)</span></span>
 <span></span>
@@ -813,7 +810,7 @@ predictions using threshold statistics.</p>
 <span>        landscape_name <span class="op">=</span> <span class="st">'scenario'</span>,</span>
 <span>        modlist <span class="op">=</span> <span class="va">BRT_riparian_wetlands</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'NUWO'</span>, <span class="st">'ATFL'</span>, <span class="st">'BHGR'</span>, <span class="st">'LAZB'</span>, <span class="st">'SPTO'</span>, <span class="st">'YEWA'</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>        constants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>region <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                                    area.ha <span class="op">=</span> <span class="fl">3.141593</span><span class="op">)</span>,</span>
+<span>                               area.ha <span class="op">=</span> <span class="fl">3.141593</span><span class="op">)</span>,</span>
 <span>        unsuitable <span class="op">=</span> <span class="fl">90</span>, <span class="co">#open water</span></span>
 <span>        dir <span class="op">=</span> <span class="st">'SDM_results'</span><span class="op">)</span></span>
 <span></span>
@@ -853,7 +850,7 @@ require updating to more current flooding data. Here, for illustration
 purposes, we randomly generate an example baseline <code>pwater</code>
 and then use the function to create an updated <code>pwater</code> layer
 for our example scenario.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pwater_base_fall</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span></span>
 <span>  <span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span>,</span>
 <span>  vals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncell</a></span><span class="op">(</span><span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span><span class="op">)</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -863,18 +860,20 @@ for our example scenario.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/update_pwater.html">update_pwater</a></span><span class="op">(</span>waterdat <span class="op">=</span> <span class="va">pwater_base_fall</span>, SDM <span class="op">=</span> <span class="st">'waterbird_fall'</span>,</span>
 <span>              landscape_name <span class="op">=</span> <span class="st">'scenario'</span>,</span>
-<span>              dir <span class="op">=</span> <span class="st">'SDM_predictors'</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              baseline_landscape <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span>, floor <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>              mask <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span>,</span>
+<span>              dir_focal <span class="op">=</span> <span class="st">'example'</span>, dir_final <span class="op">=</span> <span class="st">'SDM_predictors'</span>, </span>
+<span>              baseline_landscape <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span>, </span>
+<span>              scenario_landscape <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">scenario</span>,</span>
+<span>              floor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>              overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/update_pwater.html">update_pwater</a></span><span class="op">(</span>waterdat <span class="op">=</span> <span class="va">pwater_base_win</span>, SDM <span class="op">=</span> <span class="st">'waterbird_win'</span>,</span>
 <span>              landscape_name <span class="op">=</span> <span class="st">'scenario'</span>,</span>
-<span>              dir <span class="op">=</span> <span class="st">'SDM_predictors'</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              baseline_landscape <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span>, floor <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># waterbird_fall</span></span>
-<span><span class="va">pwater_scenario_fall</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">'SDM_predictors/waterbird_fall/scenario'</span>, </span>
-<span>                                  <span class="st">'pwater.tif$'</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">pwater_scenario_win</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">'SDM_predictors/waterbird_win/scenario'</span>, </span>
-<span>                                  <span class="st">'pwater.tif$'</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>              mask <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span>,</span>
+<span>              dir_focal <span class="op">=</span> <span class="st">'example'</span>, dir_final <span class="op">=</span> <span class="st">'SDM_predictors'</span>, </span>
+<span>              baseline_landscape <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">baseline</span>, </span>
+<span>              scenario_landscape <span class="op">=</span> <span class="va">landscapes</span><span class="op">$</span><span class="va">scenario</span>,</span>
+<span>              floor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>              overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><strong>update_roosts &amp; python_dist:</strong> In addition to
 changes in the probability of open water on the landscape, land cover
 changes may also affect the suitability of traditional night-time crane
@@ -899,7 +898,7 @@ roost predictor for each pixel in the landscape.</p>
 use as a crane roost are not expected to vary seasonally, and so we do
 not need to create separate versions corresponding to fall and winter
 waterbird SDMs.</em></p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">roosts_original</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/update_roosts.html">update_roosts</a></span><span class="op">(</span></span>
@@ -941,7 +940,7 @@ of being flooded. Thus, two layers are created for each land cover
 class, and we provide two custom <code>suffix</code> values to
 distinguish them when the files are written to
 <code>dir/SDM/landscape_name</code>.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">landscapes_watfall</span> <span class="op">=</span> <span class="fu"><a href="../reference/classify_landcover.html">classify_landcover</a></span><span class="op">(</span><span class="va">landscapes</span>, SDM <span class="op">=</span> <span class="st">'waterbird_fall'</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -967,7 +966,7 @@ distinguish them when the files are written to
 <p><strong>python_focal_stats:</strong> As above, the next step is to
 generate focal statistics for each of the separate land cover
 rasters.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/python_focal_stats.html">python_focal_stats</a></span><span class="op">(</span>SDM <span class="op">=</span> <span class="st">'waterbird_fall'</span>, </span>
 <span>                   landscape_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'baseline'</span>, <span class="st">'scenario'</span><span class="op">)</span>,</span>
 <span>                   pathin <span class="op">=</span> <span class="st">'SDM_landcover2'</span>,</span>
@@ -982,7 +981,7 @@ rasters.</p>
 <span><span class="co"># &gt;&gt; in this the regex is pasted to _area.tif and _pfld.tif</span></span></code></pre></div>
 <p><strong>update_covertype:</strong> Like the “tima” models, these
 models include a categorical cover type predictor</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">covertype_watfall</span> <span class="op">=</span> <span class="fu"><a href="../reference/update_covertype.html">update_covertype</a></span><span class="op">(</span><span class="va">landscapes_watfall</span>, SDM <span class="op">=</span> <span class="st">"waterbird_fall"</span><span class="op">)</span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">covertype_watfall</span><span class="op">)</span></span>
 <span></span>
@@ -1015,7 +1014,7 @@ due to the distinct values for <code>offset</code>, call
 <p><strong>transform_SDM:</strong> Finally, as above, the
 model-predicted results can be converted into binary presence-absence
 predictions using threshold statistics.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># fall: cranes, geese</span></span>
 <span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">landscapes</span><span class="op">)</span>,</span>
 <span>           <span class="op">~</span><span class="fu"><a href="../reference/fit_SDM.html">fit_SDM</a></span><span class="op">(</span></span>
@@ -1070,7 +1069,7 @@ predictions using threshold statistics.</p>
 convert the continuous probabilities of waterbird group presence
 predicted in the previous step to binary predictions of presence or
 absence.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">landscapes</span><span class="op">)</span>,</span>
 <span>           <span class="op">~</span><span class="fu"><a href="../reference/transform_SDM.html">transform_SDM</a></span><span class="op">(</span></span>
 <span>             pathin <span class="op">=</span> <span class="st">'SDM_results'</span>,</span>
@@ -1117,7 +1116,7 @@ structured to align with the results of <code><a href="../reference/sum_metrics.
 above for summarizing the total landscapes scores for the simple
 metrics, so that the habitat totals can be appended to those results,
 and the net change can be estimated simultaneously.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">habitat_totals</span> <span class="op">=</span> <span class="fu"><a href="../reference/sum_habitat.html">sum_habitat</a></span><span class="op">(</span></span>
 <span>  pathin <span class="op">=</span> <span class="st">'SDM_results_threshold'</span>,</span>
 <span>  rollup <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1132,7 +1131,7 @@ above (the result of <code><a href="../reference/sum_metrics.html">sum_metrics()
 change across all benefits categories simultaneously and include
 biodiversity support in the visualization of the results alongside the
 other categories of benefits.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scores_change_habitat</span> <span class="op">=</span> <span class="fu"><a href="../reference/sum_change.html">sum_change</a></span><span class="op">(</span><span class="va">habitat_totals</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
