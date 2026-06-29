@@ -8,56 +8,82 @@
 #' @details This function calls the `dist_stats.py` script to calculate the
 #'   Euclidean distance for all cells in the input raster without a value to the
 #'   nearest cell with a value (e.g., for calculating distance to a crane roost
-#'   or a stream).
+#'   or a stream). Optionally, results can be scaled, masked, and written to
+#'   `dir/SDM/landscape_name/filename`.
 #'
-#'   Raw python results will be written to
-#'   `pathin/landscape_name/droost_raw.tif`, and then optionally scaled and/or
-#'   masked, before writing the final output to `pathout/SDM/landscape_name/`.
 #'   Currently supported scale options include: `km` to divide the results by
 #'   1000 and return distances in kilometers or `sqrt` to take the square root
-#'   of the results. Note that the initial raw output from `dist_stats.py` to
-#'   `pathin/landscape_name/droost_raw.tif` will not overwrite existing rasters;
-#'   old versions must be deleted before re-running.
+#'   of the results.
 #'
-#'   *Important:* This function requires the availability of arcpy and Spatial
-#'   Analyst extensions. Use the `python` argument to specify the local pathway
-#'   to arcpy, particularly if other versions of Python are installed. For
-#'   example: 'C:/Program
-#'   Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that the
-#'   python argument is applied only on the first use within each session, and
-#'   must be repeated in each session.
+#'   The parameters `dir`, `SDM`, `landscape_name`, and `filename` are passed to
+#'   [file.path()] to contstruct filenames passed to [terra::writeRaster()]. If
+#'   multiple values for one of these character strings is provided, the output
+#'   raster will be written to more than one directory, e.g. if needed as a
+#'   predictor for multiple SDMs or landscape names.
 #'
-#' @param pathin,landscape_name Character strings defining the filepath
-#'   (`pathin/landscape_name`) where input rasters are located, such as those
-#'   created from running [python_focal_prep()] or [update_roosts()]
-#' @param dir,SDM Additional character strings defining the filepath
-#'   (`dir/SDM/landscape_name`) where output raster should be written
-#' @param filename name of the output raster, including file extension; default
-#'   is 'droost_km.tif', the name of the predictor required by the waterbird
-#'   models
+#'   This function relies on the availability of `arcpy` and Spatial Analyst
+#'   extensions. An attempt will be made to load these the first time this
+#'   function (or [python_focal_stats()]) is called in each session, and by
+#'   default will look here: `C:/Program
+#'   Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe`; use the
+#'   `python` argument to specify a different pathway.
+#'
+#' @param x Filepath or SpatRaster to be processed
 #' @param scale Optional character string for scaling the results; See Details
 #' @param mask Optional `SpatRaster` or character string giving the filepath to
 #'   a raster that should be used to mask the output, e.g. a study area boundary
-#' @param overwrite Logical; passed to [terra::writeRaster()]; does not apply to
-#'   the intermediate step of writing `droost_raw.tif`
 #' @param python Optional filepath to the preferred version of arcpy, passed to
-#'   `reticulate::use_python`. See details.
+#'   `reticulate::use_python`; See details.
+#' @param dir,SDM,landscape_name Optional; Character strings defining the
+#'   filepath where output raster should be written (`dir/SDM/landscape_name`)
+#' @param filename name of the output raster, including file extension; default
+#'   is 'droost_km.tif', the name of the predictor required by the waterbird
+#'   models
+#' @param ... Additional arguments passed to [terra::writeRaster()]
 #'
-#' @return Nothing; all files written to `pathout/SDM/landscape_name`
+#' @return SpatRaster
 #' @export
 #'
 #' @examples
 #' # See vignette
 
-python_dist = function(pathin, landscape_name, dir, SDM,
-                       filename = 'droost_km.tif', scale = NULL,
-                       mask = NULL, overwrite = FALSE, python = NULL) {
+python_dist = function(x, scale = NULL, mask = NULL, python = NULL,
+                       dir = NULL, SDM = NULL, landscape_name = NULL,
+                       filename = 'droost_km.tif', ...) {
 
   # import arcpy if not already
-  if (is.null(.py_state$arcpy)) .py_shared_init(python)
+  if (is.null(.py_state$arcpy)) {
+    if (is.null(python)) {
+      # try this as the default:
+      python = 'C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'
+    }
+    .py_shared_init(python)
+  }
 
-  # load the focal_stats.py script
-  env <- load_py_script('dist_stats')
+  if (is(x, 'SpatRaster')) {
+    filepath <- tempfile(fileext = ".tif")
+    terra::writeRaster(x, filepath)
+  } else if (!is(x, 'character')) {
+    stop("`x` must be a character string or SpatRaster")
+  }
+  python_tmpfile =  tempfile(fileext = ".tif")
+
+  # run dist_stats.py to calculate distance to roosts
+  env_py <- load_py_script('dist_stats')
+  env_py$dist_stats(filename = basename(filepath),
+                    fullpathin = dirname(filepath) |> normalizePath(),
+                    fullpathout = python_tmpfile)
+
+  # return result for further processing:
+  r = terra::rast(python_tmpfile)
+
+  if (!is.null(scale)) {
+    if (scale == 'km') {
+      r = r / 1000
+    } else if (scale == 'sqrt') {
+      r = sqrt(r)
+    }
+  }
 
   if (!is.null(mask)) {
     if (is(mask, 'character')) {
@@ -65,35 +91,23 @@ python_dist = function(pathin, landscape_name, dir, SDM,
     } else if (!is(mask, 'SpatRaster')) {
       stop('function expects "mask" to be either a character string or a SpatRaster')
     }
-  }
-
-  # run dist_stats.py to calculate distance to roosts and put in same pathout[1]
-  fname = list.files(file.path(pathin, landscape_name), '.tif$')
-
-  fullpathin = file.path(pathin, landscape_name) |> normalizePath()
-  fullpathout =  file.path(pathin, landscape_name, filename) |>
-    normalizePath()
-
-
-  env$dist_stats(filename = fname, fullpathin = fullpathin, fullpathout = fullpathout)
-
-  # further processing:
-  r = file.path(pathin, landscape_name, filename) |> terra::rast()
-
-  if (scale == 'km') {
-    r = r / 1000
-  } else if (scale == 'sqrt') {
-    r = sqrt(r)
-  }
-
-  if (!is.null(mask)) {
     r = terra::mask(r, mask)
   }
 
-  # write output with final scaled/masked version
-  create_directory(file.path(dir, SDM, landscape_name))
-  terra::writeRaster(r, file.path(dir, SDM, landscape_name, filename),
-                     wopt = list(names = gsub('.tif', '', filename)),
-                     overwrite = TRUE)
+  names(r) = gsub('.tif', '', filename)
+
+  if (!is.null(dir)) {
+
+    dots <- list(...)
+    keep <- intersect(names(dots), c("wopt", "gdal", "datatype", "filetype", "overwrite"))
+    dots2 <- dots[keep]
+
+    f = file.path(dir, SDM, landscape_name) # may be one or more filepaths
+    create_directory(f)
+    filepaths = file.path(f, filename)
+
+    purrr::walk(filepaths, ~terra::writeRaster(r, filename = .x, !!!dots2))
+  }
+  return(r)
 }
 
