@@ -41,7 +41,6 @@
 #'   covers are present; default `NULL`
 #' @param dir Optional string representing directory passed to
 #'   [terra::writeRaster()], as (`dir/SDM/landscape_name`). See Details.
-#' @param overwrite logical. If `TRUE`, output is overwritten
 #' @param ... additional arguments passed to [terra::writeRaster()]
 #'
 #' @returns SpatRaster, though primarily used to write layers to file for use
@@ -125,15 +124,13 @@ python_focal_prep = function(x, SDM, classified = FALSE, fill = TRUE,
       terra::writeRaster(presence[[i]],
                          filename = file.path(dir, SDM, landscape_names[i],
                                               paste0(names(presence[[i]]),
-                                                     '.tif')),
-                         overwrite = overwrite, ...)
+                                                     '.tif')), ...)
       if (!is.null(subset)) {
         # also write out masked versions
         terra::writeRaster(presence_mask[[i]],
                            filename = file.path(dir, SDM, landscape_names[i],
                                                 paste0(names(presence_mask[[i]]),
-                                                       '.tif')),
-                           overwrite = overwrite, ...)
+                                                       '.tif')), ...)
       }
     }
   }
@@ -146,10 +143,25 @@ python_focal_prep = function(x, SDM, classified = FALSE, fill = TRUE,
 }
 
 mask_predictors = function(lc, masklayer, suffix) {
-  purrr::map(names(lc),
-             function(x) {
-               r = terra::mask(masklayer, lc[[x]], maskvalues = c(0, NA))
-               names(r) = paste0(names(lc[[x]]), suffix[2])
-               return(r)
-             })
+  masklayer_list = terra::as.list(masklayer)
+  names(masklayer_list) = names(masklayer)
+  if (length(lc) == length(masklayer_list)) {
+    purrr::map(names(lc),
+               function(landscape_name) {
+                  r = terra::mask(masklayer_list[[landscape_name]],
+                                  lc[[landscape_name]],
+                                  maskvalues = c(0, NA))
+                  names(r) = paste0(names(lc[[landscape_name]]), suffix[2])
+                  return(r)
+                })
+  } else if (length(masklayer) == 1) {
+    purrr::map(names(lc),
+                function(landscape_name) {
+                  r = terra::mask(masklayer, lc[[landscape_name]],
+                                  maskvalues = c(0, NA))
+                  names(r) = paste0(names(lc[[landscape_name]]), suffix[2])
+                  return(r)
+                })
+  }
+
 }
