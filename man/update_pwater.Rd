@@ -7,7 +7,8 @@
 update_pwater(
   waterdat,
   mask = NULL,
-  pathout,
+  dir_focal = NULL,
+  dir_final = NULL,
   SDM,
   landscape_name,
   overwrite = FALSE,
@@ -25,10 +26,20 @@ waterbird SDM (i.e., fall vs. winter)}
 \item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
 a raster that should be used to mask the output, e.g. a study area boundary}
 
-\item{pathout, SDM, landscape_name}{Character strings defining the filepath
-(\code{pathout/SDM/landscape_name}) where output rasters should be written;
-landscape_name should either correspond to the landscape represented by
-\code{waterdat} or the \code{scenario_landscape}, if given; see Details}
+\item{dir_focal}{Optional string representing directory passed to
+\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir_focal/pwater/landscape_name}). See
+Details.}
+
+\item{dir_final}{Optional string representing directory passed to
+\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir_final/SDM/landscape_name}). See Details.}
+
+\item{SDM}{The name of intended species distribution model: either
+\code{"waterbird_fall"} or \code{"waterbird_win"}}
+
+\item{landscape_name}{Character strings defining the filepath where output
+rasters will be written; should either correspond to the landscape
+represented by \code{waterdat} or the \code{scenario_landscape}, if given; see
+Details}
 
 \item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
 
@@ -38,14 +49,17 @@ changed portions of the \code{scenario_landscape}; see Details}
 
 \item{floor}{Logical; if \code{TRUE}, don't allow new values of pwater to be lower
 than baseline values}
+
+\item{...}{Additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{
-Nothing; all files written to \code{pathout}
+SpatRaster
 }
 \description{
 Helper function for updating \code{pwater} and \code{pfld} predictors for the waterbird
 distribution models. Generates file \code{pwater.tif} at locations
-\code{pathout/pwater/landscape_name} and \code{pathout/SDM/landscape_name}.
+\code{dir_focal/pwater/landscape_name} (for use with \code{\link[=python_focal_stats]{python_focal_stats()}} and
+\code{dir_final/SDM/landscape_name} (for use with \code{\link[=fit_SDM]{fit_SDM()}}.
 }
 \details{
 The waterbird distribution models incorporate information about
@@ -53,31 +67,31 @@ surface water data in two ways: as \code{pwater}, the expected probability of
 open surface water in each cell of the landscape raster, specific to the
 waterbird season being modeled and perhaps averaged over multiple years,
 and as \code{pfld} focal statistics which represent the proportion of each land
-cover class within a given distance of each cell that is flooded (see
-\code{\link[=python_focal_prep]{python_focal_prep()}} and \code{\link[=python_focal_run]{python_focal_run()}}). Therefore, \code{pwater} data
-must be available for every landscape under analysis before the \code{pfld}
-focal statistics can be generated and distribution models fit.
+cover class within a given distance of each cell that is flooded.
+Therefore, \code{pwater} data must be available for every landscape under
+analysis before the \code{pfld} focal statistics can be generated and
+distribution models fit.
 
 Due to the dual needs for generating \code{pwater} and \code{pfld} predictors, this
-function writes results in two places within \code{pathout}. The first will be
-written to \code{pathout/pwater/landscape_name}, intended for later use with
+function writes results in two places: The first will be written to
+\code{dir_focal/pwater/landscape_name}, intended for later use with
 \code{\link[=python_focal_prep]{python_focal_prep()}} and generating \code{pfld} predictors. The second will be
-written to \code{pathout/SDM/landscape_name}, which is expected to be a
+written to \code{dir_final/SDM/landscape_name}, which is expected to be a
 directory containing all final predictors for later use with \code{\link[=fit_SDM]{fit_SDM()}} in
 fitting waterbird models.
 
 In addition, this function has two modes of operation. If
-\code{scenario_landscape} is not provided, the \code{waterdat} is assumed to to
+\code{scenario_landscape} is not provided, the \code{waterdat} is assumed to
 represent \code{pwater} data for the \code{landscape_name}, and is simply renamed and
-copied to both \code{pathout} locations for use in later steps of analysis,
-optionally masking before \code{pathout/SDM/landscape_name} is written. The
-\code{mask} is never applied to the \code{pathout/pwater/landscape_name} output
-intended for later focal statistics to avoid errors in processing near the
-boundaries of the study area.
+copied to both \code{dir_focal} and \code{dir_final} locations for use in later steps
+of analysis, optionally masking before \code{dir_final/SDM/landscape_name} is
+written. The \code{mask} is never applied to the \code{pathout/pwater/landscape_name}
+output intended for later focal statistics to avoid errors in processing
+near the boundaries of the study area.
 
 Alternatively, in the second mode, if both \code{baseline_landscape} and
-\code{scenario_landscape} rasters are provided, this function will estimate
-new \code{pwater} values for cells in the \code{scenario_landscape} that have changed
+\code{scenario_landscape} rasters are provided, this function will estimate new
+\code{pwater} values for cells in the \code{scenario_landscape} that have changed
 cover class, based on the mean probability of open surface water for that
 land cover class in the \code{baseline_landscape}. Optionally, if \code{floor = TRUE}, new probabilities of open water will be assigned only if they are
 higher than the baseline values. In this mode, the result represents
@@ -85,8 +99,8 @@ higher than the baseline values. In this mode, the result represents
 the name of the scenario.
 
 The original \code{pwater} baseline data used in the development of these models
-was derived from Point Blue's \href{https://www.pointblue.org/autowater}{Water Tracker} and may be downloaded from
-\href{https://doi.org/10.5281/zenodo.7672193}{doi:10.5281/zenodo.7672193}.
+was derived from Point Blue's \href{https://www.pointblue.org/autowater}{Water Tracker}. See \href{articles/supporting_information.html}{Supporting Information} to download the original
+historical flooding data used in developing these models
 }
 \examples{
 # See vignette

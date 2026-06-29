@@ -2,38 +2,39 @@
 #'
 #' Helper function for updating `pwater` and `pfld` predictors for the waterbird
 #' distribution models. Generates file `pwater.tif` at locations
-#' `pathout/pwater/landscape_name` and `pathout/SDM/landscape_name`.
+#' `dir_focal/pwater/landscape_name` (for use with [python_focal_stats()] and
+#' `dir_final/SDM/landscape_name` (for use with [fit_SDM()].
 #'
 #' @details The waterbird distribution models incorporate information about
 #'   surface water data in two ways: as `pwater`, the expected probability of
 #'   open surface water in each cell of the landscape raster, specific to the
 #'   waterbird season being modeled and perhaps averaged over multiple years,
 #'   and as `pfld` focal statistics which represent the proportion of each land
-#'   cover class within a given distance of each cell that is flooded (see
-#'   [python_focal_prep()] and [python_focal_run()]). Therefore, `pwater` data
-#'   must be available for every landscape under analysis before the `pfld`
-#'   focal statistics can be generated and distribution models fit.
+#'   cover class within a given distance of each cell that is flooded.
+#'   Therefore, `pwater` data must be available for every landscape under
+#'   analysis before the `pfld` focal statistics can be generated and
+#'   distribution models fit.
 #'
 #'   Due to the dual needs for generating `pwater` and `pfld` predictors, this
-#'   function writes results in two places within `pathout`. The first will be
-#'   written to `pathout/pwater/landscape_name`, intended for later use with
+#'   function writes results in two places: The first will be written to
+#'   `dir_focal/pwater/landscape_name`, intended for later use with
 #'   [python_focal_prep()] and generating `pfld` predictors. The second will be
-#'   written to `pathout/SDM/landscape_name`, which is expected to be a
+#'   written to `dir_final/SDM/landscape_name`, which is expected to be a
 #'   directory containing all final predictors for later use with [fit_SDM()] in
 #'   fitting waterbird models.
 #'
 #'   In addition, this function has two modes of operation. If
-#'   `scenario_landscape` is not provided, the `waterdat` is assumed to to
+#'   `scenario_landscape` is not provided, the `waterdat` is assumed to
 #'   represent `pwater` data for the `landscape_name`, and is simply renamed and
-#'   copied to both `pathout` locations for use in later steps of analysis,
-#'   optionally masking before `pathout/SDM/landscape_name` is written. The
-#'   `mask` is never applied to the `pathout/pwater/landscape_name` output
-#'   intended for later focal statistics to avoid errors in processing near the
-#'   boundaries of the study area.
+#'   copied to both `dir_focal` and `dir_final` locations for use in later steps
+#'   of analysis, optionally masking before `dir_final/SDM/landscape_name` is
+#'   written. The `mask` is never applied to the `pathout/pwater/landscape_name`
+#'   output intended for later focal statistics to avoid errors in processing
+#'   near the boundaries of the study area.
 #'
 #'   Alternatively, in the second mode, if both `baseline_landscape` and
-#'   `scenario_landscape` rasters are provided, this function will estimate
-#'   new `pwater` values for cells in the `scenario_landscape` that have changed
+#'   `scenario_landscape` rasters are provided, this function will estimate new
+#'   `pwater` values for cells in the `scenario_landscape` that have changed
 #'   cover class, based on the mean probability of open surface water for that
 #'   land cover class in the `baseline_landscape`. Optionally, if `floor =
 #'   TRUE`, new probabilities of open water will be assigned only if they are
@@ -43,8 +44,9 @@
 #'
 #'   The original `pwater` baseline data used in the development of these models
 #'   was derived from Point Blue's [Water
-#'   Tracker](https://www.pointblue.org/autowater) and may be downloaded from
-#'   [doi:10.5281/zenodo.7672193](https://doi.org/10.5281/zenodo.7672193).
+#'   Tracker](https://www.pointblue.org/autowater). See [Supporting
+#'   Information](articles/supporting_information.html) to download the original
+#'   historical flooding data used in developing these models
 #'
 #' @param waterdat `SpatRaster` or character string giving the filepath to a
 #'   raster representing the probability of open water (pwater) in each cell,
@@ -52,18 +54,26 @@
 #'   waterbird SDM (i.e., fall vs. winter)
 #' @param mask Optional `SpatRaster` or character string giving the filepath to
 #'   a raster that should be used to mask the output, e.g. a study area boundary
-#' @param pathout,SDM,landscape_name Character strings defining the filepath
-#'   (`pathout/SDM/landscape_name`) where output rasters should be written;
-#'   landscape_name should either correspond to the landscape represented by
-#'   `waterdat` or the `scenario_landscape`, if given; see Details
+#' @param dir_focal Optional string representing directory passed to
+#'   [terra::writeRaster()], as (`dir_focal/pwater/landscape_name`). See
+#'   Details.
+#' @param dir_final Optional string representing directory passed to
+#'   [terra::writeRaster()], as (`dir_final/SDM/landscape_name`). See Details.
+#' @param SDM The name of intended species distribution model: either
+#'   `"waterbird_fall"` or `"waterbird_win"`
+#' @param landscape_name Character strings defining the filepath where output
+#'   rasters will be written; should either correspond to the landscape
+#'   represented by `waterdat` or the `scenario_landscape`, if given; see
+#'   Details
 #' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #' @param baseline_landscape,scenario_landscape Optional SpatRasters created by
 #'   [terra::rast()] to compare with each other for estimating `pwater` for the
 #'   changed portions of the `scenario_landscape`; see Details
 #' @param floor Logical; if `TRUE`, don't allow new values of pwater to be lower
 #'   than baseline values
+#' @param ... Additional arguments passed to [terra::writeRaster()]
 #'
-#' @return Nothing; all files written to `pathout`
+#' @return SpatRaster
 #' @seealso [update_covertype()], [update_roosts()]
 #' @export
 #'
@@ -71,7 +81,8 @@
 #' # See vignette
 
 
-update_pwater = function(waterdat, mask = NULL, pathout, SDM, landscape_name,
+update_pwater = function(waterdat, mask = NULL,
+                         dir_focal = NULL, dir_final = NULL, SDM, landscape_name,
                          overwrite = FALSE, baseline_landscape= NULL,
                          scenario_landscape = NULL, floor = FALSE) {
 
@@ -138,26 +149,32 @@ update_pwater = function(waterdat, mask = NULL, pathout, SDM, landscape_name,
 
   }
 
-  # write unmasked version for focal stats
-  create_directory(file.path(pathout, 'pwater', landscape_name))
-  terra::writeRaster(pwater_scenario,
-                     file.path(pathout, 'pwater', landscape_name, 'pwater.tif'),
-                     wopt = list(names = 'pwater'), overwrite = overwrite)
-
-  # write final version as a direct model predictor, optionally masking first
-  if (!is.null(mask)) {
-    # use masked version as a direct predictor
-
-    if (is(mask, 'character')) {
-      mask = terra::rast(mask)
-    } else if (!is(mask, 'SpatRaster')) {
-      stop('function expects "mask" to be either a character string or a SpatRaster')
-    }
-    pwater_scenario = terra::mask(pwater_scenario, mask)
+  if (!is.null(dir_focal)) {
+    # write unmasked version for focal stats
+    create_directory(file.path(dir_focal, 'pwater', landscape_name))
+    terra::writeRaster(pwater_scenario,
+                       file.path(dir_focal, 'pwater', landscape_name, 'pwater.tif'),
+                       wopt = list(names = 'pwater'), overwrite = overwrite)
   }
-  create_directory(file.path(pathout, SDM, landscape_name))
-  terra::writeRaster(pwater_scenario,
-                     file.path(pathout, SDM, landscape_name, 'pwater.tif'),
-                     wopt = list(names = 'pwater'), overwrite = overwrite)
+
+  if (!is.null(dir_final)) {
+    # write final version as a direct model predictor, optionally masking first
+    if (!is.null(mask)) {
+      # use masked version as a direct predictor
+
+      if (is(mask, 'character')) {
+        mask = terra::rast(mask)
+      } else if (!is(mask, 'SpatRaster') & !is(mask, 'SpatVector')) {
+        stop('function expects "mask" to be either a character string, SpatRaster, or SpatVector')
+      }
+      pwater_scenario = terra::mask(pwater_scenario, mask)
+    }
+    create_directory(file.path(dir_final, SDM, landscape_name))
+    terra::writeRaster(pwater_scenario,
+                       file.path(dir_final, SDM, landscape_name, 'pwater.tif'),
+                       wopt = list(names = 'pwater'), overwrite = overwrite)
+  }
+
+  return(pwater_scenario)
 
 }
