@@ -34,8 +34,7 @@ rasters in \code{pathin/SDM/landscape_name}}
 \item{mask}{currently experimental}
 }
 \value{
-Nothing returned to R environment. Writes rasters to \code{pathout} for
-each land cover class.
+None
 }
 \description{
 Wrapper function to call a python script for calculating focal statistics on
@@ -58,8 +57,8 @@ masked by this file before writing to file.
 These calculations can be very slow, depending on the size and resolution
 of the rasters, and relies on the availability of \code{arcpy} and Spatial
 Analyst extensions for faster processing. An attempt will be made to load
-these the first time this function is called in each session, and by
-default will look here: \verb{C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe}; use the
+these the first time this function (or \code{\link[=python_dist]{python_dist()}}) is called in each
+session, and by default will look here: \verb{C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe}; use the
 \code{python} argument to specify a different pathway.
 }
 \examples{

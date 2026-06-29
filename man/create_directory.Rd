@@ -7,7 +7,7 @@
 create_directory(filepath)
 }
 \arguments{
-\item{filepath}{character string representing a file path}
+\item{filepath}{character string representing one or more file paths}
 }
 \value{
 Prints either "Creating directory: filepath" if directory did not

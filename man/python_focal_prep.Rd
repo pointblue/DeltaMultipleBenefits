@@ -40,8 +40,6 @@ raster. See Details.}
 \item{dir}{Optional string representing directory passed to
 \code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir/SDM/landscape_name}). See Details.}
 
-\item{overwrite}{logical. If \code{TRUE}, output is overwritten}
-
 \item{...}{additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{

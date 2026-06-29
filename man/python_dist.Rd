@@ -5,42 +5,39 @@
 \title{Calculate Euclidean distance via Python}
 \usage{
 python_dist(
-  pathin,
-  landscape_name,
-  dir,
-  SDM,
-  filename = "droost_km.tif",
+  x,
   scale = NULL,
   mask = NULL,
-  overwrite = FALSE,
-  python = NULL
+  python = NULL,
+  dir = NULL,
+  SDM = NULL,
+  landscape_name = NULL,
+  filename = "droost_km.tif",
+  ...
 )
 }
 \arguments{
-\item{pathin, landscape_name}{Character strings defining the filepath
-(\code{pathin/landscape_name}) where input rasters are located, such as those
-created from running \code{\link[=python_focal_prep]{python_focal_prep()}} or \code{\link[=update_roosts]{update_roosts()}}}
-
-\item{dir, SDM}{Additional character strings defining the filepath
-(\code{dir/SDM/landscape_name}) where output raster should be written}
-
-\item{filename}{name of the output raster, including file extension; default
-is 'droost_km.tif', the name of the predictor required by the waterbird
-models}
+\item{x}{Filepath or SpatRaster to be processed}
 
 \item{scale}{Optional character string for scaling the results; See Details}
 
 \item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
 a raster that should be used to mask the output, e.g. a study area boundary}
 
-\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; does not apply to
-the intermediate step of writing \code{droost_raw.tif}}
-
 \item{python}{Optional filepath to the preferred version of arcpy, passed to
-\code{reticulate::use_python}. See details.}
+\code{reticulate::use_python}; See details.}
+
+\item{dir, SDM, landscape_name}{Optional; Character strings defining the
+filepath where output raster should be written (\code{dir/SDM/landscape_name})}
+
+\item{filename}{name of the output raster, including file extension; default
+is 'droost_km.tif', the name of the predictor required by the waterbird
+models}
+
+\item{...}{Additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{
-Nothing; all files written to \code{pathout/SDM/landscape_name}
+SpatRaster
 }
 \description{
 Wrapper function to call a python script for calculating Euclidean distances
@@ -52,24 +49,24 @@ and Spatial Analyst extensions then sources the Python script
 This function calls the \code{dist_stats.py} script to calculate the
 Euclidean distance for all cells in the input raster without a value to the
 nearest cell with a value (e.g., for calculating distance to a crane roost
-or a stream).
+or a stream). Optionally, results can be scaled, masked, and written to
+\code{dir/SDM/landscape_name/filename}.
 
-Raw python results will be written to
-\code{pathin/landscape_name/droost_raw.tif}, and then optionally scaled and/or
-masked, before writing the final output to \verb{pathout/SDM/landscape_name/}.
 Currently supported scale options include: \code{km} to divide the results by
 1000 and return distances in kilometers or \code{sqrt} to take the square root
-of the results. Note that the initial raw output from \code{dist_stats.py} to
-\code{pathin/landscape_name/droost_raw.tif} will not overwrite existing rasters;
-old versions must be deleted before re-running.
+of the results.
 
-\emph{Important:} This function requires the availability of arcpy and Spatial
-Analyst extensions. Use the \code{python} argument to specify the local pathway
-to arcpy, particularly if other versions of Python are installed. For
-example: 'C:/Program
-Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe'. Note that the
-python argument is applied only on the first use within each session, and
-must be repeated in each session.
+The parameters \code{dir}, \code{SDM}, \code{landscape_name}, and \code{filename} are passed to
+\code{\link[=file.path]{file.path()}} to contstruct filenames passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}. If
+multiple values for one of these character strings is provided, the output
+raster will be written to more than one directory, e.g. if needed as a
+predictor for multiple SDMs or landscape names.
+
+This function relies on the availability of \code{arcpy} and Spatial Analyst
+extensions. An attempt will be made to load these the first time this
+function (or \code{\link[=python_focal_stats]{python_focal_stats()}}) is called in each session, and by
+default will look here: \verb{C:/Program Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe}; use the
+\code{python} argument to specify a different pathway.
 }
 \examples{
 # See vignette
