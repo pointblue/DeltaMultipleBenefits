@@ -19,8 +19,8 @@
 #'   These calculations can be very slow, depending on the size and resolution
 #'   of the rasters, and relies on the availability of `arcpy` and Spatial
 #'   Analyst extensions for faster processing. An attempt will be made to load
-#'   these the first time this function is called in each session, and by
-#'   default will look here: `C:/Program
+#'   these the first time this function (or [python_dist()]) is called in each
+#'   session, and by default will look here: `C:/Program
 #'   Files/ArcGIS/Pro/bin/Python/envs/arcgispro-py3/python.exe`; use the
 #'   `python` argument to specify a different pathway.
 #'
