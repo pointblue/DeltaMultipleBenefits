@@ -62,8 +62,7 @@ python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
   # create necessary directories
   fullpathin = file.path(pathin, SDM, landscape_name)
   fullpathout = file.path(dir, SDM, landscape_name)
-  create_directory(fullpathout)
-
+  cat('Processing scale "', scale, '" for landscape "', landscape_name, '"\n')
 
   # run focal_stats.py
   # env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
