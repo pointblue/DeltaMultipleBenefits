@@ -279,7 +279,7 @@ __estimate_tima_patchsize:__ From the results, we'll also estimate the size of c
 
 *Note: We will get warning messages here, because our toy example landscape does not include all land cover classes required to fit the "tima" models.*
 
-```{r tima_prep, eval = TRUE}
+```{r tima_prep, eval = FALSE}
 
 predictors_tima = python_focal_prep(landscapes, SDM = 'tima', dir = 'example',
                                     fill = FALSE) |> suppressWarnings()
@@ -289,7 +289,7 @@ psize = estimate_tima_patchsize(predictors_tima, dir = 'example')
 terra::plot(c(predictors_tima$baseline$TWET, psize[[1]]))
 
 ```
-[]
+
 __rasterize_stream_channels:__ To facilitate estimating the density (proportion cover) of channel lines, we also need to compile water channel data, based on the California Aquatic Resources Inventory (CARI) Streams (lines) data set. These data are freely available for download from [SFEI](https://www.sfei.org/data/california-aquatic-resource-inventory-cari-gis-data) and [CDFW](https://filelib.wildlife.ca.gov/Public/BDB/GIS/BIOS/metadata/DS2836.html). Download these data first, and then either provide the path to the shapefile or file geodatabase, or provide the `sf` object directly. By default, this layer will be considered the "baseline" representation of stream channels. However, it can also be applied to alternative scenarios if stream channel locations will not change by giving a different `landscape_name`, or the result of this function can be manipulated to represent changes to channel locations under alternative scenarios.
 
 ```{r tima_chan, eval = FALSE}
@@ -397,7 +397,7 @@ predictors_rip = python_focal_prep(landscapes, SDM = 'riparian', dir = 'example'
 
 Otherwise, `python_focal_prep()` can still be called directly (with `classified = FALSE`), but the internal call to `classify_landcover.SpatRaster()`may produce some minor differences from the original land cover classification scheme used in the development of these models. Note that these layers can be written to the same `dir` as the 'tima' models above, but they will be kept in a separate subdirectory for the 'riparian' SDMs.
 
-```{r rip_prep, eval = TRUE}
+```{r rip_prep, eval = FALSE}
 
 predictors_rip = python_focal_prep(landscapes, SDM = 'riparian', dir = 'example',
                                    fill = FALSE) |> suppressWarnings()
@@ -417,11 +417,11 @@ python_focal_stats(SDM = 'riparian',
 
 ### 4.2.2 Prepare additional predictors
 The "riparian" models also include several predictors not based on land cover data:
-* `area.ha`, accounting for variation in survey effort, which should be held constant for new predictions; 
-* `region`, indicating whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1)
-* `bio_1`, representing annual mean temperature, 1970-2000 
-* `bio_12`, representing total annual precipitation, 1970-2000
-* `streamdist`, representing the square-root of the distance (in m) to the nearest stream or river, based on the National Hydrography Dataset
+- `area.ha`, accounting for variation in survey effort, which should be held constant for new predictions; 
+- `region`, indicating whether the survey was conducted in the Sacramento Valley (region = 0) or in the Delta or San Joaquin (region = 1)
+- `bio_1`, representing annual mean temperature, 1970-2000 
+- `bio_12`, representing total annual precipitation, 1970-2000
+- `streamdist`, representing the square-root of the distance (in m) to the nearest stream or river, based on the National Hydrography Dataset
 
 To represent `area.ha` in new predictions, we recommend using a constant value of 3.14159, referring to the total area (in hectares) within 50m of a bird survey location, after 4 surveys. For `region`, we recommend using a constant value of 1 for predictions in the Delta. These constant values can be called directly in the `fit_SDM()` function below.
 
