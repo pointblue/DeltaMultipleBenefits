@@ -32,7 +32,7 @@
 #'
 #' @param pathin,SDM,landscape_name Character strings defining the filepath
 #'   (`pathin/SDM/landscape_name`) containing new predictor rasters to include
-#'   in the model, such as those created from running [python_focal_finalize()]
+#'   in the model, such as those created from running [python_focal_stats()]
 #' @param modlist List of model objects of class 'gbm' representing the
 #'   distribution models to which new predictors should be fit.
 #' @param constants optional dataframe containing predictors with a constant

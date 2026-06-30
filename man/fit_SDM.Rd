@@ -21,7 +21,7 @@ fit_SDM(
 \arguments{
 \item{pathin, SDM, landscape_name}{Character strings defining the filepath
 (\code{pathin/SDM/landscape_name}) containing new predictor rasters to include
-in the model, such as those created from running \code{\link[=python_focal_finalize]{python_focal_finalize()}}}
+in the model, such as those created from running \code{\link[=python_focal_stats]{python_focal_stats()}}}
 
 \item{modlist}{List of model objects of class 'gbm' representing the
 distribution models to which new predictors should be fit.}
