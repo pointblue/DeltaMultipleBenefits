@@ -65,7 +65,6 @@
 #'   rasters will be written; should either correspond to the landscape
 #'   represented by `waterdat` or the `scenario_landscape`, if given; see
 #'   Details
-#' @param overwrite Logical; passed to [terra::writeRaster()]; default `FALSE`
 #' @param baseline_landscape,scenario_landscape Optional SpatRasters created by
 #'   [terra::rast()] to compare with each other for estimating `pwater` for the
 #'   changed portions of the `scenario_landscape`; see Details
@@ -81,10 +80,10 @@
 #' # See vignette
 
 
-update_pwater = function(waterdat, mask = NULL,
-                         dir_focal = NULL, dir_final = NULL, SDM, landscape_name,
-                         overwrite = FALSE, baseline_landscape= NULL,
-                         scenario_landscape = NULL, floor = FALSE) {
+update_pwater = function(waterdat, mask = NULL, baseline_landscape= NULL,
+                         scenario_landscape = NULL, floor = FALSE,
+                         dir_focal = NULL, dir_final = NULL, SDM,
+                         landscape_name, ...) {
 
   # troubleshooting
   if (is(waterdat, 'character')) {
@@ -154,7 +153,7 @@ update_pwater = function(waterdat, mask = NULL,
     create_directory(file.path(dir_focal, SDM, landscape_name))
     terra::writeRaster(pwater_scenario,
                        file.path(dir_focal, SDM, landscape_name, 'pwater', 'pwater.tif'),
-                       wopt = list(names = 'pwater'), overwrite = overwrite)
+                       wopt = list(names = 'pwater'), ...)
   }
 
   if (!is.null(dir_final)) {
@@ -172,7 +171,7 @@ update_pwater = function(waterdat, mask = NULL,
     create_directory(file.path(dir_final, SDM, landscape_name))
     terra::writeRaster(pwater_scenario,
                        file.path(dir_final, SDM, landscape_name, 'pwater.tif'),
-                       wopt = list(names = 'pwater'), overwrite = overwrite)
+                       wopt = list(names = 'pwater'), ...)
   }
 
   return(pwater_scenario)

@@ -7,14 +7,14 @@
 update_pwater(
   waterdat,
   mask = NULL,
+  baseline_landscape = NULL,
+  scenario_landscape = NULL,
+  floor = FALSE,
   dir_focal = NULL,
   dir_final = NULL,
   SDM,
   landscape_name,
-  overwrite = FALSE,
-  baseline_landscape = NULL,
-  scenario_landscape = NULL,
-  floor = FALSE
+  ...
 )
 }
 \arguments{
@@ -25,6 +25,13 @@ waterbird SDM (i.e., fall vs. winter)}
 
 \item{mask}{Optional \code{SpatRaster} or character string giving the filepath to
 a raster that should be used to mask the output, e.g. a study area boundary}
+
+\item{baseline_landscape, scenario_landscape}{Optional SpatRasters created by
+\code{\link[terra:rast]{terra::rast()}} to compare with each other for estimating \code{pwater} for the
+changed portions of the \code{scenario_landscape}; see Details}
+
+\item{floor}{Logical; if \code{TRUE}, don't allow new values of pwater to be lower
+than baseline values}
 
 \item{dir_focal}{Optional string representing directory passed to
 \code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir_focal/pwater/landscape_name}). See
@@ -40,15 +47,6 @@ Details.}
 rasters will be written; should either correspond to the landscape
 represented by \code{waterdat} or the \code{scenario_landscape}, if given; see
 Details}
-
-\item{overwrite}{Logical; passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}; default \code{FALSE}}
-
-\item{baseline_landscape, scenario_landscape}{Optional SpatRasters created by
-\code{\link[terra:rast]{terra::rast()}} to compare with each other for estimating \code{pwater} for the
-changed portions of the \code{scenario_landscape}; see Details}
-
-\item{floor}{Logical; if \code{TRUE}, don't allow new values of pwater to be lower
-than baseline values}
 
 \item{...}{Additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
