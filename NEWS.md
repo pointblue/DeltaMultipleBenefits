@@ -1,4 +1,6 @@
-# Unreleased
+# DeltaMultipleBenefits 2.0.0 - 2026-06-30
+
+Major release including full support for Phase 2 models of tidal marsh bird species distributions. Several functions have changed substantially, breaking backwards compatibility.
 
 ### Documentation
 - [Supporting Information](articles/supporting_information.html): Added references for Phase II manuscript (in review) and published data sets
@@ -15,9 +17,9 @@
 - `classify_landcover`: Added function with methods for handling `sf` of `SpatRaster` input data; supports classification of land cover polygon data in alignment with `key` and classification of SpatRaster data to align with predictors required by each set of SDMs, respectively
 - `create_predictor_stack`: Added internal function called by `python_focal_prep` to convert a classified raster into a stack of predictor variables
 - `python_focal_finalize`: Deprecated and replaced with additional functionality in `focal_stats.py`
-- `python_focal_stats`: Added function to automatically handle selecting the correct spatial scales and summary statistics for each distribution model; also produces the appropriate predictor names and (experimentally) can mask the output
+- `python_focal_stats`: Added wrapper to `python_focal_run()` to automatically handle selecting the correct spatial scales and summary statistics for each distribution model; also produces the appropriate predictor names and (experimentally) can mask the output
 - `update_covertype`: Added support for processing SpatRaster with multiple layers
-- `ALL`: replaced `pathout` with `dir` for specificity
+- `ALL`: replaced `pathout` with `dir` for specificity; added support for passing additional arguments to `terra::writeRaster()` where relevant; made writing SpatRasters to disk optional
 - Added basic tests for `classify_landcover`, `create_predictor_stack`, and `python_focal_prep`
 
 
