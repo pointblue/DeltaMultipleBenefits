@@ -4,7 +4,7 @@
 \alias{create_predictor_stack}
 \title{Create raster stack representing SDM predictors}
 \usage{
-create_predictor_stack(x, SDM, classified = FALSE, fill = TRUE)
+create_predictor_stack(x, SDM, classified = FALSE, fill = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{x}{SpatRaster; can only have 1 layer}
@@ -15,6 +15,8 @@ create_predictor_stack(x, SDM, classified = FALSE, fill = TRUE)
 \item{classified}{logical; see Details}
 
 \item{fill}{logical; see Details}
+
+\item{verbose}{logical; passed to \code{\link[=classify_landcover.SpatRaster]{classify_landcover.SpatRaster()}}}
 }
 \value{
 SpatRaster with separate layers for each land cover class included

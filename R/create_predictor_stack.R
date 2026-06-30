@@ -30,6 +30,7 @@
 #'   `"waterbird_fall"`, `"waterbird_win"`, or `"tima"`
 #' @param classified logical; see Details
 #' @param fill logical; see Details
+#' @param verbose logical; passed to [classify_landcover.SpatRaster()]
 #'
 #' @returns SpatRaster with separate layers for each land cover class included
 #'   as a predictor in the selected SDM representing the presence (1) and
@@ -44,13 +45,14 @@
 #' r = suppressWarnings(create_predictor_stack(r, SDM = 'riparian'))
 
 
-create_predictor_stack = function(x, SDM, classified = FALSE, fill = TRUE) {
+create_predictor_stack = function(x, SDM, classified = FALSE, fill = TRUE,
+                                  verbose = TRUE) {
 
   # handle main land cover classifications & segregate into layers
   if (classified) {
     x_classified = x
   } else {
-    x_classified = classify_landcover(x, SDM = SDM)
+    x_classified = classify_landcover(x, SDM = SDM, verbose = verbose)
   }
   layernames = terra::freq(x_classified)$value
   presence = terra::segregate(x_classified, other = 0) |>

@@ -41,6 +41,7 @@
 #'   covers are present; default `NULL`
 #' @param dir Optional string representing directory passed to
 #'   [terra::writeRaster()], as (`dir/SDM/landscape_name`). See Details.
+#' @param verbose logical; passed to [classify_landcover.SpatRaster()]
 #' @param ... additional arguments passed to [terra::writeRaster()]
 #'
 #' @returns SpatRaster, though primarily used to write layers to file for use
@@ -71,7 +72,7 @@
 
 python_focal_prep = function(x, SDM, classified = FALSE, fill = TRUE,
                              suffix = NULL, pixel_value = NULL, subset = NULL,
-                             dir = NULL, overwrite = FALSE, ...) {
+                             dir = NULL, verbose = TRUE, ...) {
 
   if (!is.null(subset) & is.null(suffix)) {
     stop('Provide two suffix values to distinguish unmasked and masked results (e.g., _area and _pfld)')
@@ -81,7 +82,7 @@ python_focal_prep = function(x, SDM, classified = FALSE, fill = TRUE,
   # keep as a list to allow each set to remain separate
   presence = purrr::map(
     c(1:terra::nlyr(x)),
-    ~create_predictor_stack(x = x[[.x]], SDM = SDM, fill = fill))
+    ~create_predictor_stack(x = x[[.x]], SDM = SDM, fill = fill, verbose = verbose))
   landscape_names = names(x)
   names(presence) = landscape_names
 
@@ -145,7 +146,7 @@ python_focal_prep = function(x, SDM, classified = FALSE, fill = TRUE,
 mask_predictors = function(lc, masklayer, suffix) {
   masklayer_list = terra::as.list(masklayer)
   names(masklayer_list) = names(masklayer)
-  if (length(lc) == length(masklayer_list)) {
+  if (length(lc) > 1 & length(lc) == length(masklayer_list)) {
     purrr::map(names(lc),
                function(landscape_name) {
                   r = terra::mask(masklayer_list[[landscape_name]],
