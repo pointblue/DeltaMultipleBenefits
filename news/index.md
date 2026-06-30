@@ -1,5 +1,61 @@
 # Changelog
 
+## DeltaMultipleBenefits 2.0.0 - 2026-06-30
+
+Major release including full support for Phase 2 models of tidal marsh
+bird species distributions. Several functions have changed
+substantially, breaking backwards compatibility.
+
+#### Documentation
+
+- [Supporting
+  Information](https://pointblue.github.io/DeltaMultipleBenefits/news/articles/supporting_information.md):
+  Added references for Phase II manuscript (in review) and published
+  data sets
+- [Overview](https://pointblue.github.io/DeltaMultipleBenefits/news/articles/overview.md):
+  Updated information about the completed status of Phase II
+- Vignette: Updated throughout to reference updated functions and Phase
+  2 models
+
+#### Data
+
+- `key`: Simplified to full list of recognized land cover classes and
+  subclasses
+- `predictors_tima`, `predictors_riparian`, `predictors_waterbird_fall`,
+  `predictors_waterbird_win`: added data sets laying out the crosswalk
+  between land cover classes and subclasses in `key` with predictors
+  expected by each set of SDMs
+
+#### Functions
+
+- `utils-py.R`: Added several Python helper functions to improved how
+  Python is called and avoid importing arcpy and Spatial Analyst
+  extensions repeatedly in the same session
+- `reclassify_landcover`: Deprecated and replaced with
+  `classify_landcover` and `create_predictor_stack`
+- `classify_landcover`: Added function with methods for handling `sf` of
+  `SpatRaster` input data; supports classification of land cover polygon
+  data in alignment with `key` and classification of SpatRaster data to
+  align with predictors required by each set of SDMs, respectively
+- `create_predictor_stack`: Added internal function called by
+  `python_focal_prep` to convert a classified raster into a stack of
+  predictor variables
+- `python_focal_finalize`: Deprecated and replaced with additional
+  functionality in `focal_stats.py`
+- `python_focal_stats`: Added wrapper to
+  [`python_focal_run()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_run.md)
+  to automatically handle selecting the correct spatial scales and
+  summary statistics for each distribution model; also produces the
+  appropriate predictor names and (experimentally) can mask the output
+- `update_covertype`: Added support for processing SpatRaster with
+  multiple layers
+- `ALL`: replaced `pathout` with `dir` for specificity; added support
+  for passing additional arguments to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
+  where relevant; made writing SpatRasters to disk optional
+- Added basic tests for `classify_landcover`, `create_predictor_stack`,
+  and `python_focal_prep`
+
 ## DeltaMultipleBenefits 1.1.0 - 2026-05-14
 
 Minor release including many updates and improvements to package

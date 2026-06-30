@@ -56,14 +56,14 @@ distribution models. Generates file <code>pwater.tif</code> at locations
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">update_pwater</span><span class="op">(</span></span>
 <span>  <span class="va">waterdat</span>,</span>
 <span>  mask <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  baseline_landscape <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scenario_landscape <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  floor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  dir_focal <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dir_final <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">SDM</span>,</span>
 <span>  <span class="va">landscape_name</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  baseline_landscape <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  scenario_landscape <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  floor <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -81,6 +81,17 @@ waterbird SDM (i.e., fall vs. winter)</p></dd>
 <dt id="arg-mask">mask<a class="anchor" aria-label="anchor" href="#arg-mask"></a></dt>
 <dd><p>Optional <code>SpatRaster</code> or character string giving the filepath to
 a raster that should be used to mask the output, e.g. a study area boundary</p></dd>
+
+
+<dt id="arg-baseline-landscape-scenario-landscape">baseline_landscape, scenario_landscape<a class="anchor" aria-label="anchor" href="#arg-baseline-landscape-scenario-landscape"></a></dt>
+<dd><p>Optional SpatRasters created by
+<code><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">terra::rast()</a></code> to compare with each other for estimating <code>pwater</code> for the
+changed portions of the <code>scenario_landscape</code>; see Details</p></dd>
+
+
+<dt id="arg-floor">floor<a class="anchor" aria-label="anchor" href="#arg-floor"></a></dt>
+<dd><p>Logical; if <code>TRUE</code>, don't allow new values of pwater to be lower
+than baseline values</p></dd>
 
 
 <dt id="arg-dir-focal">dir_focal<a class="anchor" aria-label="anchor" href="#arg-dir-focal"></a></dt>
@@ -104,21 +115,6 @@ Details.</p></dd>
 rasters will be written; should either correspond to the landscape
 represented by <code>waterdat</code> or the <code>scenario_landscape</code>, if given; see
 Details</p></dd>
-
-
-<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p>Logical; passed to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code>; default <code>FALSE</code></p></dd>
-
-
-<dt id="arg-baseline-landscape-scenario-landscape">baseline_landscape, scenario_landscape<a class="anchor" aria-label="anchor" href="#arg-baseline-landscape-scenario-landscape"></a></dt>
-<dd><p>Optional SpatRasters created by
-<code><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">terra::rast()</a></code> to compare with each other for estimating <code>pwater</code> for the
-changed portions of the <code>scenario_landscape</code>; see Details</p></dd>
-
-
-<dt id="arg-floor">floor<a class="anchor" aria-label="anchor" href="#arg-floor"></a></dt>
-<dd><p>Logical; if <code>TRUE</code>, don't allow new values of pwater to be lower
-than baseline values</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

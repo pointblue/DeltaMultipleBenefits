@@ -29,7 +29,8 @@ fit_SDM(
 
   Character strings defining the filepath (`pathin/SDM/landscape_name`)
   containing new predictor rasters to include in the model, such as
-  those created from running `python_focal_finalize()`
+  those created from running
+  [`python_focal_stats()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/python_focal_stats.md)
 
 - modlist:
 

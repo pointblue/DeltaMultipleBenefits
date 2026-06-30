@@ -514,17 +514,12 @@ landscape does not include all land cover classes required to fit the
 
 predictors_tima = python_focal_prep(landscapes, SDM = 'tima', dir = 'example',
                                     fill = FALSE) |> suppressWarnings()
-#> RICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKARICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKACreating directory: example/tima/baseline 
-#> Creating directory: example/tima/scenario
 
 psize = estimate_tima_patchsize(predictors_tima, dir = 'example')
-#> Writing to directory: example/tima/baseline 
-#> Writing to directory: example/tima/scenario
 
 terra::plot(c(predictors_tima$baseline$TWET, psize[[1]]))
 ```
 
-![](DeltaMultipleBenefits_files/figure-html/tima_prep-1.png) \[\]
 **rasterize_stream_channels:** To facilitate estimating the density
 (proportion cover) of channel lines, we also need to compile water
 channel data, based on the California Aquatic Resources Inventory (CARI)
@@ -744,13 +739,9 @@ above, but they will be kept in a separate subdirectory for the
 
 predictors_rip = python_focal_prep(landscapes, SDM = 'riparian', dir = 'example',
                                    fill = FALSE) |> suppressWarnings()
-#> RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUBAG RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&SCRUBCreating directory: example/riparian/baseline 
-#> Creating directory: example/riparian/scenario
 
 terra::plot(predictors_rip$baseline)
 ```
-
-![](DeltaMultipleBenefits_files/figure-html/rip_prep-1.png)
 
 **python_focal_stats:** As above, the next step is to generate focal
 statistics for each of the separate land cover rasters.
@@ -766,14 +757,14 @@ python_focal_stats(SDM = 'riparian',
 #### 4.2.2 Prepare additional predictors
 
 The “riparian” models also include several predictors not based on land
-cover data: \* `area.ha`, accounting for variation in survey effort,
-which should be held constant for new predictions; \* `region`,
+cover data: - `area.ha`, accounting for variation in survey effort,
+which should be held constant for new predictions; - `region`,
 indicating whether the survey was conducted in the Sacramento Valley
-(region = 0) or in the Delta or San Joaquin (region = 1) \* `bio_1`,
-representing annual mean temperature, 1970-2000 \* `bio_12`,
-representing total annual precipitation, 1970-2000 \* `streamdist`,
-representing the square-root of the distance (in m) to the nearest
-stream or river, based on the National Hydrography Dataset
+(region = 0) or in the Delta or San Joaquin (region = 1) - `bio_1`,
+representing annual mean temperature, 1970-2000 - `bio_12`, representing
+total annual precipitation, 1970-2000 - `streamdist`, representing the
+square-root of the distance (in m) to the nearest stream or river, based
+on the National Hydrography Dataset
 
 To represent `area.ha` in new predictions, we recommend using a constant
 value of 3.14159, referring to the total area (in hectares) within 50m

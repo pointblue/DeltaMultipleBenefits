@@ -9,9 +9,11 @@ rasterize_stream_channels(
   x,
   template,
   min_length = NULL,
-  dir = NULL,
   SDM = "tima",
-  landscape_name = "baseline"
+  landscape_name = "baseline",
+  dir = NULL,
+  filename = "CHAN.tif",
+  ...
 )
 ```
 
@@ -30,12 +32,6 @@ rasterize_stream_channels(
 
   Optional; minimum length of stream channel to consider
 
-- dir:
-
-  Optional string representing directory passed to
-  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html),
-  as (`dir/SDM/landscape_name`). See Details.
-
 - SDM:
 
   The name of intended species distribution model; by default `"tima"`
@@ -44,6 +40,21 @@ rasterize_stream_channels(
 
   The name of the landscape scenario represented; by default
   `"baseline"`
+
+- dir:
+
+  Optional string representing directory passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html),
+  as (`dir/SDM/landscape_name`). See Details.
+
+- filename:
+
+  The filename of the output raster; by default "CHAN.tif"
+
+- ...:
+
+  Additional arguments passed to
+  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html)
 
 ## Value
 

@@ -535,16 +535,11 @@ landscape does not include all land cover classes required to fit the
 <code class="sourceCode R"><span></span>
 <span><span class="va">predictors_tima</span> <span class="op">=</span> <span class="fu"><a href="../reference/python_focal_prep.html">python_focal_prep</a></span><span class="op">(</span><span class="va">landscapes</span>, SDM <span class="op">=</span> <span class="st">'tima'</span>, dir <span class="op">=</span> <span class="st">'example'</span>,</span>
 <span>                                    fill <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; RICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKARICE URBN SALF MIXF INTR SALS MIXS WETLAND VERP WATER WOODY BARREN RIPARIAN SALTPICK EMER MEAD LEPI ALKACreating directory: example/tima/baseline </span></span>
-<span><span class="co">#&gt; Creating directory: example/tima/scenario</span></span>
 <span></span>
 <span><span class="va">psize</span> <span class="op">=</span> <span class="fu"><a href="../reference/estimate_tima_patchsize.html">estimate_tima_patchsize</a></span><span class="op">(</span><span class="va">predictors_tima</span>, dir <span class="op">=</span> <span class="st">'example'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Writing to directory: example/tima/baseline </span></span>
-<span><span class="co">#&gt; Writing to directory: example/tima/scenario</span></span>
 <span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">predictors_tima</span><span class="op">$</span><span class="va">baseline</span><span class="op">$</span><span class="va">TWET</span>, <span class="va">psize</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DeltaMultipleBenefits_files/figure-html/tima_prep-1.png" class="r-plt" alt="" width="672">
-[] <strong>rasterize_stream_channels:</strong> To facilitate estimating
+<p><strong>rasterize_stream_channels:</strong> To facilitate estimating
 the density (proportion cover) of channel lines, we also need to compile
 water channel data, based on the California Aquatic Resources Inventory
 (CARI) Streams (lines) data set. These data are freely available for
@@ -729,11 +724,8 @@ be kept in a separate subdirectory for the ‘riparian’ SDMs.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="va">predictors_rip</span> <span class="op">=</span> <span class="fu"><a href="../reference/python_focal_prep.html">python_focal_prep</a></span><span class="op">(</span><span class="va">landscapes</span>, SDM <span class="op">=</span> <span class="st">'riparian'</span>, dir <span class="op">=</span> <span class="st">'example'</span>,</span>
 <span>                                   fill <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&amp;SCRUBAG RICE IDLE URBAN SALIX MIXEDFOREST SALIXSHRUB MIXEDSHRUB PERM WATER BARREN WOODLAND&amp;SCRUBCreating directory: example/riparian/baseline </span></span>
-<span><span class="co">#&gt; Creating directory: example/riparian/scenario</span></span>
 <span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">predictors_rip</span><span class="op">$</span><span class="va">baseline</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DeltaMultipleBenefits_files/figure-html/rip_prep-1.png" class="r-plt" alt="" width="672"></p>
 <p><strong>python_focal_stats:</strong> As above, the next step is to
 generate focal statistics for each of the separate land cover
 rasters.</p>
@@ -747,13 +739,13 @@ rasters.</p>
 <h4 id="prepare-additional-predictors">4.2.2 Prepare additional predictors<a class="anchor" aria-label="anchor" href="#prepare-additional-predictors"></a>
 </h4>
 <p>The “riparian” models also include several predictors not based on
-land cover data: * <code>area.ha</code>, accounting for variation in
-survey effort, which should be held constant for new predictions; *
+land cover data: - <code>area.ha</code>, accounting for variation in
+survey effort, which should be held constant for new predictions; -
 <code>region</code>, indicating whether the survey was conducted in the
 Sacramento Valley (region = 0) or in the Delta or San Joaquin (region =
-1) * <code>bio_1</code>, representing annual mean temperature, 1970-2000
-* <code>bio_12</code>, representing total annual precipitation,
-1970-2000 * <code>streamdist</code>, representing the square-root of the
+1) - <code>bio_1</code>, representing annual mean temperature, 1970-2000
+- <code>bio_12</code>, representing total annual precipitation,
+1970-2000 - <code>streamdist</code>, representing the square-root of the
 distance (in m) to the nearest stream or river, based on the National
 Hydrography Dataset</p>
 <p>To represent <code>area.ha</code> in new predictions, we recommend

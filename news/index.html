@@ -38,6 +38,48 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.0" id="deltamultiplebenefits-200---2026-06-30">DeltaMultipleBenefits 2.0.0 - 2026-06-30<a class="anchor" aria-label="anchor" href="#deltamultiplebenefits-200---2026-06-30"></a></h2>
+<p>Major release including full support for Phase 2 models of tidal marsh bird species distributions. Several functions have changed substantially, breaking backwards compatibility.</p>
+<div class="section level4">
+<h4 id="documentation-2-0-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-0-0"></a></h4>
+<ul><li>
+<a href="articles/supporting_information.html">Supporting Information</a>: Added references for Phase II manuscript (in review) and published data sets</li>
+<li>
+<a href="articles/overview.html">Overview</a>: Updated information about the completed status of Phase II</li>
+<li>Vignette: Updated throughout to reference updated functions and Phase 2 models</li>
+</ul></div>
+<div class="section level4">
+<h4 id="data-2-0-0">Data<a class="anchor" aria-label="anchor" href="#data-2-0-0"></a></h4>
+<ul><li>
+<code>key</code>: Simplified to full list of recognized land cover classes and subclasses</li>
+<li>
+<code>predictors_tima</code>, <code>predictors_riparian</code>, <code>predictors_waterbird_fall</code>, <code>predictors_waterbird_win</code>: added data sets laying out the crosswalk between land cover classes and subclasses in <code>key</code> with predictors expected by each set of SDMs</li>
+</ul></div>
+<div class="section level4">
+<h4 id="functions-2-0-0">Functions<a class="anchor" aria-label="anchor" href="#functions-2-0-0"></a></h4>
+<ul><li>
+<code>utils-py.R</code>: Added several Python helper functions to improved how Python is called and avoid importing arcpy and Spatial Analyst extensions repeatedly in the same session</li>
+<li>
+<code>reclassify_landcover</code>: Deprecated and replaced with <code>classify_landcover</code> and <code>create_predictor_stack</code>
+</li>
+<li>
+<code>classify_landcover</code>: Added function with methods for handling <code>sf</code> of <code>SpatRaster</code> input data; supports classification of land cover polygon data in alignment with <code>key</code> and classification of SpatRaster data to align with predictors required by each set of SDMs, respectively</li>
+<li>
+<code>create_predictor_stack</code>: Added internal function called by <code>python_focal_prep</code> to convert a classified raster into a stack of predictor variables</li>
+<li>
+<code>python_focal_finalize</code>: Deprecated and replaced with additional functionality in <code>focal_stats.py</code>
+</li>
+<li>
+<code>python_focal_stats</code>: Added wrapper to <code><a href="../reference/python_focal_run.html">python_focal_run()</a></code> to automatically handle selecting the correct spatial scales and summary statistics for each distribution model; also produces the appropriate predictor names and (experimentally) can mask the output</li>
+<li>
+<code>update_covertype</code>: Added support for processing SpatRaster with multiple layers</li>
+<li>
+<code>ALL</code>: replaced <code>pathout</code> with <code>dir</code> for specificity; added support for passing additional arguments to <code><a href="https://rspatial.github.io/terra/reference/writeRaster.html" class="external-link">terra::writeRaster()</a></code> where relevant; made writing SpatRasters to disk optional</li>
+<li>Added basic tests for <code>classify_landcover</code>, <code>create_predictor_stack</code>, and <code>python_focal_prep</code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="deltamultiplebenefits-110---2026-05-14">DeltaMultipleBenefits 1.1.0 - 2026-05-14<a class="anchor" aria-label="anchor" href="#deltamultiplebenefits-110---2026-05-14"></a></h2>
 <p>Minor release including many updates and improvements to package documentation, data, and functions. This release also includes partial support for the distribution models developed for tidal marsh bird focal species in Phase 2. Work in progress to test and finalize this support before the next major release.</p>
 <div class="section level4">

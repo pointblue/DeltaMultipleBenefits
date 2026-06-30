@@ -6,7 +6,7 @@ of rasters representing the required predictors.
 ## Usage
 
 ``` r
-create_predictor_stack(x, SDM, classified = FALSE, fill = TRUE)
+create_predictor_stack(x, SDM, classified = FALSE, fill = TRUE, verbose = TRUE)
 ```
 
 ## Arguments
@@ -27,6 +27,11 @@ create_predictor_stack(x, SDM, classified = FALSE, fill = TRUE)
 - fill:
 
   logical; see Details
+
+- verbose:
+
+  logical; passed to
+  [`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md)
 
 ## Value
 

@@ -15,7 +15,7 @@ python_focal_prep(
   pixel_value = NULL,
   subset = NULL,
   dir = NULL,
-  overwrite = FALSE,
+  verbose = TRUE,
   ...
 )
 ```
@@ -62,6 +62,11 @@ python_focal_prep(
   Optional string representing directory passed to
   [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html),
   as (`dir/SDM/landscape_name`). See Details.
+
+- verbose:
+
+  logical; passed to
+  [`classify_landcover.SpatRaster()`](https://pointblue.github.io/DeltaMultipleBenefits/reference/classify_landcover.SpatRaster.md)
 
 - ...:
 

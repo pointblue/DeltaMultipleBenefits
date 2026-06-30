@@ -13,14 +13,14 @@ and `dir_final/SDM/landscape_name` (for use with
 update_pwater(
   waterdat,
   mask = NULL,
+  baseline_landscape = NULL,
+  scenario_landscape = NULL,
+  floor = FALSE,
   dir_focal = NULL,
   dir_final = NULL,
   SDM,
   landscape_name,
-  overwrite = FALSE,
-  baseline_landscape = NULL,
-  scenario_landscape = NULL,
-  floor = FALSE
+  ...
 )
 ```
 
@@ -38,6 +38,18 @@ update_pwater(
   Optional `SpatRaster` or character string giving the filepath to a
   raster that should be used to mask the output, e.g. a study area
   boundary
+
+- baseline_landscape, scenario_landscape:
+
+  Optional SpatRasters created by
+  [`terra::rast()`](https://rspatial.github.io/terra/reference/rast.html)
+  to compare with each other for estimating `pwater` for the changed
+  portions of the `scenario_landscape`; see Details
+
+- floor:
+
+  Logical; if `TRUE`, don't allow new values of pwater to be lower than
+  baseline values
 
 - dir_focal:
 
@@ -61,24 +73,6 @@ update_pwater(
   Character strings defining the filepath where output rasters will be
   written; should either correspond to the landscape represented by
   `waterdat` or the `scenario_landscape`, if given; see Details
-
-- overwrite:
-
-  Logical; passed to
-  [`terra::writeRaster()`](https://rspatial.github.io/terra/reference/writeRaster.html);
-  default `FALSE`
-
-- baseline_landscape, scenario_landscape:
-
-  Optional SpatRasters created by
-  [`terra::rast()`](https://rspatial.github.io/terra/reference/rast.html)
-  to compare with each other for estimating `pwater` for the changed
-  portions of the `scenario_landscape`; see Details
-
-- floor:
-
-  Logical; if `TRUE`, don't allow new values of pwater to be lower than
-  baseline values
 
 - ...:
 
