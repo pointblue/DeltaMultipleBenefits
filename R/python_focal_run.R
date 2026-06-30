@@ -79,7 +79,7 @@ python_focal_run = function(pathin, landscape_name, SDM, regex = NULL,
                          buffer = scale, fun = fun, suffix = suffix, regex = regex,
                          overwrite = overwrite, mask_raster = "mask_layer")
     } else {
-      mask_layer <- arcpy$Raster(mask)
+      mask_layer <- .py_state$arcpy$Raster(mask)
       env_py$focal_stats(fullpathin = fullpathin, fullpathout = fullpathout,
                          buffer = scale, fun = fun, suffix = suffix, regex = regex,
                          overwrite = overwrite, mask_raster = "mask_layer")
