@@ -8,9 +8,11 @@ rasterize_stream_channels(
   x,
   template,
   min_length = NULL,
-  dir = NULL,
   SDM = "tima",
-  landscape_name = "baseline"
+  landscape_name = "baseline",
+  dir = NULL,
+  filename = "CHAN.tif",
+  ...
 )
 }
 \arguments{
@@ -22,14 +24,18 @@ channel data}
 
 \item{min_length}{Optional; minimum length of stream channel to consider}
 
-\item{dir}{Optional string representing directory passed to
-\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir/SDM/landscape_name}). See Details.}
-
 \item{SDM}{The name of intended species distribution model; by default
 \code{"tima"}}
 
 \item{landscape_name}{The name of the landscape scenario represented; by
 default \code{"baseline"}}
+
+\item{dir}{Optional string representing directory passed to
+\code{\link[terra:writeRaster]{terra::writeRaster()}}, as (\code{dir/SDM/landscape_name}). See Details.}
+
+\item{filename}{The filename of the output raster; by default "CHAN.tif"}
+
+\item{...}{Additional arguments passed to \code{\link[terra:writeRaster]{terra::writeRaster()}}}
 }
 \value{
 SpatRaster

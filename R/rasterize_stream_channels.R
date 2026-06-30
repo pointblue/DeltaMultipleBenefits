@@ -29,19 +29,23 @@
 #' @param template SpatRaster to be used as a template for rasterizing stream
 #'   channel data
 #' @param min_length Optional; minimum length of stream channel to consider
-#' @param dir Optional string representing directory passed to
-#'   [terra::writeRaster()], as (`dir/SDM/landscape_name`). See Details.
 #' @param SDM The name of intended species distribution model; by default
 #'   `"tima"`
 #' @param landscape_name The name of the landscape scenario represented; by
 #'   default `"baseline"`
+#' @param filename The filename of the output raster; by default "CHAN.tif"
+#' @param dir Optional string representing directory passed to
+#'   [terra::writeRaster()], as (`dir/SDM/landscape_name`). See Details.
+#' @param ... Additional arguments passed to [terra::writeRaster()]
+#'
 #'
 #' @returns SpatRaster
 #' @export
 #'
 #'
-rasterize_stream_channels = function(x, template, min_length = NULL, dir = NULL,
-                                   SDM = 'tima', landscape_name = 'baseline') {
+rasterize_stream_channels = function(x, template, min_length = NULL,
+                                     SDM = 'tima', landscape_name = 'baseline',
+                                     dir = NULL, filename = 'CHAN.tif', ...) {
   if (is(x, 'character')) {
     x = sf::read_sf(x)
   }
@@ -55,17 +59,17 @@ rasterize_stream_channels = function(x, template, min_length = NULL, dir = NULL,
 
   if (!is.null(min_length)) {
     x = x |>
-      dplyr::mutate(length = sf::st_length(channels_shp) |> as.numeric()) |>
+      dplyr::mutate(length = sf::st_length(x) |> as.numeric()) |>
       dplyr::filter(length >= min_length)
   }
   res = terra::rasterize(terra::vect(x), y = template)
   names(res) = 'CHAN'
 
   if (!is.null(dir)) {
-    create_directory(file.path(dir, 'tima', names(x)[i]))
-    terra::writeRaster(p,
+    create_directory(file.path(dir, 'tima', landscape_name))
+    terra::writeRaster(res,
                        filename = file.path(dir, 'tima', landscape_name,
-                                            'CHAN.tif'),
-                       overwrite = overwrite, ...)
+                                            filename),
+                       ...)
   }
 }
