@@ -59,7 +59,7 @@ estimate_tima_patchsize = function(x, directions = 8, zeroAsNA = TRUE,
   p = terra::classify(p, rcl = psize |> dplyr::select(from = 'value', to = 'count'))
 
   if (fill) {
-    p = cover(p, subst(twet, from = 1, to = 0))
+    p = terra::cover(p, terra::subst(twet, from = 1, to = 0))
   }
 
   if (!is.null(dir)) {
