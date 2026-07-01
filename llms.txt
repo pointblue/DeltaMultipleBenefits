@@ -14,11 +14,11 @@ land cover.
 
 ## Installation
 
-You can install the released version from
+You can install the latest release from
 [Zenodo](https://zenodo.org/records/7718620) with:
 
 ``` R
-remotes::install_url("https://zenodo.org/records/7718620/files/pointblue/DeltaMultipleBenefits-v1.0.0.zip?download=1")
+remotes::install_url("https://zenodo.org/records/21090842/files/pointblue/DeltaMultipleBenefits-v2.0.0.zip?download=1")
 ```
 
 Or the latest development version from [GitHub](https://github.com/)

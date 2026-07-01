@@ -8,17 +8,17 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/pointblue/DeltaMultipleBenefits/blob/v2.0.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/pointblue/DeltaMultipleBenefits/blob/main/DESCRIPTION)
 
 Dybala K (2026). *DeltaMultipleBenefits: Projecting the Multiple
 Benefits of Land Cover Change in the Sacramento-San Joaquin River
-Delta*. R package version 1.1.0,
+Delta*. R package version 2.0.0,
 <https://github.com/pointblue/DeltaMultipleBenefits>.
 
     @Manual{,
       title = {DeltaMultipleBenefits: Projecting the Multiple Benefits of Land Cover Change in the Sacramento-San Joaquin River Delta},
       author = {Kristen Dybala},
       year = {2026},
-      note = {R package version 1.1.0},
+      note = {R package version 2.0.0},
       url = {https://github.com/pointblue/DeltaMultipleBenefits},
     }
