@@ -8,7 +8,7 @@
 <!-- badges: start -->
 
 [![DOI](man/figures/zenodo.7718619.svg)](https://doi.org/10.5281/zenodo.7718619)
-[![](https://img.shields.io/badge/devel%20version-1.1.0-blue.svg)](https://github.com/pointblue/DeltaMultipleBenefits)
+[![](https://img.shields.io/badge/devel%20version-2.0.0-blue.svg)](https://github.com/pointblue/DeltaMultipleBenefits)
 ![License badge](man/figures/license-GPL3-blue.svg)
 ![StatusActive](man/figures/active.svg)
 
@@ -26,10 +26,10 @@ land cover.
 
 ## Installation
 
-You can install the released version from
+You can install the latest release from
 [Zenodo](https://zenodo.org/records/7718620) with:
 
-    remotes::install_url("https://zenodo.org/records/7718620/files/pointblue/DeltaMultipleBenefits-v1.0.0.zip?download=1")
+    remotes::install_url("https://zenodo.org/records/21090842/files/pointblue/DeltaMultipleBenefits-v2.0.0.zip?download=1")
 
 Or the latest development version from [GitHub](https://github.com/)
 with:
